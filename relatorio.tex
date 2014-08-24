@@ -1,0 +1,607 @@
+%% abtex2-modelo-trabalho-academico.tex, v-1.8 laurocesar
+%% Copyright 2012-2013 by abnTeX2 group at http://abntex2.googlecode.com/ 
+%%
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3 or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%%
+%% This work has the LPPL maintenance status `maintained'.
+%% 
+%% The Current Maintainer of this work is the abnTeX2 team, led
+%% by Lauro César Araujo. Further information are available on 
+%% http://abntex2.googlecode.com/
+%%
+%% This work consists of the files abntex2-modelo-trabalho-academico.tex,
+%% abntex2-modelo-include-comandos and abntex2-modelo-references.bib
+%%
+
+% ------------------------------------------------------------------------
+% ------------------------------------------------------------------------
+% abnTeX2: Modelo de Trabalho Academico (tese de doutorado, dissertacao de
+% mestrado e trabalhos monograficos em geral) em conformidade com 
+% ABNT NBR 14724:2011: Informacao e documentacao - Trabalhos academicos -
+% Apresentacao
+% ------------------------------------------------------------------------
+% ------------------------------------------------------------------------
+
+\documentclass[
+	% -- opções da classe memoir --
+	12pt,				% tamanho da fonte
+	%openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+	%twoside,			% para impressão em verso e anverso. Oposto a oneside
+	oneside,			% para impressão em verso e anverso. Oposto a oneside
+	a4paper,			% tamanho do papel. 
+	% -- opções da classe abntex2 --
+	%chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+	% -- opções do pacote babel --
+	english,			% idioma adicional para hifenização
+	brazil,				% o último idioma é o principal do documento
+	% -- opções da classe ime-abntex2 --
+	%brasao,
+	]{ime-abntex2}
+
+
+% ---
+% PACOTES
+% ---
+
+% ---
+% Pacotes fundamentais 
+% ---
+\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
+\usepackage{cmap}			% Mapear caracteres especiais no PDF
+\usepackage{lmodern}			% Usa a fonte Latin Modern
+\usepackage{amsmath}			% Para usar blocos como "gather" de escrever matemática
+%\usepackage{amsfonts}			% Para usar fontes ams
+%\usepackage{times}			% Usa a fonte Times
+\usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
+%\usepackage{lastpage}			% Usado pela Ficha catalográfica
+\usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
+\usepackage{color}			% Controle das cores
+\usepackage{graphicx}			% Inclusão de gráficos
+\usepackage{algorithm2e}		% Para escrever algorítimos
+\usepackage{lscape}			% Para usar landscape
+\usepackage{amsthm}			% Para usar Definições e lemas
+\usepackage{amssymb}			% \mathbb{•}
+\usepackage{caption}			% dependencia de subcaption
+\usepackage{subcaption}			% Para usar \begin{subfigure} e colocar figuras (a) e (b) lado a lado
+\usepackage{listings}			% Para usar \lstinputlisting e incluir código
+\newtheorem{teo}{Teorema}[section]	%Renomear o comando
+\newtheorem{defi}[teo]{Definição}
+% o seguinte é necessário para corrigir um bug no algorithm2e
+% http://tex.stackexchange.com/questions/113325/problem-with-algorithm2e-and-portuguese-option
+\SetKwFor{Para}{para}{fa\c{c}a}{fim para}
+% não era pra precisar do seguinte, mas precisa para traduzir a captions dos algoritmos
+\renewcommand{\algorithmcfname}{Algoritmo}%
+% ---
+
+% ---
+% Pacotes de citacoes
+% ---
+% O seguinte serve para mostrar as referencias reversas na bibliografia
+% \usepackage[brazilian,hyperpageref]{backref}	 % Paginas com as citações na bibl
+\usepackage[alf]{abntex2cite}	% Citações padrão ABNT
+
+% --- 
+% CONFIGURAÇÕES DE PACOTES
+% --- 
+
+% ---
+% Configurações do pacote backref
+% Usado sem a opção hyperpageref de backref
+%\renewcommand{\backrefpagesname}{Citado na(s) página(s):~}
+% Texto padrão antes do número das páginas
+%\renewcommand{\backref}{}
+% Define os textos da citação
+%\renewcommand*{\backrefalt}[4]{
+%	\ifcase #1 %
+%		Nenhuma citação no texto.%
+%	\or
+%		Citado na página #2.%
+%	\else
+%		Citado #1 vezes nas páginas #2.%
+%	\fi}%
+% ---
+
+
+% ---
+% Informações de dados para CAPA e FOLHA DE ROSTO
+% ---
+\titulo{Heurística Estática para Times\\Cooperativos de Robôs}
+\autor{Jan Segre\\
+Victor Bramigk}
+\local{Rio de Janeiro}
+\data{Julho de 2014}
+\orientador{Paulo Fernando Ferreira Rosa}{Ph.D., do IME}
+%\coorientador{Equipe \abnTeX}
+\instituicao{%
+  Instituto Militar de Engenharia
+  \par
+  Seção de Computação
+  \par
+  Graduação em Engenharia de Computação}
+\tipotrabalho{Iniciação à Pesquisa}
+% O preambulo deve conter o tipo do trabalho, o objetivo, 
+% o nome da instituição e a área de concentração 
+\preambulo{Iniciação à Pesquisa apresentada ao Curso de Graduação
+em Engenharia de Computação do Instituto Militar de
+Engenharia.}
+% ---
+
+
+% ---
+% Configurações de aparência do PDF final
+
+% alterando o aspecto da cor azul
+%\definecolor{blue}{RGB}{41,5,195}
+\definecolor{blue}{RGB}{0,0,0}
+
+% informações do PDF
+\makeatletter
+\hypersetup{
+	%pagebackref=true,
+	pdftitle={\@title},
+	pdfauthor={\@author},
+	pdfsubject={\imprimirpreambulo},
+	pdfcreator={LaTeX with abnTeX2},
+	pdfkeywords={ime}{robocup}{analise}{logs}{rede neural},
+	colorlinks=true,		% false: boxed links; true: colored links
+	linkcolor=blue,			% color of internal links
+	citecolor=blue,			% color of links to bibliography
+	filecolor=magenta,		% color of file links
+	urlcolor=blue,
+	bookmarksdepth=4
+}
+\makeatother
+% ---
+
+% ---
+% Espaçamentos entre linhas e parágrafos 
+% ---
+
+% O tamanho do parágrafo é dado por:
+%\setlength{\parindent}{1.3cm}
+
+% Controle do espaçamento entre um parágrafo e outro:
+%\setlength{\parskip}{0.2cm}  % tente também \onelineskip
+\setlength{\parskip}{\onelineskip}
+
+% ---
+% compila o indice
+% ---
+\makeindex
+% ---
+
+% ----
+% Início do documento
+% ----
+\begin{document}
+
+% Retira espaço extra obsoleto entre as frases.
+%\frenchspacing
+
+% ----------------------------------------------------------
+% ELEMENTOS PRÉ-TEXTUAIS
+% ----------------------------------------------------------
+% \pretextual
+
+% ---
+% Capa
+% ---
+\imprimircapa
+%\input{pre_textuais/capa}
+% ---
+
+% ---
+% Folha de rosto
+% (o * indica que haverá a ficha bibliográfica)
+% ---
+\imprimirfolhaderosto*
+%\input{pre_textuais/folha_de_rosto}
+% ---
+
+% ---
+% Inserir a ficha bibliografica
+% ---
+
+% Isto é um exemplo de Ficha Catalográfica, ou ``Dados internacionais de
+% catalogação-na-publicação''. Você pode utilizar este modelo como referência. 
+% Porém, provavelmente a biblioteca da sua universidade lhe fornecerá um PDF
+% com a ficha catalográfica definitiva após a defesa do trabalho. Quando estiver
+% com o documento, salve-o como PDF no diretório do seu projeto e substitua todo
+% o conteúdo de implementação deste arquivo pelo comando abaixo:
+%
+% \begin{fichacatalografica}
+%     \includepdf{fig_ficha_catalografica.pdf}
+% \end{fichacatalografica}
+\imprimirfichacatalografica
+{629.892}
+{S455h}
+{Segre, Jan}
+{Iniciação à Pesquisa (IP)}
+{1. Curso de engenharia da computação - Iniciação à Pesquisa.
+ 2. Robótica.
+ 3. Redes Neurais.
+ I. Bramigk, Victor.
+ II. Rosa, Paulo Fernando Ferreira.
+ % XXX estou realmente na dúvida:
+ %III. Heurística Estática para Times Cooperativos de Robôs.
+ III. Título.
+ IV. Instituto Militar de Engenharia.}
+{Heurística estática para times cooperativos de robôs}
+% ---
+
+% ---
+% Inserir errata
+% ---
+%\begin{errata}
+%Elemento opcional da \citeonline[4.2.1.2]{NBR14724:2011}. Exemplo:
+%
+%\vspace{\onelineskip}
+%
+%FERRIGNO, C. R. A. \textbf{Tratamento de neoplasias ósseas apendiculares com
+%reimplantação de enxerto ósseo autólogo autoclavado associado ao plasma
+%rico em plaquetas}: estudo crítico na cirurgia de preservação de membro em
+%cães. 2011. 128 f. Tese (Livre-Docência) - Faculdade de Medicina Veterinária e
+%Zootecnia, Universidade de São Paulo, São Paulo, 2011.
+%
+%\begin{table}[htb]
+%\center
+%\footnotesize
+%\begin{tabular}{|p{1.4cm}|p{1cm}|p{3cm}|p{3cm}|}
+%  \hline
+%   \textbf{Folha} & \textbf{Linha}  & \textbf{Onde se lê}  & \textbf{Leia-se}  \\
+%    \hline
+%    1 & 10 & auto-conclavo & autoconclavo\\
+%   \hline
+%\end{tabular}
+%\end{table}
+%
+%\end{errata}
+% ---
+
+% ---
+% Inserir folha de aprovação
+% ---
+%
+% Isto é um exemplo de Folha de aprovação, elemento obrigatório da NBR
+% 14724/2011 (seção 4.2.1.3). Você pode utilizar este modelo até a aprovação
+% do trabalho. Após isso, substitua todo o conteúdo deste arquivo por uma
+% imagem da página assinada pela banca com o comando abaixo:
+%
+% \includepdf{folhadeaprovacao_final.pdf}
+%
+\convidadoum{Julio Cesar Duarte}{D.Sc., do IME}
+\convidadodois{Ricardo Choren Noya}{D.Sc., do IME}
+\imprimirfolhadeaprovacao{17 de julho de 2014}
+% ---
+
+% ---
+% Dedicatória
+% ---
+%\begin{dedicatoria}
+%   \vspace*{\fill}
+%   \centering
+%   \noindent
+%   \textit{ Este trabalho é dedicado às crianças adultas que,\\
+%   quando pequenas, sonharam em se tornar cientistas.} \vspace*{\fill}
+%\end{dedicatoria}
+% ---
+
+% ---
+% Agradecimentos
+% ---
+%\begin{agradecimentos}
+%Os agradecimentos principais são direcionados à Gerald Weber, Miguel Frasson,
+%Leslie H. Watter, Bruno Parente Lima, Flávio de Vasconcellos Corrêa, Otavio Real
+%Salvador, Renato Machnievscz\footnote{Os nomes dos integrantes do primeiro
+%projeto abn\TeX\ foram extraídos de
+%\url{http://codigolivre.org.br/projects/abntex/}} e todos aqueles que
+%contribuíram para que a produção de trabalhos acadêmicos conforme
+%as normas ABNT com \LaTeX\ fosse possível.
+%
+%Agradecimentos especiais são direcionados ao Centro de Pesquisa em Arquitetura
+%da Informação\footnote{\url{http://www.cpai.unb.br/}} da Universidade de
+%Brasília (CPAI), ao grupo de usuários
+%\emph{latex-br}\footnote{\url{http://groups.google.com/group/latex-br}} e aos
+%novos voluntários do grupo
+%\emph{\abnTeX}\footnote{\url{http://groups.google.com/group/abntex2} e
+%\url{http://abntex2.googlecode.com/}}~que contribuíram e que ainda
+%contribuirão para a evolução do \abnTeX.
+%
+%\end{agradecimentos}
+% ---
+
+% ---
+% Epígrafe
+% ---
+%\begin{epigrafe}
+%    \vspace*{\fill}
+%	\begin{flushright}
+%		\textit{``Não vos amoldeis às estruturas deste mundo, \\
+%		mas transformai-vos pela renovação da mente, \\
+%		a fim de distinguir qual é a vontade de Deus: \\
+%		o que é bom, o que Lhe é agradável, o que é perfeito.\\
+%		(Bíblia Sagrada, Romanos 12, 2)}
+%	\end{flushright}
+%\end{epigrafe}
+% ---
+
+% ---
+% RESUMOS
+% ---
+
+% resumo em português
+\setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
+\begin{resumo}
+
+% DONE[jansegre] Dividir em 3 parágrafos:
+% - Tema
+% - Objetivo
+% - Contrubuições
+
+Anualmente, países de todo o mundo se reúnem para competir no torneio de
+futebol de robôs autônomos chamado RoboCup. Desde 2012, o IME participa dessa
+competição com o time do laboratório de robótica RoboIME. Com o passar dos
+anos, as partidas se tornam mais complexas e é necessário analisá-las para
+melhorar o desempenho da inteligência artificial do RoboIME.
+
+O objetivo deste trabalho é estudar maneiras para, a partir do \textit{log}
+de uma partida, prever o comportamento do time adversário. O estudo analisa o
+possível uso dos seguintes algoritmos: redes neurais, lógica nebulosa,
+otimização da colônia de formigas, algoritmo genético e recozimento simulado, e
+também, propõe um modelo para abstrair o comportamento de um time desconhecido.
+% TODO[jansegre] inserir ponto sobre conclusão
+
+A grande contribuição deste trabalho é concluir que a lógica nebulosa não é
+adequada para abordar o problema devido à complexidade de incorporar o conceito
+de temporalidade. Além disso, a otimização de colônia de formigas, o algoritmo
+genético e o recozimento simulado são mais apropriados para apoio de um
+algoritmo baseado em rede neural. É proposto que em um trabalho futuro seja
+implementado um algoritmo com rede neural e esse usado num algoritmo minimax
+para efetuar a movimentação do adversário.
+
+% Segundo a \citeonline[3.1-3.2]{NBR6028:2003}, o resumo deve ressaltar o
+% objetivo, o método, os resultados e as conclusões do documento. A ordem e a extensão
+% destes itens dependem do tipo de resumo (informativo ou indicativo) e do
+% tratamento que cada item recebe no documento original. O resumo deve ser
+% precedido da referência do documento, com exceção do resumo inserido no
+% próprio documento. (\ldots) As palavras-chave devem figurar logo abaixo do
+% resumo, antecedidas da expressão Palavras-chave:, separadas entre si por
+% ponto e finalizadas também por ponto.
+%
+\textbf{Palavras-chaves}: inteligência artificial, redes neurais, robótica.
+\end{resumo}
+
+% resumo em inglês
+\begin{resumo}[Abstract]
+\begin{otherlanguage*}{english}
+
+% TODO[jansegre] refazer
+
+Every year countries from all over the world gather for the autonomous robot
+football world cup, known as RoboCup. Since 2012 IME's robotic laboratory team,
+RoboIME, is a regular contestant. Each year the matches get more and more
+complex and it is increasingly necessary to analyze them to improve the
+artificial intelligence used by RoboIME.
+
+The goal of this work is to study ways to, given the log of a match, foresee
+the behaviour of the opponent. This study analyzes the possible use of neural
+networks, fuzzy logic, ant colony optimization, genetic algorithm and simulated
+annealing, and also proposes a model to abstract the behaviour of an unknown
+team.
+
+The major contribution of this work is concluding that fuzzy logic is not
+adequate to approach the problem given the complexity to incorporate time
+awareness into it, furthermore the ant colony optimization, genetic algorithm
+and simulated annealing only have use to support an algorithm, while the main
+algorithm is best implemented with a neural network. It is suggested that a
+future work implements a neural network algorithm to be used on a minimax to
+make the moves of the rival team.
+
+%This paper covers ways to analyze logs of robot soccer matches from
+%RoboCup's SSL category in order to obtain better results on the
+%RoboIME's artificial intelligence (from IME's robotics lab) which
+%participates yearly on that competition.  The desired goal is to
+%predict the behaviour of a robot team based solely on data collected
+%on previous matches, which are called logs.  A high level modeling was
+%developed such that existing routines could be used both for tests and
+%to actual predictions.  The following methods were researched: ACO
+%(Ant Colony Optimization), SA (Simulated Annealing), GA (Genetic
+%Algorithm), fuzzy logic, neural networks and CRFs (Conditional Random
+%Fields).  From the detailed research made, some approaches were
+%defined.  It was necessary to specify the team model for the
+%approaches involving the ACO and SA, which use CRFs as a base.  The
+%approach involving fuzzy logic showed itself too complex to be
+%developed in this paper.  After a thrill study it is desired to
+%implement an optimization process for both algorithms, such that the
+%result can be refined and the proposed methods benchmarked.  For
+%future works the proposed methods are ideal adversary simulators for a
+%MiniMax algorithm.
+
+%\vspace{\onelineskip}
+
+%\noindent
+\textbf{Key-words}: artificial intelligence, neural networks, robotics.
+\end{otherlanguage*}
+\end{resumo}
+
+% resumo em francês 
+%\begin{resumo}[Résumé]
+% \begin{otherlanguage*}{french}
+%    Il s'agit d'un résumé en français.
+% 
+%   \textbf{Mots-clés}: latex. abntex. publication de textes.
+% \end{otherlanguage*}
+%\end{resumo}
+
+% resumo em espanhol
+%\begin{resumo}[Resumen]
+% \begin{otherlanguage*}{spanish}
+%   Este es el resumen en español.
+%  
+%   \textbf{Palabras clave}: latex. abntex. publicación de textos.
+% \end{otherlanguage*}
+%\end{resumo}
+% ---
+
+% ---
+% inserir o sumario
+% ---
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+% ---
+
+% ---
+% inserir lista de ilustrações
+% ---
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\cleardoublepage
+% ---
+
+% ---
+% inserir lista de tabelas
+% ---
+%\pdfbookmark[0]{\listtablename}{lot}
+%\listoftables*
+%\cleardoublepage
+% ---
+
+% ---
+% inserir lista de abreviaturas e siglas
+% ---
+\begin{siglas}
+	\item[ACO] \textit{Ant Colony Optimization}
+	\item[ANN] \textit{Artificial Neural Networks}
+	\item[AG] Algoritmo genético
+	\item[IA] Inteligência artificial
+	\item[KDD] \textit{Knowledge Discovery in Databases}
+	\item[RoboCup] \textit{Robot World Cup Initiative}
+	\item[SA] \textit{Simulated Annealing}
+	\item[SAM] \textit{Standard Addition Method}
+	\item[SSL] \textit{Small Size League}
+	\item[STP] \textit{Skill Tactic Play}
+  \item[CRF] \textit{Conditional Random Fields}
+\end{siglas}
+% ---
+
+% ---
+% inserir lista de símbolos
+% ---
+%\begin{simbolos}
+%  \item[$ \Gamma $] Letra grega Gama
+%  \item[$ \Lambda $] Lambda
+%  \item[$ \zeta $] Letra grega minúscula zeta
+%  \item[$ \in $] Pertence
+%\end{simbolos}
+% ---
+
+
+
+% ----------------------------------------------------------
+% ELEMENTOS TEXTUAIS
+% ----------------------------------------------------------
+\textual
+
+% ----------------------------------------------------------
+% Introdução
+% ----------------------------------------------------------
+%\input{partes/introducao}
+
+% Desenvolvimento
+% ---------------
+
+%\input{partes/def_problema}
+%\input{partes/rev_bibliografica}
+
+%\input{partes/metodos}
+%\input{partes/colonia_de_formigas}
+%\input{partes/simulated_anealing}
+%\input{partes/logica_fuzzy}
+%\input{partes/algoritmo_genetico}
+%\input{partes/rede_neural}
+
+%\input{partes/analise_abordagens}
+
+% ---
+% Finaliza a parte no bookmark do PDF, para que se inicie o bookmark na raiz
+% ---
+\bookmarksetup{startatroot}%
+% ---
+
+%\addcontentsline{toc}{chapter}{Conclusão}
+%\input{partes/conclusao}
+
+% ----------------------------------------------------------
+% ELEMENTOS PÓS-TEXTUAIS
+% ----------------------------------------------------------
+\postextual
+
+
+% ----------------------------------------------------------
+% Referências bibliográficas
+% ----------------------------------------------------------
+%\bibliographystyle{plainnat}%abbrvnat, unsrtnat, apsrev, rmpaps, IEEEtranN, achemso, rsc
+\bibliography{referencias}
+
+% ----------------------------------------------------------
+% Glossário
+% ----------------------------------------------------------
+%
+% Consulte o manual da classe abntex2 para orientações sobre o glossário.
+%
+%\glossary
+
+% ----------------------------------------------------------
+% Apêndices
+% ----------------------------------------------------------
+
+% ---
+% Inicia os apêndices
+% ---
+%\begin{apendicesenv}
+
+% Imprime uma página indicando o início dos apêndices
+%\partapendices
+
+% ----------------------------------------------------------
+%\chapter{Quisque libero justo}
+% ----------------------------------------------------------
+%\end{apendicesenv}
+% ---
+
+
+% ----------------------------------------------------------
+% Anexos
+% ----------------------------------------------------------
+
+% ---
+% Inicia os anexos
+% ---
+%\begin{anexosenv}
+
+% Imprime uma página indicando o início dos anexos
+%\partanexos
+
+% ---
+%\chapter{Morbi ultrices rutrum lorem.}
+% ---
+
+%\end{anexosenv}
+
+%---------------------------------------------------------------------
+% INDICE REMISSIVO
+%---------------------------------------------------------------------
+
+\printindex
+
+\end{document}
