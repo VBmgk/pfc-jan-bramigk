@@ -1,0 +1,41 @@
+\chapter{Mapeamento de jogo contínuo para um jogo discreto}
+
+Uma das dificuldades de se discretizar um sistema é a necessidade de criar uma abstração válida para
+o jogo, de modo que o que a ocorra na simulação acontessa na prática caso a mesma situação simulada
+seja observada no mundo físico.
+
+Essa modelagem pode ser separada em duas etapas:
+
+\begin{itemize}
+  \item Representação do jogo
+  \item Execução do planejamento
+\end{itemize}
+
+\section{Representação do jogo}
+
+Cada um dos robôs em campo será modelado com as seguintes ações possíveis:
+\begin{itemize}
+  \item Time com a bola
+  \begin{itemize}
+    \item robô sem a bola
+    \begin{itemize}
+       \item Move
+    \end{itemize}
+    \item robô com a bola
+    \begin{itemize}
+       \item Move
+       \item Chute
+       \item Passe
+    \end{itemize}
+  \end{itemize}
+  \item Time sem a bola:
+  \begin{itemize}
+    \item Move
+    \item GetBall
+  \end{itemize}
+\end{itemize}
+
+\section{Execução do planejamento}
+
+Esta etapa do modelo é o que decide se o planejamento será executado da maneira como foi simulado
+no mundo virtual.
