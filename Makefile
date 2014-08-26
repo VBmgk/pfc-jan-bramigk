@@ -1,13 +1,10 @@
-# options
-#BUILD_STRATEGY	:= htlatex
 
-neverclean := *.pdf
-onlysources.tex := relatorio.tex
-#onlysources.tex := relatorio.tex apresentacao.tex
 
 .PHONY:
-all: all-pdf
+all: relatorio.pdf
 
+
+neverclean := *.pdf
 -include latex.make
 
 
