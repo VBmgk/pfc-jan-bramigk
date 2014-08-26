@@ -1,0 +1,101 @@
+Modelo inicial PFC
+==================
+
+Foi tentado um minimax com chaveamento de heurística, mas fracasou devido ao
+custo computacional
+
+Não se deve utilizar um minimax localmente
+
+Foi tentado um minimax com simulador físico, mas o custo computacional das simulações
+associado ao cresciemento exponencial da árvore minimax não permite um controle eficiente
+dos robôs em um ambiente dinâmico com agentes que não são controláveis.
+
+Devido a essas experiêcias anteriores pretende-se criar um modelo mais conceitual.
+
+Em um trabalho anterior foi pesquisado o problema de modelar o inimigo.
+isso tem o objetivo de otimizar a busca para aumentar a eficiencia dos
+movimentos selecionados pela inteligência. Entretanto, para implementar
+isso corretamente, seria necessário que o modelo da inteligência que
+se utilize disso leve em consideração o modelo de discretização do
+inimigo.
+
+1. Mapeamento de jogo contínuo para um jogo discreto
+====================================================
+
+Formular um jogo com:
+
+  Representação:
+
+  Time com a bola
+  ===============
+    |- robô sem a bola
+    | |- Move
+    |
+    |- robô com a bola
+       |- Move
+       |- Chute
+       |- Passe
+
+  Time sem a bola
+  ===============
+    |- Move
+    |- GetBall
+
+Que permita mapeamento
+
+Atualmete, os times estão seguindo uma linha heurística. Isso limita
+o número de jogadas que se pode executar e impede que o seja utilizado
+a capacidade que o computador tem de testar possibilidades.
+
+Não da para prever tudo. Logo, heurística não funciona
+é necessário um modelo de jogo para depois criar um modelo
+do inimigo.
+
+Uma das dificuldades de se discretizar um sistema é necessário criar uma abstração válida para
+o jogo, de modo que o que a ocorra na simulação acontessa na prática caso a mesma situação simulada
+seja observada na prática.
+
+Essa modelagem pode ser separada em duas etapas:
+  - Representação do jogo
+  - Execução do planejamento
+
+Diagrama de blocos do programa da Similação
+===========================================
+
+     ---------
+    |         |
+    |  Visão  |<-------------------------------------------------------
+    |         |                                                        |
+     ---------                                                         |
+                                                                       |
+                     -------------                    ----------       |
+                    |             |                  |          |      |
+                    |  Tabuleiro  |----------------->|  OpenGL  |      |
+                    |             |                  |          |      |
+                     -------------                    ----------       |
+                       /^\    /^\                                      |
+                        |      |                                       |
+                        |      -----                                   |
+                        |           |                                  |
+                     ------     ---------                          ---------
+                    |      |   |         |                        |         |
+                    |  IA  |   |  Enemy  |                        |  Mundo  |
+                    |      |   |         |                        |         |
+                     ------     ---------                          ---------
+                        |                                             /^\
+                        |                                              |
+                        |______                                        |
+                               |                                       |
+                               |                                       |
+                               V                                       |
+                     ---------------------           ---------------   |
+                    |                     |         |               |  |
+                    |  Modelo Matemático  |-------->|  Transmissão  |---
+                    |                     |         |               |
+                     ---------------------           ---------------
+
+
+Minimax
+=======
+
+#include <descrisão_minimax>
