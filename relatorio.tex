@@ -1,60 +1,27 @@
-%% abtex2-modelo-trabalho-academico.tex, v-1.8 laurocesar
-%% Copyright 2012-2013 by abnTeX2 group at http://abntex2.googlecode.com/ 
-%%
-%% This work may be distributed and/or modified under the
-%% conditions of the LaTeX Project Public License, either version 1.3
-%% of this license or (at your option) any later version.
-%% The latest version of this license is in
-%%   http://www.latex-project.org/lppl.txt
-%% and version 1.3 or later is part of all distributions of LaTeX
-%% version 2005/12/01 or later.
-%%
-%% This work has the LPPL maintenance status `maintained'.
-%% 
-%% The Current Maintainer of this work is the abnTeX2 team, led
-%% by Lauro César Araujo. Further information are available on 
-%% http://abntex2.googlecode.com/
-%%
-%% This work consists of the files abntex2-modelo-trabalho-academico.tex,
-%% abntex2-modelo-include-comandos and abntex2-modelo-references.bib
-%%
-
-% ------------------------------------------------------------------------
-% ------------------------------------------------------------------------
-% abnTeX2: Modelo de Trabalho Academico (tese de doutorado, dissertacao de
-% mestrado e trabalhos monograficos em geral) em conformidade com 
-% ABNT NBR 14724:2011: Informacao e documentacao - Trabalhos academicos -
-% Apresentacao
-% ------------------------------------------------------------------------
-% ------------------------------------------------------------------------
-
 \documentclass[
-	% -- opções da classe memoir --
-	12pt,				% tamanho da fonte
-	%openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
-	%twoside,			% para impressão em verso e anverso. Oposto a oneside
-	oneside,			% para impressão em verso e anverso. Oposto a oneside
-	a4paper,			% tamanho do papel. 
-	% -- opções da classe abntex2 --
-	%chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
-	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
-	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
-	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
-	% -- opções do pacote babel --
-	english,			% idioma adicional para hifenização
-	brazil,				% o último idioma é o principal do documento
-	% -- opções da classe ime-abntex2 --
-	%brasao,
-	]{ime-abntex2}
+  % -- opções da classe memoir --
+  12pt,				% tamanho da fonte
+  %openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+  %twoside,			% para impressão em verso e anverso. Oposto a oneside
+  oneside,			% para impressão em verso e anverso. Oposto a oneside
+  a4paper,			% tamanho do papel. 
+  % -- opções da classe abntex2 --
+  %chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+  %section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+  %subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+  %subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+  % -- opções do pacote babel --
+  english,			% idioma adicional para hifenização
+  brazil,				% o último idioma é o principal do documento
+  % -- opções da classe ime-abntex2 --
+  %brasao,
+]{ime-abntex2}
 
 
 % ---
 % PACOTES
 % ---
 
-% ---
-% Pacotes fundamentais 
-% ---
 \usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
 \usepackage{cmap}			% Mapear caracteres especiais no PDF
 \usepackage{lmodern}			% Usa a fonte Latin Modern
@@ -71,7 +38,7 @@
 \usepackage{amsthm}			% Para usar Definições e lemas
 \usepackage{amssymb}			% \mathbb{•}
 \usepackage{caption}			% dependencia de subcaption
-% \usepackage{subcaption}			% Para usar \begin{subfigure} e colocar figuras (a) e (b) lado a lado
+%\usepackage{subcaption}			% Para usar \begin{subfigure} e colocar figuras (a) e (b) lado a lado
 \usepackage{listings}			% Para usar \lstinputlisting e incluir código
 \newtheorem{teo}{Teorema}[section]	%Renomear o comando
 \newtheorem{defi}[teo]{Definição}
@@ -117,25 +84,25 @@
 % ---
 % Informações de dados para CAPA e FOLHA DE ROSTO
 % ---
-\titulo{Heurística Estática para Times\\Cooperativos de Robôs}
-\autor{Jan Segre\\
-Victor Bramigk}
+\titulo{Técnicas de IA Aplicadas a Sistemas Multiagentes Cooperativos e
+Competitivos}
+\autor{Jan Segre\\Victor Bramigk}
 \local{Rio de Janeiro}
 \data{Julho de 2014}
 \orientador{Paulo Fernando Ferreira Rosa}{Ph.D., do IME}
-%\coorientador{Equipe \abnTeX}
+\coorientador{Bruno Eduardo Madeira}%{M.Sc., do IME}
 \instituicao{%
   Instituto Militar de Engenharia
   \par
   Seção de Computação
   \par
-  Graduação em Engenharia de Computação}
+  Graduação em Engenharia de Computação
+}
 \tipotrabalho{Iniciação à Pesquisa}
-% O preambulo deve conter o tipo do trabalho, o objetivo, 
+% O preambulo deve conter o tipo do trabalho, o objetivo,
 % o nome da instituição e a área de concentração 
-\preambulo{Iniciação à Pesquisa apresentada ao Curso de Graduação
-em Engenharia de Computação do Instituto Militar de
-Engenharia.}
+\preambulo{Projeto Final de Curso de Graduação em Engenharia de Computação do
+Instituto Militar de Engenharia.}
 % ---
 
 
@@ -148,19 +115,19 @@ Engenharia.}
 
 % informações do PDF
 \makeatletter
-\hypersetup{
-	%pagebackref=true,
-	pdftitle={\@title},
-	pdfauthor={\@author},
-	pdfsubject={\imprimirpreambulo},
-	pdfcreator={LaTeX with abnTeX2},
-	pdfkeywords={ime}{robocup}{analise}{logs}{rede neural},
-	colorlinks=true,		% false: boxed links; true: colored links
-	linkcolor=blue,			% color of internal links
-	citecolor=blue,			% color of links to bibliography
-	filecolor=magenta,		% color of file links
-	urlcolor=blue,
-	bookmarksdepth=4
+\hypersetup{%
+  %pagebackref=true,
+  pdftitle={\@title},
+  pdfauthor={\@author},
+  pdfsubject={\imprimirpreambulo},
+  pdfcreator={LaTeX with abnTeX2},
+  pdfkeywords={ime}{robocup}{analise}{logs}{rede neural},
+  colorlinks=true,		% false: boxed links; true: colored links
+  linkcolor=blue,			% color of internal links
+  citecolor=blue,			% color of links to bibliography
+  filecolor=magenta,		% color of file links
+  urlcolor=blue,
+  bookmarksdepth=4
 }
 \makeatother
 % ---
@@ -229,16 +196,18 @@ Engenharia.}
 {S455h}
 {Segre, Jan}
 {Iniciação à Pesquisa (IP)}
-{1. Curso de engenharia da computação - Iniciação à Pesquisa.
- 2. Robótica.
- 3. Redes Neurais.
- I. Bramigk, Victor.
- II. Rosa, Paulo Fernando Ferreira.
- % XXX estou realmente na dúvida:
- %III. Heurística Estática para Times Cooperativos de Robôs.
- III. Título.
- IV. Instituto Militar de Engenharia.}
-{Heurística estática para times cooperativos de robôs}
+{%
+  1. Curso de engenharia da computação - Projeto Final de Curso.
+  2. Robótica.
+  3. Minimax.
+  I. Bramigk, Victor.
+  II. Rosa, Paulo Fernando Ferreira.
+  III. Bruno Eduardo Madeira.
+  IV. \@title.
+  V. Instituto Militar de Engenharia.
+}
+{Técnicas de IA aplicadas a sistemas multiagentes cooperativos e
+competitivos}
 % ---
 
 % ---
@@ -282,8 +251,8 @@ Engenharia.}
 % \includepdf{folhadeaprovacao_final.pdf}
 %
 \convidadoum{Julio Cesar Duarte}{D.Sc., do IME}
-\convidadodois{Ricardo Choren Noya}{D.Sc., do IME}
-\imprimirfolhadeaprovacao{17 de julho de 2014}
+\convidadodois{Sandro Santos de Lima}{M.Sc., do IME}
+\imprimirfolhadeaprovacao{5 de setembro de 2014}
 % ---
 
 % ---
@@ -345,115 +314,24 @@ Engenharia.}
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
 \begin{resumo}
 
-% DONE[jansegre] Dividir em 3 parágrafos:
-% - Tema
-% - Objetivo
-% - Contrubuições
+  % TODO: fazer resumo
 
-Anualmente, países de todo o mundo se reúnem para competir no torneio de
-futebol de robôs autônomos chamado RoboCup. Desde 2012, o IME participa dessa
-competição com o time do laboratório de robótica RoboIME. Com o passar dos
-anos, as partidas se tornam mais complexas e é necessário analisá-las para
-melhorar o desempenho da inteligência artificial do RoboIME.
+  Lorem ipsum dolor sit amet.
 
-O objetivo deste trabalho é estudar maneiras para, a partir do \textit{log}
-de uma partida, prever o comportamento do time adversário. O estudo analisa o
-possível uso dos seguintes algoritmos: redes neurais, lógica nebulosa,
-otimização da colônia de formigas, algoritmo genético e recozimento simulado, e
-também, propõe um modelo para abstrair o comportamento de um time desconhecido.
-% TODO[jansegre] inserir ponto sobre conclusão
-
-A grande contribuição deste trabalho é concluir que a lógica nebulosa não é
-adequada para abordar o problema devido à complexidade de incorporar o conceito
-de temporalidade. Além disso, a otimização de colônia de formigas, o algoritmo
-genético e o recozimento simulado são mais apropriados para apoio de um
-algoritmo baseado em rede neural. É proposto que em um trabalho futuro seja
-implementado um algoritmo com rede neural e esse usado num algoritmo minimax
-para efetuar a movimentação do adversário.
-
-% Segundo a \citeonline[3.1-3.2]{NBR6028:2003}, o resumo deve ressaltar o
-% objetivo, o método, os resultados e as conclusões do documento. A ordem e a extensão
-% destes itens dependem do tipo de resumo (informativo ou indicativo) e do
-% tratamento que cada item recebe no documento original. O resumo deve ser
-% precedido da referência do documento, com exceção do resumo inserido no
-% próprio documento. (\ldots) As palavras-chave devem figurar logo abaixo do
-% resumo, antecedidas da expressão Palavras-chave:, separadas entre si por
-% ponto e finalizadas também por ponto.
-%
-\textbf{Palavras-chaves}: inteligência artificial, redes neurais, robótica.
+  \textbf{Palavras-chaves}: inteligência artificial, minimax, robótica.
 \end{resumo}
 
 % resumo em inglês
 \begin{resumo}[Abstract]
-\begin{otherlanguage*}{english}
+  \begin{otherlanguage*}{english}
 
-% TODO[jansegre] refazer
+    % TODO[jansegre] traduzir depois de fazer o resumo
 
-Every year countries from all over the world gather for the autonomous robot
-football world cup, known as RoboCup. Since 2012 IME's robotic laboratory team,
-RoboIME, is a regular contestant. Each year the matches get more and more
-complex and it is increasingly necessary to analyze them to improve the
-artificial intelligence used by RoboIME.
+    Lorem ipsum dolor sit amet
 
-The goal of this work is to study ways to, given the log of a match, foresee
-the behaviour of the opponent. This study analyzes the possible use of neural
-networks, fuzzy logic, ant colony optimization, genetic algorithm and simulated
-annealing, and also proposes a model to abstract the behaviour of an unknown
-team.
-
-The major contribution of this work is concluding that fuzzy logic is not
-adequate to approach the problem given the complexity to incorporate time
-awareness into it, furthermore the ant colony optimization, genetic algorithm
-and simulated annealing only have use to support an algorithm, while the main
-algorithm is best implemented with a neural network. It is suggested that a
-future work implements a neural network algorithm to be used on a minimax to
-make the moves of the rival team.
-
-%This paper covers ways to analyze logs of robot soccer matches from
-%RoboCup's SSL category in order to obtain better results on the
-%RoboIME's artificial intelligence (from IME's robotics lab) which
-%participates yearly on that competition.  The desired goal is to
-%predict the behaviour of a robot team based solely on data collected
-%on previous matches, which are called logs.  A high level modeling was
-%developed such that existing routines could be used both for tests and
-%to actual predictions.  The following methods were researched: ACO
-%(Ant Colony Optimization), SA (Simulated Annealing), GA (Genetic
-%Algorithm), fuzzy logic, neural networks and CRFs (Conditional Random
-%Fields).  From the detailed research made, some approaches were
-%defined.  It was necessary to specify the team model for the
-%approaches involving the ACO and SA, which use CRFs as a base.  The
-%approach involving fuzzy logic showed itself too complex to be
-%developed in this paper.  After a thrill study it is desired to
-%implement an optimization process for both algorithms, such that the
-%result can be refined and the proposed methods benchmarked.  For
-%future works the proposed methods are ideal adversary simulators for a
-%MiniMax algorithm.
-
-%\vspace{\onelineskip}
-
-%\noindent
-\textbf{Key-words}: artificial intelligence, neural networks, robotics.
-\end{otherlanguage*}
+    \textbf{Key-words}: artificial intelligence, minimax, robotics.
+  \end{otherlanguage*}
 \end{resumo}
-
-% resumo em francês 
-%\begin{resumo}[Résumé]
-% \begin{otherlanguage*}{french}
-%    Il s'agit d'un résumé en français.
-% 
-%   \textbf{Mots-clés}: latex. abntex. publication de textes.
-% \end{otherlanguage*}
-%\end{resumo}
-
-% resumo em espanhol
-%\begin{resumo}[Resumen]
-% \begin{otherlanguage*}{spanish}
-%   Este es el resumen en español.
-%  
-%   \textbf{Palabras clave}: latex. abntex. publicación de textos.
-% \end{otherlanguage*}
-%\end{resumo}
-% ---
 
 % ---
 % inserir o sumario
@@ -483,17 +361,7 @@ make the moves of the rival team.
 % inserir lista de abreviaturas e siglas
 % ---
 \begin{siglas}
-	\item[ACO] \textit{Ant Colony Optimization}
-	\item[ANN] \textit{Artificial Neural Networks}
-	\item[AG] Algoritmo genético
-	\item[IA] Inteligência artificial
-	\item[KDD] \textit{Knowledge Discovery in Databases}
-	\item[RoboCup] \textit{Robot World Cup Initiative}
-	\item[SA] \textit{Simulated Annealing}
-	\item[SAM] \textit{Standard Addition Method}
-	\item[SSL] \textit{Small Size League}
-	\item[STP] \textit{Skill Tactic Play}
-  \item[CRF] \textit{Conditional Random Fields}
+  \item[ACO] \textit{Ant Colony Optimization}
 \end{siglas}
 % ---
 
@@ -600,3 +468,4 @@ make the moves of the rival team.
 \printindex
 
 \end{document}
+% vim: tw=80 et ts=2 sw=2 sts=2
