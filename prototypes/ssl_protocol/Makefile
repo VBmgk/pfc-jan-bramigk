@@ -29,7 +29,7 @@ list_robot_python: list_robot.py protoc_middleman
 
 clean:
 	rm -f add_robot_cpp list_team_cpp add_robot_python list_robot_python
-	rm -f protoc_middleman team.pb.cc team.pb.h robot_pb2.py
+	rm -f protoc_middleman team.pb.cc team.pb.h team_pb2.py
 	rm -f *.pyc
 	rm -r html latex
 
