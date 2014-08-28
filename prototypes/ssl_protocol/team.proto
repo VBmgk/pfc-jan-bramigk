@@ -1,0 +1,55 @@
+// See README.txt for information and build instructions.
+
+package ssl;
+
+message Robot {
+  message Position {
+    required float x = 1 [default = 0.0];
+    required float y = 2 [default = 0.0];
+  }
+
+  message Pose {
+    required Position position = 1;
+    optional float theta = 2;
+  }
+
+  message Speed {
+    required Position linear = 1;
+    optional float angular = 2;
+  }
+
+  enum Action {
+    MOVE = 0;
+    PASS = 1;
+    KICK = 2;
+  }
+
+  message Move {
+    required Position target = 1;
+  }
+
+  message Pass {
+    required int32 robot_id = 1;
+  }
+
+  message Kick {
+    required Position target = 1;
+  }
+
+  required Pose pose = 1;
+  optional Speed speed = 2;
+  optional Action action = 3 [default = MOVE];
+  optional Move move = 4;
+  optional Pass pass = 5;
+  optional Kick kick = 6;
+}
+
+message Team {
+  enum Color {
+    BLUE = 0;
+    YELLOW = 1;
+  }
+
+  required Color color = 1 [default = YELLOW];
+  repeated Robot robot = 2;
+}
