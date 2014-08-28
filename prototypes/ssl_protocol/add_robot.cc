@@ -17,23 +17,13 @@ void PromptForTeam(ssl::Robot* robot) {
   cout << " Enter the robot y position: ";
   cin >> y;
   cin.ignore(256, '\n');
-  
-  ssl::Robot::Pose* pose = new ssl::Robot::Pose();
+
   ssl::Robot::Position* position = new ssl::Robot::Position();
 
   position->set_x(x);
   position->set_y(y);
 
-  /*  Robot angle  */
-  cout << " Enter the robot angle: ";
-  float angle;
-  cin >> angle;
-  cin.ignore(256, '\n');
-
-  /*  Robot pose  */
-  pose->set_allocated_position(position);
-  pose->set_theta(angle);
-  robot->set_allocated_pose(pose);
+  robot->set_allocated_position(position);
 
   /*  Action  */
   cout << " Enter the robot action (move, pass or kick): ";
@@ -118,19 +108,6 @@ int main(int argc, char* argv[]) {
     fstream input(argv[1], ios::in | ios::binary);
     if (!input) {
       cout << argv[1] << ": File not found.  Creating a new file." << endl;
-
-      /*  Team color  */
-      cout << " Enter the team color(blue or yellow: ";
-      string color;
-      getline(cin, color);
-      if (color == "blue") {
-        team.set_color(ssl::Team::BLUE);
-      } else if(color == "yellow") {
-        team.set_color(ssl::Team::YELLOW);
-      } else {
-        cout << " Unknown robot color.  Using default." << endl;
-      }
-
     } else if (!team.ParseFromIstream(&input)) {
       cerr << "Failed to parse address book." << endl;
       return -1;

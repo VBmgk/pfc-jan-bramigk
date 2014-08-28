@@ -14,8 +14,8 @@ void ListRobots(const ssl::Team& team) {
     cout << "Robot id: " << i << endl;
 
     /*  TODO: check pose  */
-    cout << "Robot Pose: " << robot.pose().position().x() << ", " << \
-      robot.pose().position().y() << " - " << robot.pose().theta() << endl;
+    cout << "Robot Position: " << robot.position().x() << ", " << \
+      robot.position().y() << endl;
 
     /*  TODO: check action  */
     const ssl::Robot::Action& action = robot.action();
