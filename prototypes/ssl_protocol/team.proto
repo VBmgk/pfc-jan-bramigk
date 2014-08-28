@@ -1,21 +1,17 @@
 // See README.txt for information and build instructions.
 
-package ssl;
+package roboime;
 
-message Robot {
-  message Position {
-    required float x = 1 [default = 0.0];
-    required float y = 2 [default = 0.0];
-  }
-
-  enum Action {
+message Action {
+  enum Type {
     MOVE = 0;
     PASS = 1;
     KICK = 2;
   }
 
   message Move {
-    required Position target = 1;
+    required float x = 1;
+    required float y = 2;
   }
 
   message Pass {
@@ -23,16 +19,17 @@ message Robot {
   }
 
   message Kick {
-    required Position target = 1;
+    required float x = 1;
+    required float y = 2;
   }
 
-  required Position position = 1;
-  optional Action action = 2 [default = MOVE];
+  required int32 robot_id = 1;
+  required Type type = 2;
   optional Move move = 3;
   optional Pass pass = 4;
   optional Kick kick = 5;
 }
 
-message Team {
-  repeated Robot robot = 2;
+message Command {
+  repeated Action actions = 2 [packed=true];
 }
