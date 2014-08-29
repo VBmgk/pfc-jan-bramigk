@@ -31,5 +31,5 @@ message Action {
 }
 
 message Command {
-  repeated Action actions = 2 [packed=true];
+  repeated Action action = 1;
 }

@@ -1,5 +1,6 @@
 // See README.txt for information and build instructions.
 
+#include <zmq.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -41,6 +42,7 @@ void ListActions(const roboime::Command& command) {
   }
 }
 
+
 // Main function:  Reads the entire address book from a file and prints all
 //   the information inside.
 int main(int argc, char* argv[]) {
@@ -48,21 +50,17 @@ int main(int argc, char* argv[]) {
   // compatible with the version of the headers we compiled against.
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  if (argc != 2) {
-    cerr << "Usage:  " << argv[0] << " TEAM_FILE" << endl;
-    return -1;
-  }
-
   roboime::Command command;
 
-  {
-    // Read the existing team list.
-    fstream input(argv[1], ios::in | ios::binary);
-    if (!command.ParseFromIstream(&input)) {
-      cerr << "Failed to parse team list." << endl;
-      return -1;
-    }
-  }
+  zmq::context_t context (1);
+  zmq::socket_t socket(context, ZMQ_REP);
+
+  socket.bind("tcp://*:5555");
+
+  zmq::message_t resultset(1000);
+  socket.recv (&resultset);
+
+  command.ParseFromArray(resultset.data(), resultset.size());
 
   ListActions(command);
 

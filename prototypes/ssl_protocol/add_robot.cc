@@ -1,5 +1,6 @@
 // See README.txt for information and build instructions.
 
+#include <zmq.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -7,32 +8,24 @@
 using namespace std;
 
 // This function fills in a Person message based on user input.
-void PromptForTeam(ssl::Robot* robot) {
+void PromptForTeam(roboime::Action* action) {
+  float x,y;
   /*  Robot Position  */
-  cout << " Enter the robot x position: ";
-  float x, y;
-  cin >> x;
+  cout << " Enter the robot id: ";
+  int id;
+  cin >> id;
   cin.ignore(256, '\n');
 
-  cout << " Enter the robot y position: ";
-  cin >> y;
-  cin.ignore(256, '\n');
-
-  ssl::Robot::Position* position = new ssl::Robot::Position();
-
-  position->set_x(x);
-  position->set_y(y);
-
-  robot->set_allocated_position(position);
+  action->set_robot_id(id);
 
   /*  Action  */
   cout << " Enter the robot action (move, pass or kick): ";
-  string action;
-  getline(cin, action);
-  if (action == "move") {
+  string action_type;
+  getline(cin, action_type);
+  if (action_type == "move") {
     /*  Move  */
-    robot->set_action(ssl::Robot::MOVE);
-    ssl::Robot::Move* move = new ssl::Robot::Move();
+    action->set_type(roboime::Action::MOVE);
+    roboime::Action::Move* move = new roboime::Action::Move();
 
     /*  Target positon  */
     cout << " Enter the target x position: ";
@@ -43,16 +36,14 @@ void PromptForTeam(ssl::Robot* robot) {
     cin >> y;
     cin.ignore(256, '\n');
 
-    position = new ssl::Robot::Position();
-    position->set_x(x);
-    position->set_y(y);
+    move->set_x(x);
+    move->set_y(y);
 
-    move->set_allocated_target(position);
-    robot->set_allocated_move(move);
+    action->set_allocated_move(move);
 
-  } else if (action == "pass") {
+  } else if (action_type == "pass") {
     /*  Pass  */
-    robot->set_action(ssl::Robot::PASS);
+    action->set_type(roboime::Action::PASS);
 
     /*  Robot id  */
     cout << " Enter the robot id: ";
@@ -60,13 +51,13 @@ void PromptForTeam(ssl::Robot* robot) {
     cin >> robot_id;
     cin.ignore(256, '\n');
 
-    ssl::Robot::Pass* pass = new ssl::Robot::Pass();
+    roboime::Action::Pass* pass = new roboime::Action::Pass();
     pass->set_robot_id(robot_id);
-    robot->set_allocated_pass(pass);
-  } else if (action == "kick") {
+    action->set_allocated_pass(pass);
+  } else if (action_type == "kick") {
     /*  Kick  */
-    robot->set_action(ssl::Robot::KICK);
-    ssl::Robot::Kick* kick = new ssl::Robot::Kick();
+    action->set_type(roboime::Action::KICK);
+    roboime::Action::Kick* kick = new roboime::Action::Kick();
 
     /*  Target positon  */
     cout << " Enter the target x position: ";
@@ -77,19 +68,33 @@ void PromptForTeam(ssl::Robot* robot) {
     cin >> y;
     cin.ignore(256, '\n');
 
-    position = new ssl::Robot::Position();
-    position->set_x(x);
-    position->set_y(y);
+    kick->set_x(x);
+    kick->set_y(y);
 
-    kick->set_allocated_target(position);
-    robot->set_allocated_kick(kick);
+    action->set_allocated_kick(kick);
   } else {
-    cout << " Unknown robot action.  Using default." << endl;
+    cout << " Invalid action." << endl;
   }
 }
 
-// Main function:  Reads the entire address book from a file,
-//   adds one person based on user input, then writes it back out to the same
+void sendCommand(string data){
+  zmq::context_t context(1);
+  zmq::socket_t socket (context, ZMQ_REQ);
+
+  cout << "Connecting to server..." << endl;
+  socket.connect("tcp://localhost:5555");
+
+  zmq::message_t command_message(data.length());
+  memcpy((void *) command_message.data(), data.c_str(), data.length());
+
+  cout << "Sending data..." << endl;
+  socket.send (command_message);
+
+  cout << "Done." << endl;
+}
+
+// Main function:  Reads the entire command from a file,
+//   adds one action based on user input, then writes it back out to the same
 //   file.
 int main(int argc, char* argv[]) {
   // Verify that the version of the library that we linked against is
@@ -97,33 +102,41 @@ int main(int argc, char* argv[]) {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   if (argc != 2) {
-    cerr << "Usage:  " << argv[0] << " TEAM_FILE" << endl;
+    cerr << "Usage:  " << argv[0] << " COMMAND_FILE" << endl;
     return -1;
   }
 
-  ssl::Team team;
+  roboime::Command command;
 
   {
     // Read the existing team list.
     fstream input(argv[1], ios::in | ios::binary);
     if (!input) {
       cout << argv[1] << ": File not found.  Creating a new file." << endl;
-    } else if (!team.ParseFromIstream(&input)) {
-      cerr << "Failed to parse address book." << endl;
+    } else if (!command.ParseFromIstream(&input)) {
+      cerr << "Failed to parse command." << endl;
       return -1;
     }
   }
 
-  // Add an address.
-  PromptForTeam(team.add_robot());
+  // Add an action.
+  PromptForTeam(command.add_action());
 
   {
-    // Write the new address book back to disk.
+    // Write the new command back to disk.
     fstream output(argv[1], ios::out | ios::trunc | ios::binary);
-    if (!team.SerializeToOstream(&output)) {
-      cerr << "Failed to write address book." << endl;
+    if (!command.SerializeToOstream(&output)) {
+      cerr << "Failed to write command." << endl;
       return -1;
     }
+
+    string data;
+
+    if(!command.SerializeToString(&data)) {
+      cerr << "Failed to convert command." << endl;
+    }
+
+    sendCommand(data);
   }
 
   // Optional:  Delete all global objects allocated by libprotobuf.
