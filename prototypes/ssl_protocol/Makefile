@@ -1,20 +1,23 @@
 .PHONY: cpp python
 
+CXXFLAGS := -I/usr/local/include -L/usr/local/lib
+
 cpp:    add_robot_cpp    list_team_cpp
 python: add_robot_python list_robot_python
 
 protoc_middleman: team.proto
-	protoc --cpp_out=. --python_out=. team.proto
+	#protoc --cpp_out=. --python_out=. minimax.proto
+	protoc --cpp_out=. minimax.proto
 	@touch protoc_middleman
 
 add_robot_cpp: add_robot.cc protoc_middleman
 	pkg-config --cflags protobuf  # fails if protobuf is not installed
-	c++ add_robot.cc team.pb.cc -o add_robot_cpp `pkg-config --cflags --libs protobuf` -lzmq
+	c++ add_robot.cc team.pb.cc $(CXXFLAGS) -o add_robot_cpp `pkg-config --cflags --libs protobuf` -lzmq
 
 list_team_cpp: list_team.cc protoc_middleman
 	pkg-config --cflags protobuf  # fails if protobuf is not installed
-	c++ list_team.cc team.pb.cc -o list_team_cpp `pkg-config --cflags --libs protobuf`
-	c++ list_team_server.cpp team.pb.cc -o list_team_server_cpp `pkg-config --cflags --libs protobuf` -lzmq
+	c++ list_team.cc team.pb.cc $(CXXFLAGS) -o list_team_cpp `pkg-config --cflags --libs protobuf`
+	c++ list_team_server.cpp team.pb.cc $(CXXFLAGS) -o list_team_server_cpp `pkg-config --cflags --libs protobuf` -lzmq
 
 add_robot_python: add_person.py protoc_middleman
 	@echo "Writing shortcut script add_robot_python..."
