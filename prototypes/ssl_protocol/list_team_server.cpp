@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "team.pb.h"
+#include "discrete.pb.h"
 using namespace std;
 
 // Iterates though all people in the AddressBook and prints info about them.
@@ -57,12 +57,22 @@ int main(int argc, char* argv[]) {
 
   socket.bind("tcp://*:5555");
 
-  zmq::message_t resultset(1000);
-  socket.recv (&resultset);
+  while (true) {
+    zmq::message_t resultset(1000);
+    socket.recv (&resultset);
 
-  command.ParseFromArray(resultset.data(), resultset.size());
+    std::cout << "received request" << std::endl;
 
-  ListActions(command);
+    //command.ParseFromArray(resultset.data(), resultset.size());
+    //ListActions(command);
+
+    //TODO: build command packet to send
+
+    //  Send reply back to client
+    zmq::message_t reply (5);
+    memcpy ((void *) reply.data (), "World", 5);
+    socket.send (reply);
+  }
 
   // Optional:  Delete all global objects allocated by libprotobuf.
   google::protobuf::ShutdownProtobufLibrary();

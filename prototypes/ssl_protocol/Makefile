@@ -2,38 +2,31 @@
 
 CXXFLAGS := -I/usr/local/include -L/usr/local/lib
 
-cpp:    add_robot_cpp    list_team_cpp
-python: add_robot_python list_robot_python
+all: add_robot list_team list_team_server hwserver
 
-protoc_middleman: team.proto
-	#protoc --cpp_out=. --python_out=. minimax.proto
-	protoc --cpp_out=. minimax.proto
+protoc_middleman: discrete.proto
+	protoc --cpp_out=. discrete.proto
 	@touch protoc_middleman
 
-add_robot_cpp: add_robot.cc protoc_middleman
+add_robot: add_robot.cc protoc_middleman
 	pkg-config --cflags protobuf  # fails if protobuf is not installed
-	c++ add_robot.cc team.pb.cc $(CXXFLAGS) -o add_robot_cpp `pkg-config --cflags --libs protobuf` -lzmq
+	$(CXX) add_robot.cc discrete.pb.cc $(CXXFLAGS) -o add_robot `pkg-config --cflags --libs protobuf` -lzmq
 
-list_team_cpp: list_team.cc protoc_middleman
+list_team: list_team.cc protoc_middleman
 	pkg-config --cflags protobuf  # fails if protobuf is not installed
-	c++ list_team.cc team.pb.cc $(CXXFLAGS) -o list_team_cpp `pkg-config --cflags --libs protobuf`
-	c++ list_team_server.cpp team.pb.cc $(CXXFLAGS) -o list_team_server_cpp `pkg-config --cflags --libs protobuf` -lzmq
+	$(CXX) list_team.cc discrete.pb.cc $(CXXFLAGS) -o list_team `pkg-config --cflags --libs protobuf`
 
-add_robot_python: add_person.py protoc_middleman
-	@echo "Writing shortcut script add_robot_python..."
-	@echo '#! /bin/sh' > add_robot_python
-	@echo './add_robot.py "$$@"' >> add_robot_python
-	@chmod +x add_robot_python
+list_team_server: list_team.cc protoc_middleman
+	pkg-config --cflags protobuf  # fails if protobuf is not installed
+	$(CXX) list_team_server.cpp discrete.pb.cc $(CXXFLAGS) -o list_team_server `pkg-config --cflags --libs protobuf` -lzmq
 
-list_robot_python: list_robot.py protoc_middleman
-	@echo "Writing shortcut script list_robot_python..."
-	@echo '#! /bin/sh' > list_robot_python
-	@echo './list_robot.py "$$@"' >> list_robot_python
-	@chmod +x list_robot_python
+hwserver: list_team.cc protoc_middleman
+	pkg-config --cflags protobuf  # fails if protobuf is not installed
+	$(CXX) hwserver.cc discrete.pb.cc $(CXXFLAGS) -o hwserver `pkg-config --cflags --libs protobuf` -lzmq
 
 clean:
-	rm -f add_robot_cpp list_team_server_cpp list_team_cpp add_robot_python list_robot_python
-	rm -f protoc_middleman team.pb.cc team.pb.h team_pb2.py
+	rm -f add_robot list_team_server list_team hwserver
+	rm -f protoc_middleman discrete.pb.cc discrete.pb.h
 	rm -f *.pyc
 	rm -r html latex
 

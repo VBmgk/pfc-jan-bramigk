@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "team.pb.h"
+#include "discrete.pb.h"
 using namespace std;
 
 // This function fills in a Person message based on user input.

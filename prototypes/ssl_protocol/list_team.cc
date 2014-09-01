@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "team.pb.h"
+#include "discrete.pb.h"
 using namespace std;
 
 // Iterates though all people in the AddressBook and prints info about them.

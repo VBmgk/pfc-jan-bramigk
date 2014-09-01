@@ -1,6 +1,7 @@
 *.pb.cc
 *.pb.h
 protoc_middleman
-add_robot_cpp
-list_team_cpp
-list_team_server_cpp
+add_robot
+hwserver
+list_team
+list_team_server
