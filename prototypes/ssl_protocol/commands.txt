@@ -1,20 +1,20 @@
 # testes
-
-command 1 move 0.0 0.0, 2 move 2.0 2.0, 3 move -2.0 2.0, 4 move -2.0 -2.0, 5 move 2.0 -2.0
+#
+command 1 move 0.5 0.0 2 move 2.0 2.0 3 move -2.0 2.0 4 move -2.0 -2.0 5 move 2.0 -2.0
 sleep 1
 command 2 kick 4.0 0.0
-
+#
 # primeira sequencia
 # comandos simultaneos de passe
-
+#
 sleep 3
 command 1 pass 2
 command 2 kick 3.0 0.0
 sleep 10
-
+#
 # segunda sequencia
 # 2 passa para 3, e após 1 segundo passa de novo para 2
-
+#
 command 2 pass 3
 sleep 1
 command 3 pass 2

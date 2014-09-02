@@ -19,7 +19,7 @@ int main () {
 
     //  Wait for next request from client
     socket.recv (&request);
-    std::cout << "Received Hello" << std::endl;
+    std::cout << "Received " << std::endl;
 
     //  Do some 'work'
     sleep(1);

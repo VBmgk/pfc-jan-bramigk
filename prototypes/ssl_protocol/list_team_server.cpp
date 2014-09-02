@@ -63,8 +63,8 @@ int main(int argc, char* argv[]) {
 
     std::cout << "received request" << std::endl;
 
-    //command.ParseFromArray(resultset.data(), resultset.size());
-    //ListActions(command);
+    command.ParseFromArray(resultset.data(), resultset.size());
+    ListActions(command);
 
     //TODO: build command packet to send
 
