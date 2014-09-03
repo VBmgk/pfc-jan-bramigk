@@ -1,6 +1,6 @@
 .PHONY: cpp python
 
-CXXFLAGS := -I/usr/local/include -L/usr/local/lib `pkg-config --cflags --libs protobuf` -lzmq
+CXXFLAGS := -std=c++11 -I/usr/local/include -L/usr/local/lib `pkg-config --cflags --libs protobuf` -lzmq
 
 all: add_robot list_team list_team_server hwserver parser
 

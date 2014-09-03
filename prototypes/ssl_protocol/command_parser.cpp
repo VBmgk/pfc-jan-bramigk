@@ -3,28 +3,25 @@
 #include <fstream>
 #include <sstream>
 #include <ctime>
+#include <chrono>
 #include <vector>
 #include <zmq.hpp>
 #include "discrete.pb.h"
 
-using namespace std;
-
-
-#include <ctime>
- 
 class Timer {
-public:
-  Timer() { clock_gettime(CLOCK_REALTIME, &beg_); }
+ public:
+  Timer() { reset(); }
 
   double elapsed() {
-    clock_gettime(CLOCK_REALTIME, &end_);
-    return end_.tv_sec - beg_.tv_sec + (end_.tv_nsec - beg_.tv_nsec) / 1000000000.;
+    end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    return elapsed.count();
   }
 
-  void reset() { clock_gettime(CLOCK_REALTIME, &beg_); }
+  void reset() { start = std::chrono::system_clock::now(); }
 
-private:
-  timespec beg_, end_;
+ private:
+  std::chrono::time_point<std::chrono::system_clock> start, end;
 };
 
 void add_kick(roboime::Action* action, float x, float y){
@@ -60,15 +57,18 @@ void add_pass(roboime::Action* action, int receiver_id){
   action->set_allocated_pass(pass);
 }
 
-void sendCommand(string data, zmq::socket_t &socket){
+void sendCommand(std::string data, zmq::socket_t &socket){
   zmq::message_t command_message(data.length());
   memcpy((void *) command_message.data(), data.c_str(), data.length());
 
-  cout << "Sending data...";
+  std::cout << "Sending data...";
   socket.send (command_message);
 }
 
-int main(void){
+
+int main() {
+  using namespace std;
+
   Timer tmr;
   string file_path = "commands.txt";
   string line, word;
@@ -142,22 +142,23 @@ int main(void){
         }
       } else if( word == "sleep"){
         // sleep time
-        int time;
+        double time;
         str_stream >> time;
 
-        cout << "dormir " << time << " seg ... ";
+        cout << "dormir " << time << " seg ... " << endl;
         cout.flush();
 
         // starting count
         tmr.reset();
-        for(;;){
+        for(;;) {
           // sending last command
           socket.recv (&resultset);
-          std::cout << "received request" << std::endl;
+          cout << "received request" << endl;
           sendCommand(data, socket);
           if(tmr.elapsed() > time)
             break;
         }
+        cout << "passou " << tmr.elapsed() << endl;
 
       } else cout << "Command unknown" << endl;
 
