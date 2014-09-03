@@ -8,6 +8,8 @@
 #include <zmq.hpp>
 #include "discrete.pb.h"
 
+//#define DEBUG
+
 class Timer {
  public:
   Timer() { reset(); }
@@ -61,7 +63,9 @@ void sendCommand(std::string data, zmq::socket_t &socket){
   zmq::message_t command_message(data.length());
   memcpy((void *) command_message.data(), data.c_str(), data.length());
 
+#ifdef DEBUG
   std::cout << "Sending data...";
+#endif
   socket.send (command_message);
 }
 
@@ -153,7 +157,9 @@ int main() {
         for(;;) {
           // sending last command
           socket.recv (&resultset);
+#ifdef DEBUG
           cout << "received request" << endl;
+#endif
           sendCommand(data, socket);
           if(tmr.elapsed() > time)
             break;
@@ -169,7 +175,9 @@ int main() {
 
       // sending command
       socket.recv (&resultset);
+#ifdef DEBUG
       std::cout << "received request" << std::endl;
+#endif
       sendCommand(data, socket);
       cout << "done!" << endl;
     }
