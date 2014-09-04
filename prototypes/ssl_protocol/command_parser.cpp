@@ -3,27 +3,28 @@
 #include <fstream>
 #include <sstream>
 #include <ctime>
-#include <chrono>
 #include <vector>
 #include <zmq.hpp>
 #include "discrete.pb.h"
 
-//#define DEBUG
+using namespace std;
 
+
+#include <ctime>
+ 
 class Timer {
- public:
-  Timer() { reset(); }
+public:
+  Timer() { clock_gettime(CLOCK_REALTIME, &beg_); }
 
   double elapsed() {
-    end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    return elapsed.count();
+    clock_gettime(CLOCK_REALTIME, &end_);
+    return end_.tv_sec - beg_.tv_sec + (end_.tv_nsec - beg_.tv_nsec) / 1000000000.;
   }
 
-  void reset() { start = std::chrono::system_clock::now(); }
+  void reset() { clock_gettime(CLOCK_REALTIME, &beg_); }
 
- private:
-  std::chrono::time_point<std::chrono::system_clock> start, end;
+private:
+  timespec beg_, end_;
 };
 
 void add_kick(roboime::Action* action, float x, float y){
@@ -59,20 +60,15 @@ void add_pass(roboime::Action* action, int receiver_id){
   action->set_allocated_pass(pass);
 }
 
-void sendCommand(std::string data, zmq::socket_t &socket){
+void sendCommand(string data, zmq::socket_t &socket){
   zmq::message_t command_message(data.length());
   memcpy((void *) command_message.data(), data.c_str(), data.length());
 
-#ifdef DEBUG
-  std::cout << "Sending data...";
-#endif
+  cout << "Sending data...";
   socket.send (command_message);
 }
 
-
-int main() {
-  using namespace std;
-
+int main(void){
   Timer tmr;
   string file_path = "commands.txt";
   string line, word;
@@ -107,10 +103,11 @@ int main() {
       if( word == "#") continue;
       else if( word == "command"){
         cout << "comando ";
-        roboime::Action* action = command->add_action();
         int robot_id;
 
         while(str_stream >> robot_id){
+          roboime::Action* action = command->add_action();
+
           cout << " robot_id: " << robot_id << " ";
           action->set_robot_id(robot_id);
           str_stream >> word;
@@ -146,25 +143,22 @@ int main() {
         }
       } else if( word == "sleep"){
         // sleep time
-        double time;
+        int time;
         str_stream >> time;
 
-        cout << "dormir " << time << " seg ... " << endl;
+        cout << "dormir " << time << " seg ... ";
         cout.flush();
 
         // starting count
         tmr.reset();
-        for(;;) {
+        for(;;){
           // sending last command
           socket.recv (&resultset);
-#ifdef DEBUG
-          cout << "received request" << endl;
-#endif
+          std::cout << "received request" << std::endl;
           sendCommand(data, socket);
           if(tmr.elapsed() > time)
             break;
         }
-        cout << "passou " << tmr.elapsed() << endl;
 
       } else cout << "Command unknown" << endl;
 
@@ -175,9 +169,7 @@ int main() {
 
       // sending command
       socket.recv (&resultset);
-#ifdef DEBUG
       std::cout << "received request" << std::endl;
-#endif
       sendCommand(data, socket);
       cout << "done!" << endl;
     }

@@ -5,3 +5,4 @@ add_robot
 hwserver
 list_team
 list_team_server
+command_parser
