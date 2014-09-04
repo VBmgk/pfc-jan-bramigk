@@ -1,7 +1,7 @@
 
 
 .PHONY:
-all: relatorio.pdf
+all: relatorio.pdf apresentacao.pdf
 
 
 neverclean := *.pdf
