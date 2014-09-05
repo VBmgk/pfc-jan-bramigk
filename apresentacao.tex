@@ -100,7 +100,123 @@
   \end{block}
 }
 
-\section{Experiências prévias}
+\section{Lições Aprendidas com implementações Anteriores}
+
+\frame{%
+  \frametitle{Lições Aprendidas com implementações Anteriores}
+  \begin{block}{}
+    \textbf{Abordagens}
+    \begin{itemize}
+      \item Heurística pura
+      \item Otimização
+      \item Baseado em jogos
+      \item Otimização com modelagem do oponente
+    \end{itemize}
+  \end{block}
+  \begin{block}{}
+    \textbf{Longo prazo}
+    Jogos + modelagem do oponente $\longrightarrow$ otimização
+  \end{block}
+}
+
+\frame{%
+  \frametitle{Lições Aprendidas com implementações Anteriores}
+  \begin{block}{}
+    \centering
+    \textbf{Propostas de solução}
+    \begin{itemize}
+      \item No jogo com robôs omnidirecionais não são necessárias
+      as trajetórias elaboradas
+      \item Aproximar a simulação física por um jogo de tabuleiro.
+\end{itemize}
+  \end{block}
+  \begin{block}{}
+    \begin{itemize}
+      \item minimax com simulador físico: custo computacional das simulações
+      \item minimax com chaveamento de heurística: custo computacional
+      \item Resultado: heurísticas puras
+\end{itemize}
+  \end{block}
+}
+
+\frame{%
+  \frametitle{Lições Aprendidas com implementações Anteriores}
+  \begin{block}{}
+    \centering
+    \textbf{Minimax para robôs omnidirecionais}
+    \begin{itemize}
+      \item Pegar a bola parada, se o oponente não estiver mais próximo da bola que o
+        nosso robô.
+      \item Pegar a bola em movimento, se for possível, escolhendo um ponto aleatório
+        da trajetória da bola.
+      \item Passar a bola, se não tiver ninguém que possa interceptar a bola.
+      \item Chutar a gol, se não tiver ninguém no caminho da bola.
+      \item Deslocar-se para outro ponto escolhido aleatoriamente, se não tiver ninguém
+        em seu caminho, ou utilizar a célula de Voronoi.
+      \item Deslocar-se para o ponto escolhido na última jogada. ( Aprendizagem local )
+    \end{itemize}
+  \end{block}
+}
+
+\frame{%
+  \frametitle{Lições Aprendidas com implementações Anteriores}
+  \begin{block}{}
+    \textbf{Problemas}
+    \begin{itemize}
+      \item Mapeamento do modelo conceitual para o controle dos robôs
+      \item Time defensor na árvore minimax tem vantagem
+\end{itemize}
+  \end{block}
+  \begin{block}{}
+    \textbf{Ideias}
+    \begin{itemize}
+      \item Desacoplamento do comportamento dos jogadores para melhorar o
+        aproveitamento da CPU\@.
+      \item Definir algumas jogadas de movimento com finalidade especifica,
+        (e.g., bloquear a bola defensivamente). Problema: tempo de processamento
+    \end{itemize}
+  \end{block}
+}
+\frame{%
+  \frametitle{Lições Aprendidas com implementações Anteriores}
+  \begin{block}{}
+    \textbf{Considerações}
+    \begin{itemize}
+      \item Substituição das jogadas do oponente por jogadas aprendidas
+            aumenta a efetividade das jogadas, e permite um maior tempo de
+            planejamento
+    \item Problema complexo
+  \end{itemize}
+  \end{block}
+}
+
+\section{Prova de Conceito}
+\frame{%
+  \frametitle{Arquitetura do Programa para Prova de Conceito}
+  \begin{block}{}
+    \begin{itemize}
+        \item Protobuf (protocolo)
+        \item Zmq (comunicação)
+        \item pyroboime (máquinas de estados)
+    \end{itemize}
+  \end{block}
+}
+\frame{%
+  \frametitle{Protocolo}
+  \begin{block}{}
+    \begin{itemize}
+      \item int robot\_id
+      \item enum Type type \{ MOVE, PASS, KICK\}
+       \item Move move $\longrightarrow$ x, y
+       \item Pass pass $\longrightarrow$ robot\_id
+       \item Kick kick $\longrightarrow$ x, y
+     \end{itemize}
+  \end{block}
+}
+%\frame{%
+%  \frametitle{Máquinas de estados}
+%  %TODO: insert state machine
+%}
 
 \section{Cronograma}
 \frame{%
@@ -124,7 +240,7 @@
         \small{do algoritmo}   &     &     &     &     &     &     &     &     \\
         \hline
         \small{Otimização}     &     &     &     &     &     &     &     &   x \\
-        \small{do algoritimo}  &     &     &     &     &     &     &     &     \\
+        \small{do algoritmo}  &     &     &     &     &     &     &     &     \\
         \hline
       \end{tabular}
     \end{center}
