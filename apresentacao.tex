@@ -5,6 +5,7 @@
 \usepackage[portuguese]{algorithm2e}% Para escrever algorítimos
 \usepackage{listings}			% Para usar \lstinputlisting e incluir código
 \usepackage{subcaption}			% Para usar \begin{subfigure} e colocar figuras (a) e (b) lado a lado
+\usepackage{multicol}
 
 \title[Técnicas de IA aplicadas ao futebol de robôs]{%
   Técnicas de IA Aplicadas a Sistemas Multiagentes Cooperativos e Competitivos
@@ -192,8 +193,9 @@
 
 \section{Prova de Conceito}
 \frame{%
-  \frametitle{Arquitetura do Programa para Prova de Conceito}
+  \frametitle{Prova de Conceito}
   \begin{block}{}
+    \textbf{Frameworks}
     \begin{itemize}
         \item Protobuf (protocolo)
         \item Zmq (comunicação)
@@ -202,8 +204,9 @@
   \end{block}
 }
 \frame{%
-  \frametitle{Protocolo}
+  \frametitle{Prova de Conceito}
   \begin{block}{}
+    \textbf{Protocolo}
     \begin{itemize}
       \item int robot\_id
       \item enum Type type \{ MOVE, PASS, KICK\}
@@ -213,10 +216,29 @@
      \end{itemize}
   \end{block}
 }
-%\frame{%
-%  \frametitle{Máquinas de estados}
-%  %TODO: insert state machine
-%}
+\frame{%
+  \frametitle{Prova de Conceito}
+  \begin{description}
+      \begin{multicols}{2}
+      \item command 3 move 0 0
+      \item sleep 5
+      \item command 2 move 1 1
+      \item sleep 5
+      \item command 3 pass 2
+      \item sleep 4
+      \item command 2 pass 3
+      \item sleep 3
+      \item command 4 move 1 0
+      \item sleep 3
+      \item command 3 pass 4
+      \item sleep 3
+      \item command 4 kick 3 0
+      \item sleep 6
+      \item command 4 move 1 -1
+      \item sleep 300
+      \end{multicols}
+    \end{description}
+}
 
 \section{Cronograma}
 \frame{%
