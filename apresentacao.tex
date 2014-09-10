@@ -127,16 +127,16 @@
     \textbf{Propostas de solução}
     \begin{itemize}
       \item No jogo com robôs omnidirecionais não são necessárias
-      as trajetórias elaboradas
+        as trajetórias elaboradas
       \item Aproximar a simulação física por um jogo de tabuleiro.
-\end{itemize}
+    \end{itemize}
   \end{block}
   \begin{block}{}
     \begin{itemize}
       \item minimax com simulador físico: custo computacional das simulações
       \item minimax com chaveamento de heurística: custo computacional
       \item Resultado: heurísticas puras
-\end{itemize}
+    \end{itemize}
   \end{block}
 }
 
@@ -146,6 +146,7 @@
     \centering
     \textbf{Minimax para robôs omnidirecionais}
     \begin{itemize}
+        \small
       \item Pegar a bola parada, se o oponente não estiver mais próximo da bola que o
         nosso robô.
       \item Pegar a bola em movimento, se for possível, escolhendo um ponto aleatório
@@ -154,7 +155,7 @@
       \item Chutar a gol, se não tiver ninguém no caminho da bola.
       \item Deslocar-se para outro ponto escolhido aleatoriamente, se não tiver ninguém
         em seu caminho, ou utilizar a célula de Voronoi.
-      \item Deslocar-se para o ponto escolhido na última jogada. ( Aprendizagem local )
+      \item Deslocar-se para o ponto escolhido na última jogada. (aprendizagem local)
     \end{itemize}
   \end{block}
 }
@@ -166,7 +167,7 @@
     \begin{itemize}
       \item Mapeamento do modelo conceitual para o controle dos robôs
       \item Time defensor na árvore minimax tem vantagem
-\end{itemize}
+    \end{itemize}
   \end{block}
   \begin{block}{}
     \textbf{Ideias}
@@ -184,10 +185,10 @@
     \textbf{Considerações}
     \begin{itemize}
       \item Substituição das jogadas do oponente por jogadas aprendidas
-            aumenta a efetividade das jogadas, e permite um maior tempo de
-            planejamento
-    \item Problema complexo
-  \end{itemize}
+        aumenta a efetividade das jogadas, e permite um maior tempo de
+        planejamento
+      \item Problema complexo
+    \end{itemize}
   \end{block}
 }
 
@@ -197,9 +198,9 @@
   \begin{block}{}
     \textbf{Frameworks}
     \begin{itemize}
-        \item Protobuf (protocolo)
-        \item Zmq (comunicação)
-        \item pyroboime (máquinas de estados)
+      \item Protobuf (protocolo)
+      \item Zmq (comunicação)
+      \item pyroboime (máquinas de estados)
     \end{itemize}
   \end{block}
 }
@@ -210,16 +211,16 @@
     \begin{itemize}
       \item int robot\_id
       \item enum Type type \{ MOVE, PASS, KICK\}
-       \item Move move $\longrightarrow$ x, y
-       \item Pass pass $\longrightarrow$ robot\_id
-       \item Kick kick $\longrightarrow$ x, y
-     \end{itemize}
+      \item Move move $\longrightarrow$ x, y
+      \item Pass pass $\longrightarrow$ robot\_id
+      \item Kick kick $\longrightarrow$ x, y
+    \end{itemize}
   \end{block}
 }
 \frame{%
   \frametitle{Prova de Conceito}
   \begin{description}
-      \begin{multicols}{2}
+    \begin{multicols}{2}
       \item command 3 move 0 0
       \item sleep 5
       \item command 2 move 1 1
@@ -236,8 +237,8 @@
       \item sleep 6
       \item command 4 move 1 -1
       \item sleep 300
-      \end{multicols}
-    \end{description}
+    \end{multicols}
+  \end{description}
 }
 
 \section{Cronograma}
@@ -262,7 +263,7 @@
         \small{do algoritmo}   &     &     &     &     &     &     &     &     \\
         \hline
         \small{Otimização}     &     &     &     &     &     &     &     &   x \\
-        \small{do algoritmo}  &     &     &     &     &     &     &     &     \\
+        \small{do algoritmo}   &     &     &     &     &     &     &     &     \\
         \hline
       \end{tabular}
     \end{center}
