@@ -1,5 +1,3 @@
-// See README.txt for information and build instructions.
-
 package roboime;
 
 message Action {
@@ -33,3 +31,5 @@ message Action {
 message Command {
   repeated Action action = 1;
 }
+
+// vim: et sw=2 ts=2 sts=2
