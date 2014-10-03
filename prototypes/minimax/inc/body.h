@@ -31,6 +31,7 @@ class Robot: public Body{
   int id;
   Player player;
   Vector last_planed_pos;
+  static float MAX_SPEED_SQUARE = 16;// 4 m/s * 4 m/s
 
 public:
   int getId(){
