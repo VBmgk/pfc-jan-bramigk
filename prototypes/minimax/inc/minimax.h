@@ -1,15 +1,15 @@
 class Minimax{
 public:
-  vector<class Action>* decision(class Board);
+  std::vector<class Action>* decision(class Board);
   float getValue(class Board);
-  vector<class Board> getSuccessors(class Board);
+  std::vector<class Board> getSuccessors(class Board);
 };
 
 class Team{
-  vector<Robots> robots;
+  std::vector<Robot> robots;
 
 public:
-  vector<Robots>* getRobots(){
+  std::vector<Robot>* getRobots(){
     return &robots;
   }
 
@@ -20,8 +20,6 @@ public:
 
 #define MIN_AREA_TO_MARK 30 // TODO: set correct value
 
-typedef enum {MIN, MAX} Player;
-
 class Board{
   Ball ball;
   Team max, min;
@@ -31,14 +29,16 @@ class Board{
 public:
   bool isGameOver();
   Player currentPlayer();
-  vector<Action> getActions();
-  vector<vector<class Action> > getRobotsActions();
+  std::vector<Action> getActions();
+  std::vector<std::vector<class Action> > getRobotsActions();
   float evaluate();
   float openGoalArea();
   Player playerWithBall();
-  vector<Robot> canGetPass();
+  std::vector<Robot> canGetPass();
   Robot getRobotWithBall();
-  Board applyRobotsActions(vector<class Action>);
-  float getRobotsActionsTime(vector<class Action>);
-  vector<class Robot> getRobots2Move();
+  float getRobotsActionsTime(const std::vector<class Action> &);
+  std::vector<Robot> getRobots2Move();
+  float getTimeToBall(const Robot& robot);
+  float getTimeToVirtualBall(const Robot& robot, const Ball ball);
+  Board applyRobotsActions(const std::vector<class Action> &);
 };

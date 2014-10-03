@@ -1,6 +1,8 @@
+#include <armadillo>
 #include <vector>
 #include <cfloat>
-#include "board.h"
+#include "base.h"
+#include "body.h"
 #include "action.h"
 #include "minimax.h"
 

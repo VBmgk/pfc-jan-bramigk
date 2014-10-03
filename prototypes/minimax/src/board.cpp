@@ -1,14 +1,12 @@
 #include <vector>
 #include <armadillo>
-#include "action.h"
-#include "pass.h"
-#include "kick.h"
-#include "board.h"
+#include <cfloat>
+#include "base.h"
 #include "body.h"
-#include "ball.h"
-#include "robot.h"
-#include "move.h"
-#include "team.h"
+#include "action.h"
+#include "minimax.h"
+
+constexpr int RAMIFICATION_NUMBER = 10;
 
 using namespace std;
 
@@ -59,10 +57,10 @@ vector<vector<Action> > Board::getRobotsActions(){
 
 Robot Board::getRobotWithBall(){
   // TODO: don't concatenate vectors
-  vector<Robots> robots;
+  vector<Robot> robots;
 
   // preallocate memory
-  robots.reserve(min.getRobots()->size() + max.getRobots->size());
+  robots.reserve(min.getRobots()->size() + max.getRobots()->size());
   robots.insert(robots.end(), min.getRobots()->begin(), min.getRobots()->end());
   robots.insert(robots.end(), max.getRobots()->begin(), max.getRobots()->end());
 
@@ -140,7 +138,7 @@ Player Board::playerWithBall(){
 vector<Robot> Board::canGetPass(){
   // TODO
   // create ball with after kick
-  // float Board::getTimeToBall(const Robot& robot, const Ball ball){
+  // float getTimeToBall(const Robot& robot, const Ball ball){
 }
 
 float Board::openGoalArea(){

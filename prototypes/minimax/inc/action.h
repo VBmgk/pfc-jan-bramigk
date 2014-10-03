@@ -1,5 +1,3 @@
-#include "robot.h"
-
 // dimensions in meters
 #define FIELD_WIDTH 4.0
 #define FIELD_HIGHT 6.0
@@ -13,19 +11,19 @@ public:
 
 class Move: public Action{
   Vector nextPosition;
-  static unsigned float MAX_SPEED = 4;// meters per second
-  unsigned float time;
+  static constexpr float MAX_SPEED = 4;// meters per second
+  float time;
 
 public:
-  Move(const class Robot &robot){
-    Vector position = robot.lastPlanedPosition();
-    srand(time(NULL));
+  Move(const class Robot &robot) {
+    Vector position = robot.getLastPlanedPos();
+    //srand(time(NULL));//XXX: ????
     if(rand()%2 == 1){
       // Move with uniforme distribution
-      nextPosition = robot.setURandPos();
+      nextPosition = robot.getURandPos();
     } else{
       // Move with normal distribution
-      nextPosition = robot.setNRandPos();
+      nextPosition = robot.getNRandPos();
     }
     // Compute minimum time
     time = robot.getDist(nextPosition) / MAX_SPEED;
@@ -39,17 +37,15 @@ public:
 
 class Pass: public Action{
   public:
-    Pass(class Robot,class Robot);
+    Pass(class Robot,class Robot) {}
 };
 
 
 class Kick: public Action{
   float speed, angle;
-  static unsigned float DEFAUL_SPEED = 10;// meters per second
+  static constexpr float DEFAULT_SPEED = 10;// meters per second
 
 public:
-  Kick(class Robot robot){
-    speed = DEFAUL_SPEED;
-    // TODO: get goal greatest area
-  }
+  Kick(class Robot robot) : speed(DEFAULT_SPEED) {}
+
 };
