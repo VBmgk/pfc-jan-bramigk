@@ -22,10 +22,12 @@ public:
     speed = s;
   }
 
-  float getDist(Vector target){
+  float getDist(Vector target) const{
     return (position - target).norm();
   }
 };
+
+typedef enum {MIN, MAX} Player;
 
 class Robot: public Body{
   int id;
@@ -45,14 +47,18 @@ public:
     return player;
   }
 
-  Vector getNRandPos(){
-    return Vector.getNRand(last_planed_pos);
+  Vector getNRandPos() const {
+    return Vector::getNRand(last_planed_pos);
   }
 
-  Vector getURandPos(){
-    return Vector.getURand();
+  Vector getURandPos() const {
+    return Vector::getURand();
+  }
+
+  Vector getLastPlanedPos() const {
+    return last_planed_pos;
   }
 };
 
 class Ball: public Body{
-}
+};
