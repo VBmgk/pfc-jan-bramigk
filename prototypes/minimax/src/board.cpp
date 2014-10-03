@@ -95,9 +95,9 @@ float Board::getTimeToBall(const Robot& robot){
    */
 
   // vb.(pb - pr)
-  float a = (Robot.MAX_SPEED_SQUARE - ball.getSpeed() * ball.getSpeed());
-  float c = - ((robot.getPosition() - ball.getPosition()) * (robot.getPosition() - ball.getPosition()));
-  float b_div_2 = ball.getSpeed() * (ball.getPosition() - robot.getPosition());
+  float a = (Robot.MAX_SPEED_SQUARE - ball.v() * ball.v());
+  float c = - ((robot.pos() - ball.pos()) * (robot.pos() - ball.pos()));
+  float b_div_2 = ball.v() * (ball.pos() - robot.pos());
   float delta_div_4 = b_div_2 * b_div_2 - a * c;
 
   if(a != 0){

@@ -6,19 +6,19 @@ public:
   Body(Vector p, Vector s):
     position(p), speed(s) {}
 
-  Vector getPosition(){
+  Vector pos(){
     return position;
   }
 
-  Vector getSpeed(){
+  Vector v(){
     return speed;
   }
 
-  void setPosition(Vector p){
+  void setPos(Vector p){
     position = p;
   }
 
-  void setSpeed(Vector s){
+  void setV(Vector s){
     speed = s;
   }
 
