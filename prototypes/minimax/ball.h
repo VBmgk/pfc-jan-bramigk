@@ -1,2 +1,0 @@
-class Ball: public Body{
-}

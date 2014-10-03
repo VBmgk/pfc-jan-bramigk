@@ -1,39 +1,50 @@
 class Vector{
-  float x,y, theta;
+  arma::vec a_v;
+  static unsigned int VEC_SIZE = 2;
+
+  Vector(const arma::vec &v): a_v(a_v){}
 
 public:
-  Vector():
-    x(0), y(0), theta(0){}
-
-  Vector(float x, float y):
-    x(x), y(y), theta(0){}
-
-  Vector(float x, float y, float theta):
-    x(x), y(y), theta(theta){}
-
-  float getX(){
-    return x;
+  Vector(){
+    a_v = arma::zeros<arma::vec>(Vector.VEC_SIZE);
   }
 
-  float getY(){
-    return y;
+  Vector operation+(const Vector &v2){
+    Vector vr(a_v + v2.a_v);
+
+    return vr;
   }
 
-  float getTheta(){
-    return theta;
+  Vector operation-(const Vector &v2){
+    Vector vr(a_v - v2.a_v);
+
+    return vr;
+  }
+
+  float operation*(const Vector &v2){
+    return a_v.t() * v2.a_v;
+  }
+
+  static Vector getURand(){
+    Vector aux;
+    arma::arma_rng::set_seed_random();
+
+    aux.a_v = arma::randu<arma::vec>(Vector.VEC_SIZ);
+
+    return aux;
+  }
+
+  static Vector getNRand(const Vector &v){
+    Vector aux;
+    arma::arma_rng::set_seed_random();
+
+    // Center Distribution on last value
+    aux.a_v = v.a_v + arma::randn<arma::vec>(Vector.VEC_SIZ);
+
+    return aux;
   }
 
   float norm(){
-    return sqrt(x*x + y*y);
-  }
-
-  Vector operator + (const Vector& v){
-    Vector r(this->x + v.x, this->y + v.y);
-
-    return r;
-  }
-
-  float operator * (const Vector& v){
-    return this->x * v.x + this->y * v.y;
+    return (float) arma::norm(a_v);
   }
 };
