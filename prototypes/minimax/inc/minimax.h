@@ -9,8 +9,8 @@ class Team{
   std::vector<Robot> robots;
 
 public:
-  std::vector<Robot>* getRobots(){
-    return &robots;
+  std::vector<Robot>& getRobots(){
+    return robots;
   }
 
   void addRobot(const Robot& robot){
@@ -27,6 +27,13 @@ class Board{
   Player player;// current player
 
 public:
+  Board(Team &min, Team &max):
+    min(min), max(max){}
+
+  Team& GetTeam(){
+    return min;
+  }
+
   bool isGameOver();
   Player currentPlayer();
   std::vector<Action> getActions();

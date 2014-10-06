@@ -80,4 +80,9 @@ public:
 };
 
 class Ball: public Body{
+public:
+  Ball(){}
+
+  Ball(Vector p, Vector v):
+    Body(p,v){}
 };
