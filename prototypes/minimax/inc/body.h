@@ -35,7 +35,7 @@ class Robot: public Body{
   int id;
   Player player;
   Vector last_planed_pos;
-  static const float MAX_SPEED_SQUARE = 16;// 4 m/s * 4 m/s
+  static constexpr float MAX_SPEED_SQUARE = 16;// 4 m/s * 4 m/s
 
 public:
   Robot(int id):

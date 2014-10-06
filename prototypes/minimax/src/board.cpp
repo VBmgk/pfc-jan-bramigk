@@ -159,3 +159,10 @@ float Board::getRobotsActionsTime(const vector<class Action>& actions){
 vector<class Robot> Board::getRobots2Move(){
   // TODO
 }
+
+// print operator for Vector
+std::ostream& operator<<(std::ostream &os, const Vector &v){
+  os << v.a_v;
+
+  return os;
+}

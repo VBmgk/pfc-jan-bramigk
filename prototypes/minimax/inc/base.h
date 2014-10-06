@@ -52,8 +52,4 @@ public:
 };
 
 // Overloading output stream operator
-std::ostream& operator<<(std::ostream &os, const Vector &v){
-  os << v.a_v;
-
-  return os;
-}
+std::ostream& operator<<(std::ostream &os, const Vector &v);
