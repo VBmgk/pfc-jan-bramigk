@@ -29,8 +29,14 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS})
 
-add_executable(minimax_gui ${SRC} ${PROTO_SRC} src/opengl.cpp)
-target_link_libraries(minimax_gui ${PROTOBUF_LIBRARIES} zmq ${ARMADILLO_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+add_executable(minimax_glut ${SRC} ${PROTO_SRC} src/glut_main.cpp)
+target_link_libraries(minimax_glut ${PROTOBUF_LIBRARIES} zmq ${ARMADILLO_LIBRARIES} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+
+find_package(PkgConfig REQUIRED)
+pkg_search_module(GLFW REQUIRED glfw3)
+include_directories(${GLFW_INCLUDE_DIRS})
+add_executable(minimax_glfw ${SRC} ${PROTO_SRC} src/glfw_main.cpp)
+target_link_libraries(minimax_glfw ${PROTOBUF_LIBRARIES} zmq ${ARMADILLO_LIBRARIES} ${OPENGL_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
 
 # Docs
 find_package(Sphinx)

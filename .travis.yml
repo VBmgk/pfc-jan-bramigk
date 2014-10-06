@@ -1,18 +1,31 @@
+# Requirements
 language: cpp
 compiler:
   - clang
   - gcc
 
+# Dependencies
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
 install:
   # See issue travis-ci/travis-ci#1379
   - '[ "$CXX" = "g++" ] && (sudo apt-get install -qq g++-4.8 && export CXX="g++-4.8" CC="gcc-4.8") || true'
-  # TODO: organize deps
-  - sudo apt-get install -qq protobuf-compiler libprotobuf-dev libzmq3-dev freeglut3-dev libxmu-dev libxi-dev libboost-dev libopenblas-dev liblapack-dev libarpack2-dev
+  # Google Protobuf
+  - sudo apt-get install -qq protobuf-compiler libprotobuf-dev
+  # ZMQ
+  - sudo apt-get install -qq libzmq3-dev
+  # GLUT (deprecated)
+  - sudo apt-get install -qq freeglut3-dev
+  # Armadillo
+  - sudo apt-get install -qq libxmu-dev libxi-dev libboost-dev libopenblas-dev liblapack-dev libarpack2-dev
   - 'wget http://sourceforge.net/projects/arma/files/armadillo-4.450.2.tar.gz && tar xzf armadillo-4.450.2.tar.gz'
   - 'cd armadillo-4.450.2 && cmake . && make && sudo make install && cd ..'
+  # GLFW
+  - 'git clone https://github.com/glfw/glfw.git'
+  - sudo apt-get install -qq xorg-dev libgl1-mesa-dev libglu1-mesa-dev
+  - 'cd glfw && git checkout 3.0.4 && cmake . && make && sudo make install && cd ..'
 
+# Install
 before_script: "cd prototypes/minimax"
 script: "mkdir build && cd build && cmake .. && make"
