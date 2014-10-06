@@ -11,7 +11,7 @@ install:
   - '[ "$CXX" = "g++" ] && (sudo apt-get install -qq g++-4.8 && export CXX="g++-4.8" CC="gcc-4.8") || true'
   # TODO: organize deps
   - sudo apt-get install -qq protobuf-compiler libprotobuf-dev libzmq3-dev freeglut3-dev libxmu-dev libxi-dev libboost-dev libopenblas-dev liblapack-dev libarpack2-dev
-  - wget http://sourceforge.net/projects/arma/files/armadillo-4.450.2.tar.gz
+  - 'wget http://sourceforge.net/projects/arma/files/armadillo-4.450.2.tar.gz && tar xzf armadillo-4.450.2.tar.gz'
   - 'cd armadillo-4.450.2 && cmake . && make && sudo make install'
 
 before_script: "cd prototypes/minimax"
