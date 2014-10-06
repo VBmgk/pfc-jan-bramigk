@@ -8,11 +8,11 @@ public:
   Body(Vector p, Vector s):
     position(p), speed(s) {}
 
-  Vector pos() const {
+  const Vector& pos() const {
     return position;
   }
 
-  Vector v() const {
+  const Vector& v() const {
     return speed;
   }
 

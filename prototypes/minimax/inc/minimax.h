@@ -33,13 +33,14 @@ class Board{
 
 public:
   Board(Team &min, Team &max):
-    min(min), max(max){}
+    min(min), max(max), ball(){}
 
   Board(Team &min, Team &max, Ball &b):
     min(min), max(max), ball(b){}
 
-  Team& GetTeam(){
-    return min;
+  Team& GetTeam(Player p){
+    if(p == MIN) return min;
+    else return max;
   }
 
   bool isGameOver();

@@ -1,3 +1,6 @@
+#include <armadillo>
+#include <iostream>
+
 class Vector{
   arma::vec a_v;
   static const unsigned int VEC_SIZE = 2;
@@ -27,6 +30,10 @@ public:
 
     return aux;
   }
+
+  // Copy constructor
+  Vector(const Vector &vec):
+    a_v(vec.a_v){}
 
   float norm(){
     return (float) arma::norm(a_v);
