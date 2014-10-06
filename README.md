@@ -1,13 +1,9 @@
-[![PDF Status][badge]][pdf]
-
-pfc-jan-bramigk
-===============
+# pfc-jan-bramigk [![PDF Status][badge]][pdf] [![Build Status][status]][travis]
 
 PFC (Projeto Final de Curso) aka TCC (Trabalho de Conclusão de Curso) dos
 alunos Jan Segre e Victor Bramigk do IME (Instituto Militar de Engenharia).
 
-Interno
--------
+## Interno
 
 Convenções:
 
@@ -20,4 +16,6 @@ Convenções:
 
 
 [badge]: https://www.sharelatex.com/github/repos/roboime/pfc-jan-bramigk/builds/latest/badge.svg
-[pdf]: https://www.sharelatex.com/github/repos/roboime/pfc-jan-bramigk/builds/latest/output.pdf
+[pdf]:   https://www.sharelatex.com/github/repos/roboime/pfc-jan-bramigk/builds/latest/output.pdf
+[status]: https://travis-ci.org/roboime/pfc-jan-bramigk.svg
+[travis]: https://travis-ci.org/roboime/pfc-jan-bramigk
