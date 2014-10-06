@@ -1,0 +1,13 @@
+language: cpp
+compiler:
+  - clang
+  - gcc
+install:
+  - apt-get install protobuf
+script:
+  - cd prototypes/minimax
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
+  #- make test
