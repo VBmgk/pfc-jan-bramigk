@@ -33,7 +33,7 @@ typedef enum {MIN, MAX} Player;
 
 class Robot: public Body{
   int id;
-  Player player;
+  mutable Player player;
   Vector last_planed_pos;
   static constexpr float MAX_SPEED_SQUARE = 16;// 4 m/s * 4 m/s
 
@@ -54,7 +54,7 @@ public:
     return id;
   }
 
-  void setPlayer(Player p){
+  void setPlayer(Player p) const {
     player = p;
   }
 

@@ -50,6 +50,3 @@ public:
   // Overloading output stream operator
   friend std::ostream& operator<<(std::ostream &os, const Vector &v);
 };
-
-// Overloading output stream operator
-std::ostream& operator<<(std::ostream &os, const Vector &v);

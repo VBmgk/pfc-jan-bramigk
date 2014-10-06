@@ -6,7 +6,6 @@
 #include "action.h"
 #include "minimax.h"
 
-constexpr int RAMIFICATION_NUMBER = 10;
 
 using namespace std;
 
@@ -55,32 +54,36 @@ vector<vector<Action> > Board::getRobotsActions(){
   return robotsActions;
 }
 
-Robot Board::getRobotWithBall(){
+Robot& Board::getRobotWithBall(){
   // TODO: don't concatenate vectors
   vector<Robot> robots;
 
   // preallocate memory
-  robots.reserve(min.getRobots()->size() + max.getRobots()->size());
-  robots.insert(robots.end(), min.getRobots()->begin(), min.getRobots()->end());
-  robots.insert(robots.end(), max.getRobots()->begin(), max.getRobots()->end());
+  robots.reserve(min.getRobots().size() + max.getRobots().size());
+  robots.insert(robots.end(), min.getRobots().begin(), min.getRobots().end());
+  robots.insert(robots.end(), max.getRobots().begin(), max.getRobots().end());
 
   float min_time = FLT_MAX;
-  Robot *robotWithBall = nullptr;
+  Robot robotWithBall(-1);// Negative Id
 
   float time;
   for(auto& robot: robots){
     time = getTimeToBall(robot);
 
     if(time < min_time){
-      robotWithBall = &robot;
+      robotWithBall = robot;
       min_time = time;
     }
   }
 
-  return *robotWithBall;
+  return robotWithBall;
 }
 
 float Board::getTimeToBall(const Robot& robot){
+  return getTimeToVirtualBall(robot, this->ball);
+}
+
+float Board::getTimeToVirtualBall(const Robot& robot, const Ball virt_ball){
   /* TODO
    * vb.t + pb = vr.t + pr, t_min? vr?
    * => 0 = (vr^2 - vb^2)t^2 - |pr - pb|^2 - 2.vb.(pb - pr).t
@@ -95,9 +98,9 @@ float Board::getTimeToBall(const Robot& robot){
    */
 
   // vb.(pb - pr)
-  float a = (robot.maxV2() - ball.v() * ball.v());
-  float c = - ((robot.pos() - ball.pos()) * (robot.pos() - ball.pos()));
-  float b_div_2 = ball.v() * (ball.pos() - robot.pos());
+  float a = (robot.maxV2() - virt_ball.v() * virt_ball.v());
+  float c = - ((robot.pos() - virt_ball.pos()) * (robot.pos() - virt_ball.pos()));
+  float b_div_2 = virt_ball.v() * (ball.pos() - robot.pos());
   float delta_div_4 = b_div_2 * b_div_2 - a * c;
 
   if(a != 0){
@@ -126,10 +129,6 @@ float Board::getTimeToBall(const Robot& robot){
   }
 }
 
-float Board::getTimeToVirtualBall(const Robot& robot, const Ball virt_ball){
-  // TODO
-}
-
 Player Board::playerWithBall(){
   return getRobotWithBall().getPlayer();
 }
@@ -142,10 +141,12 @@ vector<Robot> Board::canGetPass(){
 
 float Board::openGoalArea(){
   // TODO
+  return 0;
 }
 
 float Board::evaluate(){
   // TODO
+  return 0;
 }
 
 Board Board::applyRobotsActions(const vector<class Action>& actions){
@@ -156,8 +157,16 @@ float Board::getRobotsActionsTime(const vector<class Action>& actions){
   // TODO: get maximum time
 }
 
-vector<class Robot> Board::getRobots2Move(){
-  // TODO
+vector<class Robot>& Board::getRobots2Move(){
+  // TODO: don't concatenate vectors
+  vector<Robot> robots;
+
+  // preallocate memory
+  robots.reserve(min.getRobots().size() + max.getRobots().size());
+  robots.insert(robots.end(), min.getRobots().begin(), min.getRobots().end());
+  robots.insert(robots.end(), max.getRobots().begin(), max.getRobots().end());
+
+  return robots;
 }
 
 // print operator for Vector

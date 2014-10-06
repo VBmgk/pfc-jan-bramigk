@@ -7,20 +7,25 @@ public:
 
 class Team{
   std::vector<Robot> robots;
+  Player player;
 
 public:
+  Team(Player p): player(p){}
+
   std::vector<Robot>& getRobots(){
     return robots;
   }
 
   void addRobot(const Robot& robot){
+    robot.setPlayer(player);
     robots.push_back(robot);
   }
 };
 
-#define MIN_AREA_TO_MARK 30 // TODO: set correct value
-
 class Board{
+  static constexpr int RAMIFICATION_NUMBER = 10;
+  static constexpr int MIN_AREA_TO_MARK = 30; // TODO: set correct value
+
   Ball ball;
   Team max, min;
 
@@ -29,6 +34,9 @@ class Board{
 public:
   Board(Team &min, Team &max):
     min(min), max(max){}
+
+  Board(Team &min, Team &max, Ball &b):
+    min(min), max(max), ball(b){}
 
   Team& GetTeam(){
     return min;
@@ -42,9 +50,9 @@ public:
   float openGoalArea();
   Player playerWithBall();
   std::vector<Robot> canGetPass();
-  Robot getRobotWithBall();
+  Robot& getRobotWithBall();
   float getRobotsActionsTime(const std::vector<class Action> &);
-  std::vector<Robot> getRobots2Move();
+  std::vector<Robot>& getRobots2Move();
   float getTimeToBall(const Robot& robot);
   float getTimeToVirtualBall(const Robot& robot, const Ball ball);
   Board applyRobotsActions(const std::vector<class Action> &);
