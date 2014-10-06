@@ -3,7 +3,9 @@ compiler:
   - clang
   - gcc
 
-before_install: "sudo apt-get update -qy"
+before_install:
+  - "sudo apt-add-repository -y ppa:comp-phys/stable"
+  - "sudo apt-get update -qy"
 # TODO: organize deps
 install: "sudo apt-get install -qy protobuf-compiler libprotobuf-dev libzmq3-dev freeglut3-dev libarmadillo-dev libxmu-dev libxi-dev liblapack-dev libblas-dev libboost-dev"
 before_script: "cd prototypes/minimax"
