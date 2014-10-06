@@ -3,7 +3,7 @@ compiler:
   - clang
   - gcc
 before_install: "sudo apt-get update -qy"
-install: "sudo apt-get install -qy protobuf-compiler libprotobuf-dev libzmq-dev freeglut3-dev"
+install: "sudo apt-get install -qy protobuf-compiler libprotobuf-dev libzmq3-dev freeglut3-dev"
 script:
   - cd prototypes/minimax
   - mkdir build
