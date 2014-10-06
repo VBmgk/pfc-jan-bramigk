@@ -7,11 +7,11 @@ before_install:
   - sudo apt-add-repository -y ppa:comp-phys/stable
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
+install:
   # See issue travis-ci/travis-ci#1379
-  - '[ "$CXX" = "g++" ] && sudo apt-get install -qq g++-4.8 || true'
-  - '[ "$CXX" = "g++" ] && export CXX="g++-4.8" CC="gcc-4.8" || true'
-# TODO: organize deps
-install: "sudo apt-get install -qq protobuf-compiler libprotobuf-dev libzmq3-dev freeglut3-dev libarmadillo-dev libxmu-dev libxi-dev liblapack-dev libblas-dev libboost-dev"
-before_script: "cd prototypes/minimax"
+  - '[ "$CXX" = "g++" ] && (sudo apt-get install -qq g++-4.8 && export CXX="g++-4.8" CC="gcc-4.8") || true'
+  # TODO: organize deps
+  - 'sudo apt-get install -qq protobuf-compiler libprotobuf-dev libzmq3-dev freeglut3-dev libarmadillo-dev libxmu-dev libxi-dev liblapack-dev libblas-dev libboost-dev'
 
+before_script: "cd prototypes/minimax"
 script: "mkdir build && cd build && cmake .. && make"
