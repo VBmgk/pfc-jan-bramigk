@@ -95,7 +95,7 @@ float Board::getTimeToBall(const Robot& robot){
    */
 
   // vb.(pb - pr)
-  float a = (Robot.MAX_SPEED_SQUARE - ball.v() * ball.v());
+  float a = (robot.maxV2() - ball.v() * ball.v());
   float c = - ((robot.pos() - ball.pos()) * (robot.pos() - ball.pos()));
   float b_div_2 = ball.v() * (ball.pos() - robot.pos());
   float delta_div_4 = b_div_2 * b_div_2 - a * c;
@@ -110,25 +110,24 @@ float Board::getTimeToBall(const Robot& robot){
       else return FLT_MAX;
     } else {
       // delta_div_4 > 0
-      float t1 = -b - sqrt(delta_div_4), t2 =  -b - sqrt(delta_div_4);
-      t1 /= a;
-      t2 /= a;
+      float t1 = (-b_div_2 - sqrt(delta_div_4))/a , t2 = (-b_div_2 - sqrt(delta_div_4))/a;
+      float t_min = std::min(t1, t2);
+      float t_max = std::max(t1, t2);
 
+      if(t_max < 0) return FLT_MAX;
+      else if(t_min < 0) return t_max;
+      else return t_min;
     }
   } else{
-    // a == 0
-
+    // 0 = |pr - pb|^2 + 2.vb.(pb - pr).t
+    // 0 =[(pr - pb) + 2.vb.t](pb - pr)
+    // TODO
+    return 0;
   }
 }
 
-float Board::getTimeToVirtualBall(const Robot& robot, const Ball &ball){
+float Board::getTimeToVirtualBall(const Robot& robot, const Ball virt_ball){
   // TODO
-  // vb.t + pb = vr.t + pr, t_min? vr?
-  // => 0 = (vr^2 - vb^2)t^2 - |pr - pb|^2 - 2.vb.(pb - pr).t
-  // => delta = 4.[ (vb.(pb - pr))^2 + (vr^2 - vb^2).|pr - pb|^2]
-  // t = -b +- sqrt(delta)
-  //    -----------------
-  //           2.a
 }
 
 Player Board::playerWithBall(){
