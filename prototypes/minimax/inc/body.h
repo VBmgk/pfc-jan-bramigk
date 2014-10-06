@@ -1,3 +1,6 @@
+#ifndef MINIMAX_BODY_H
+#define MINIMAX_BODY_H
+
 class Body{
   Vector position;
   Vector speed;
@@ -86,3 +89,5 @@ public:
   Ball(Vector p, Vector v):
     Body(p,v){}
 };
+
+#endif

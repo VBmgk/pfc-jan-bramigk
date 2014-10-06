@@ -1,4 +1,3 @@
-#include <armadillo>
 #include <vector>
 #include <cfloat>
 #include "base.h"

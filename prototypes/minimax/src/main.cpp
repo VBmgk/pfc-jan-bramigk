@@ -3,10 +3,10 @@
 #include <fstream>
 #include <sstream>
 #include <ctime>
-#include <chrono>
 #include <vector>
 #include <zmq.hpp>
 #include "discrete.pb.h"
+#include "timer.h"
 
 struct Robot {
   int i;
@@ -46,20 +46,6 @@ struct RobotAction {
 struct TeamCommand {
   std::vector<RobotAction> actions;
   bool min; // otherwise max
-};
-
-struct Timer {
-  Timer() { reset(); }
-
-  double elapsed() {
-    end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    return elapsed.count();
-  }
-
-  void reset() { start = std::chrono::system_clock::now(); }
-
-  std::chrono::time_point<std::chrono::system_clock> start, end;
 };
 
 void add_kick(roboime::Action* action, float x, float y){

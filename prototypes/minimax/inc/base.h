@@ -1,3 +1,7 @@
+#ifndef MINIMAX_BASE_H
+#define MINIMAX_BASE_H
+#include <armadillo>
+
 class Vector{
   arma::vec a_v;
   static const unsigned int VEC_SIZE = 2;
@@ -50,3 +54,5 @@ public:
   // Overloading output stream operator
   friend std::ostream& operator<<(std::ostream &os, const Vector &v);
 };
+
+#endif

@@ -1,28 +1,29 @@
-class Minimax{
-public:
+#ifndef MINIMAX_MINIMAX_H
+#define MINIMAX_MINIMAX_H
+
+class Minimax {
+ public:
   std::vector<class Action>* decision(class Board);
   float getValue(class Board);
   std::vector<class Board> getSuccessors(class Board);
 };
 
-class Team{
+class Team {
   std::vector<Robot> robots;
   Player player;
 
-public:
+ public:
   Team(Player p): player(p){}
 
-  std::vector<Robot>& getRobots(){
-    return robots;
-  }
+  std::vector<Robot>& getRobots() { return robots; }
 
-  void addRobot(const Robot& robot){
+  void addRobot(const Robot& robot) {
     robot.setPlayer(player);
     robots.push_back(robot);
   }
 };
 
-class Board{
+class Board {
   static constexpr int RAMIFICATION_NUMBER = 10;
   static constexpr int MIN_AREA_TO_MARK = 30; // TODO: set correct value
 
@@ -32,15 +33,11 @@ class Board{
   Player player;// current player
 
 public:
-  Board(Team &min, Team &max):
-    min(min), max(max){}
+  Board() : min(Player::MIN), max(Player::MAX) {}
+  Board(Team &min, Team &max) : min(min), max(max) {}
+  Board(Team &min, Team &max, Ball &b): min(min), max(max), ball(b) {}
 
-  Board(Team &min, Team &max, Ball &b):
-    min(min), max(max), ball(b){}
-
-  Team& GetTeam(){
-    return min;
-  }
+  Team& getTeam() { return min; }
 
   bool isGameOver();
   Player currentPlayer();
@@ -57,3 +54,5 @@ public:
   float getTimeToVirtualBall(const Robot& robot, const Ball ball);
   Board applyRobotsActions(const std::vector<class Action> &);
 };
+
+#endif

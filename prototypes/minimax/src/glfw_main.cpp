@@ -1,7 +1,18 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <thread>
 #include <GLFW/glfw3.h>
+#include <zmq.hpp>
+
+#include "discrete.pb.h"
+#include "update.pb.h"
+#include "timer.h"
+
+#include "base.h"
+#include "body.h"
+#include "action.h"
+#include "minimax.h"
 
 using namespace std;
 
@@ -36,7 +47,68 @@ class MainWindow {
     glfwDestroyWindow(window);
   }
 
+  void draw(const Board& board) {
+  }
+
   void run() {
+    Timer tmr;
+    Board board;
+    mutex board_mutex;
+    bool recv(true);
+
+    // Verify that the version of the library that we linked against is
+    // compatible with the version of the headers we compiled against.
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+    thread zmq_thread([&] () {
+      zmq::context_t context (1);
+      zmq::socket_t socket(context, ZMQ_REP);
+
+      socket.bind("tcp://*:5555");
+      zmq::message_t buffer(1024);
+      string data;
+
+      Board local_board;
+
+      while (recv) {
+        try {
+          if (socket.recv(&buffer, ZMQ_RCVTIMEO)) {
+            string buffer_str((char*)buffer.data(), buffer.size());
+            roboime::Update u;
+            u.ParseFromString(buffer_str);
+            cout << u.ball().x() << endl;
+
+            // TODO: update local_board with u
+            board_mutex.lock();
+            board = local_board;
+            board_mutex.unlock();
+
+            zmq::message_t command_message(data.length());
+            memcpy((void *) command_message.data(), data.c_str(), data.length());
+            socket.send(command_message);
+          }
+        } catch(zmq::error_t e) {
+          cerr << "error" << endl;
+        }
+      }
+    });
+
+    while (!glfwWindowShouldClose(window)) {
+      // draw the copied board, lock area could be reduced
+      board_mutex.lock();
+      draw(board);
+      board_mutex.unlock();
+
+      // poll events
+      glfwSwapBuffers(window);
+      glfwPollEvents();
+    }
+
+    recv = false;
+    zmq_thread.join();
+  }
+
+  void demo() {
     while (!glfwWindowShouldClose(window)) {
       float ratio;
       int width, height;
