@@ -43,7 +43,17 @@ public:
   }
 
   float operator*(const Vector& v2) const {
-    //return a_v.t() * v2.a_v;
-    return 0.0;
+    // Using trace to avoid conversion operator
+    return arma::trace((a_v.t() * v2.a_v));
   }
+
+  // Overloading output stream operator
+  friend std::ostream& operator<<(std::ostream &os, const Vector &v);
 };
+
+// Overloading output stream operator
+std::ostream& operator<<(std::ostream &os, const Vector &v){
+  os << v.a_v;
+
+  return os;
+}

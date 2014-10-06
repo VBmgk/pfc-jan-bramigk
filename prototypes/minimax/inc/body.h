@@ -3,22 +3,24 @@ class Body{
   Vector speed;
 
 public:
+  Body(){}
+
   Body(Vector p, Vector s):
     position(p), speed(s) {}
 
-  Vector getPosition(){
+  Vector pos() const {
     return position;
   }
 
-  Vector getSpeed(){
+  Vector v() const {
     return speed;
   }
 
-  void setPosition(Vector p){
+  void setPos(Vector p){
     position = p;
   }
 
-  void setSpeed(Vector s){
+  void setV(Vector s){
     speed = s;
   }
 
@@ -33,9 +35,22 @@ class Robot: public Body{
   int id;
   Player player;
   Vector last_planed_pos;
+  static const float MAX_SPEED_SQUARE = 16;// 4 m/s * 4 m/s
 
 public:
-  int getId(){
+  Robot(int id):
+    id(id){
+    player = MIN;
+    Vector zero;
+  }
+
+  Robot(int id, Vector pos, Vector speed):
+    Body(pos, speed), id(id){
+    player = MIN;
+    Vector zero;
+  }
+
+  int getId() const {
     return id;
   }
 
@@ -57,6 +72,10 @@ public:
 
   Vector getLastPlanedPos() const {
     return last_planed_pos;
+  }
+
+  float maxV2() const {
+    return MAX_SPEED_SQUARE;
   }
 };
 
