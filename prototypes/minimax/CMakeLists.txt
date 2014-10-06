@@ -35,6 +35,9 @@ target_link_libraries(minimax_gui ${PROTOBUF_LIBRARIES} zmq ${ARMADILLO_LIBRARIE
 # Docs
 find_package(Sphinx)
 if(SPHINX_FOUND)
+  option(BUILD_DOCS "Build documentations?" OFF)
+endif()
+if(BUILD_DOCS)
   if(NOT DEFINED SPHINX_THEME)
     set(SPHINX_THEME default)
   endif()
