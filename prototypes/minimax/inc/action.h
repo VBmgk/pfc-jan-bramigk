@@ -7,7 +7,7 @@
 
 class Action{
 public:
-  float getTime(){
+  virtual float getTime(){
     return 0;
   }
 };

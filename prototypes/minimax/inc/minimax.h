@@ -33,11 +33,14 @@ class Board {
   Player player;// current player
 
 public:
-  Board() : min(Player::MIN), max(Player::MAX) {}
-  Board(Team &min, Team &max) : min(min), max(max) {}
-  Board(Team &min, Team &max, Ball &b): min(min), max(max), ball(b) {}
+  Board() : min(Player::MIN), max(Player::MAX), ball() {}
+  Board(Team &min, Team &max) : min(min), max(max), ball() {}
+  Board(Team &min, Team &max, Ball &b) : min(min), max(max), ball(b) {}
 
-  Team& getTeam() { return min; }
+  Team& GetTeam(Player p){
+    if(p == MIN) return min;
+    else return max;
+  }
 
   bool isGameOver();
   Player currentPlayer();

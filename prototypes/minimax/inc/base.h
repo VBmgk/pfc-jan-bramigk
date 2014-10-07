@@ -1,6 +1,7 @@
 #ifndef MINIMAX_BASE_H
 #define MINIMAX_BASE_H
 #include <armadillo>
+#include <iostream>
 
 class Vector{
   arma::vec a_v;
@@ -31,6 +32,10 @@ public:
 
     return aux;
   }
+
+  // Copy constructor
+  Vector(const Vector &vec):
+    a_v(vec.a_v){}
 
   float norm(){
     return (float) arma::norm(a_v);
