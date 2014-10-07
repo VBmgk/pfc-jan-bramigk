@@ -3,41 +3,40 @@
 #include <armadillo>
 #include <iostream>
 
-class Vector{
+class Vector {
   arma::vec a_v;
   static const unsigned int VEC_SIZE = 2;
 
-  Vector(const arma::vec &v): a_v(v){}
+  Vector(const arma::vec &v) : a_v(v) {}
 
 public:
-  Vector(){
-    a_v = arma::zeros<arma::vec>(Vector::VEC_SIZE);
-  }
+  Vector() : a_v(arma::zeros<arma::vec>(Vector::VEC_SIZE)) {}
 
-  static Vector getURand(){
-    Vector aux;
+  // Copy constructor
+  Vector(const Vector &vec) : a_v(vec.a_v) {}
+
+  static Vector getURand() {
     arma::arma_rng::set_seed_random();
 
-    aux.a_v = arma::randu<arma::vec>(Vector::VEC_SIZE);
-
-    return aux;
+    return Vector(arma::randu<arma::vec>(Vector::VEC_SIZE));
   }
 
-  static Vector getNRand(const Vector &v){
-    Vector aux;
+  static Vector getURand(float rx, float ry) {
+    arma::arma_rng::set_seed_random();
+    Vector v(arma::randu<arma::vec>(Vector::VEC_SIZE));
+    v.a_v[0] = v.a_v[0] * rx - rx / 2;
+    v.a_v[1] = v.a_v[1] * ry - ry / 2;
+    return v;
+  }
+
+  static Vector getNRand(const Vector &v) {
     arma::arma_rng::set_seed_random();
 
     // Center Distribution on last value
-    aux.a_v = v.a_v + arma::randn<arma::vec>(Vector::VEC_SIZE);
-
-    return aux;
+    return Vector(v.a_v + arma::randn<arma::vec>(Vector::VEC_SIZE));
   }
 
-  // Copy constructor
-  Vector(const Vector &vec):
-    a_v(vec.a_v){}
-
-  float norm(){
+  float norm() {
     return (float) arma::norm(a_v);
   }
 
@@ -54,6 +53,15 @@ public:
   float operator*(const Vector& v2) const {
     // Using trace to avoid conversion operator
     return arma::trace((a_v.t() * v2.a_v));
+  }
+
+  Vector operator*(float k) const {
+    return Vector(a_v * k);
+  }
+
+  float operator[](int i) const {
+    //return (float) a_v[i];// this is a fast but unsafe alternative
+    return (float) a_v(i);
   }
 
   // Overloading output stream operator

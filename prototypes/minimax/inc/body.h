@@ -1,15 +1,13 @@
 #ifndef MINIMAX_BODY_H
 #define MINIMAX_BODY_H
 
-class Body{
+class Body {
   Vector position;
   Vector speed;
 
-public:
-  Body(){}
-
-  Body(Vector p, Vector s):
-    position(p), speed(s) {}
+ public:
+  Body() {}
+  Body(Vector p, Vector s) : position(p), speed(s) {}
 
   const Vector& pos() const {
     return position;
@@ -34,7 +32,7 @@ public:
 
 typedef enum {MIN, MAX} Player;
 
-class Robot: public Body{
+class Robot: public Body {
   int id;
   mutable Player player;
   Vector last_planed_pos;
@@ -42,13 +40,13 @@ class Robot: public Body{
 
 public:
   Robot(int id):
-    id(id){
+      id(id) {
     player = MIN;
     Vector zero;
   }
 
   Robot(int id, Vector pos, Vector speed):
-    Body(pos, speed), id(id){
+      Body(pos, speed), id(id) {
     player = MIN;
     Vector zero;
   }
@@ -80,14 +78,15 @@ public:
   float maxV2() const {
     return MAX_SPEED_SQUARE;
   }
+
+  static constexpr float radius() { return 0.180 / 2; }
 };
 
-class Ball: public Body{
-public:
+class Ball : public Body {
+ public:
   Ball(){}
-
-  Ball(Vector p, Vector v):
-    Body(p,v){}
+  Ball(Vector p, Vector v) : Body(p,v) {}
+  static constexpr float radius() { return 0.043 / 2; }
 };
 
 #endif

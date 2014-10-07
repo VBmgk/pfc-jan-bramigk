@@ -15,8 +15,6 @@ install:
   - sudo apt-get install -qq protobuf-compiler libprotobuf-dev
   # ZMQ
   - sudo apt-get install -qq libzmq3-dev
-  # GLUT (deprecated)
-  - sudo apt-get install -qq freeglut3-dev
   # Armadillo
   - sudo apt-get install -qq libxmu-dev libxi-dev libboost-dev libopenblas-dev liblapack-dev libarpack2-dev
   - 'wget http://sourceforge.net/projects/arma/files/armadillo-4.450.2.tar.gz && tar xzf armadillo-4.450.2.tar.gz'
