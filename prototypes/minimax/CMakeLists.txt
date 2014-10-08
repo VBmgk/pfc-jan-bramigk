@@ -11,6 +11,10 @@ set(SRC
   src/board.cpp
 )
 
+#
+# DEPS
+#
+
 find_package(Protobuf REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIRS})
 protobuf_generate_cpp(PROTO_SRC PROTO_HDR
@@ -22,17 +26,33 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 find_package(Armadillo REQUIRED)
 include_directories(${ARMADILLO_INCLUDE_DIRS})
 
-add_executable(minimax_cli ${SRC} ${PROTO_SRC} src/main.cpp)
-target_link_libraries(minimax_cli ${PROTOBUF_LIBRARIES} zmq ${ARMADILLO_LIBRARIES})
+find_package(ZMQ REQUIRED)
+include_directories(${ZMQ_INCLUDE_DIRS})
 
 find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIR})
+
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)
 include_directories(${GLFW_INCLUDE_DIRS})
-add_executable(minimax_gui ${SRC} ${PROTO_SRC} src/glfw_main.cpp)
-target_link_libraries(minimax_gui ${PROTOBUF_LIBRARIES} zmq ${ARMADILLO_LIBRARIES} ${OPENGL_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
 
-# Docs
+#
+# BIN
+#
+
+add_library(minimax OBJECT ${SRC})
+set(COMMON_LIBRARIES ${PROTOBUF_LIBRARIES} ${ZMQ_LIBRARIES} ${ARMADILLO_LIBRARIES})
+
+add_executable(minimax_cli ${PROTO_SRC} src/main.cpp $<TARGET_OBJECTS:minimax>)
+target_link_libraries(minimax_cli ${COMMON_LIBRARIES})
+
+add_executable(minimax_gui ${PROTO_SRC} src/glfw_main.cpp $<TARGET_OBJECTS:minimax>)
+target_link_libraries(minimax_gui ${COMMON_LIBRARIES} ${OPENGL_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
+
+#
+# DOCS
+#
+
 find_package(Sphinx)
 if(SPHINX_FOUND)
   option(BUILD_DOCS "Build documentations?" OFF)
