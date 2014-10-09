@@ -1,11 +1,11 @@
 #ifndef MINIMAX_MINIMAX_H
 #define MINIMAX_MINIMAX_H
-#include <cfloat>
 
 #include "base.h"
 #include "body.h"
 #include "action.h"
 
+#include <cfloat>
 #include <vector>
 #include <functional>
 #include <mutex>
