@@ -9,18 +9,18 @@
 
 using namespace std;
 
-bool Board::isGameOver(){
+bool Board::isGameOver() const {
   if(openGoalArea() > MIN_AREA_TO_MARK)
     return true;
 
   return false;
 }
 
-Player Board::currentPlayer(){
+Player Board::currentPlayer() const {
   return player;
 }
 
-vector<Action> Board::getActions(){
+vector<Action> Board::getActions() const {
   vector<Action> actions;
 
   if(playerWithBall() == player){
@@ -44,7 +44,7 @@ vector<Action> Board::getActions(){
   return actions;
 }
 
-vector<vector<Action> > Board::getRobotsActions(){
+vector<vector<Action> > Board::getRobotsActions() const {
   vector<vector<Action> > robotsActions;
 
   for(int i=0 ; i<RAMIFICATION_NUMBER ; i++){
@@ -54,7 +54,7 @@ vector<vector<Action> > Board::getRobotsActions(){
   return robotsActions;
 }
 
-Robot& Board::getRobotWithBall(){
+Robot& Board::getRobotWithBall() const {
   // TODO: don't concatenate vectors
   vector<Robot> robots;
 
@@ -79,11 +79,11 @@ Robot& Board::getRobotWithBall(){
   return robotWithBall;
 }
 
-float Board::getTimeToBall(const Robot& robot){
+float Board::getTimeToBall(const Robot& robot) const {
   return getTimeToVirtualBall(robot, this->ball);
 }
 
-float Board::getTimeToVirtualBall(const Robot& robot, const Ball virt_ball){
+float Board::getTimeToVirtualBall(const Robot& robot, const Ball virt_ball) const {
   /* TODO
    * vb.t + pb = vr.t + pr, t_min? vr?
    * => 0 = (vr^2 - vb^2)t^2 - |pr - pb|^2 - 2.vb.(pb - pr).t
@@ -131,35 +131,35 @@ float Board::getTimeToVirtualBall(const Robot& robot, const Ball virt_ball){
   //}
 }
 
-Player Board::playerWithBall(){
+Player Board::playerWithBall() const {
   return getRobotWithBall().getPlayer();
 }
 
-vector<Robot> Board::canGetPass(){
+vector<Robot> Board::canGetPass() const {
   // TODO
   // create ball with after kick
   // float getTimeToBall(const Robot& robot, const Ball ball){
 }
 
-float Board::openGoalArea(){
+float Board::openGoalArea() const {
   // TODO
   return 0;
 }
 
-float Board::evaluate(){
+float Board::evaluate() const {
   // TODO
   return 0;
 }
 
-Board Board::applyRobotsActions(const vector<class Action>& actions){
+Board Board::applyRobotsActions(const vector<class Action>& actions) const {
   // TODO
 }
 
-float Board::getRobotsActionsTime(const vector<class Action>& actions){
+float Board::getRobotsActionsTime(const vector<class Action>& actions) const {
   // TODO: get maximum time
 }
 
-vector<class Robot>& Board::getRobots2Move(){
+vector<class Robot>& Board::getRobots2Move() const {
   // TODO: don't concatenate vectors
   vector<Robot> robots;
 

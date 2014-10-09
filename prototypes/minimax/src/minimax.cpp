@@ -53,9 +53,9 @@ float Minimax::getValue(const Board &board){
 vector<Board>& Minimax::getSuccessors(const Board &board){
   vector<Board> successors;
 
-  for(auto& actions: board.getActions()){
-    successors.push_back(board.applyActions(actions));
+  for(auto& actions: board.getRobotsActions()){
+    successors.push_back(board.applyRobotsActions(actions));
   }
 
-  return sucessors;
+  return successors;
 }
