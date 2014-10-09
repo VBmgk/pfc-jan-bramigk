@@ -50,7 +50,7 @@ float Minimax::getValue(const Board &board){
   }
 }
 
-vector<Board>& Minimax::getSuccessors(const Board &board){
+vector<Board> Minimax::getSuccessors(const Board &board){
   vector<Board> successors;
 
   for(auto& actions: board.getRobotsActions()){

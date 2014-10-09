@@ -96,7 +96,7 @@ class Minimax {
  public:
   std::vector<class Action>* decision(const Board&);
   float getValue(const Board&);
-  std::vector<class Board>& getSuccessors(const Board&);
+  std::vector<class Board> getSuccessors(const Board&);
 
   static void run_minimax(std::function<void(Board&, std::mutex&)>);
 };
