@@ -9,6 +9,7 @@ include_directories(inc)
 set(SRC
   src/minimax.cpp
   src/board.cpp
+  src/run.cpp
 )
 
 #

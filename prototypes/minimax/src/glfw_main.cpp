@@ -1,27 +1,9 @@
 #include <stdio.h>
 #include <iostream>
-#include <vector>
 #include <cmath>
-#include <mutex>
-#include <thread>
 #include <GLFW/glfw3.h>
-//#ifdef __APPLE__
-//#include <OpenGL/glu.h>
-//#else
-//#include <GL/glu.h>
-//#endif
-#include <zmq.hpp>
 
-#include "discrete.pb.h"
-#include "update.pb.h"
-#include "timer.h"
-
-#include "base.h"
-#include "body.h"
-#include "action.h"
 #include "minimax.h"
-
-using namespace std;
 
 //
 // STATIC DATA
@@ -38,15 +20,15 @@ static const GLubyte WHITE[3]       = {239, 239, 239};
 static const GLubyte YELLOW[3]      = {237, 229, 40};
 static const int NSIDES = 64;
 
-static Board board;
-static mutex board_mutex;
+static Board* board;
+static std::mutex* board_mutex;
 
 //
 // CALLBACKS
 //
 
 static void error_callback(int error, const char* description) {
-    cerr << description << endl;
+  std::cerr << description << std::endl;
 }
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -57,7 +39,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
   if (action == GLFW_PRESS) {
     switch (key) {
       case GLFW_KEY_R:
-        board = Board::randomBoard();
+        {
+          std::lock_guard<std::mutex> _(*board_mutex);
+          *board = Board::randomBoard();
+        }
         break;
       default:
         break;
@@ -82,7 +67,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
   zoom += copysign(sqrt(abs(offset2)), offset2) * zoom_speed;
   // restrict zoom in [zoom_min, zoom_max] interval
   zoom = (zoom > zoom_max) ? zoom_max : (zoom < zoom_min) ? zoom_min : zoom;
-  //cout << zoom << endl;
+  //std::cout << zoom << std::endl;
 }
 
 static bool is_drag;
@@ -90,7 +75,7 @@ void drag_callback(GLFWwindow* window, double xpos, double ypos) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
   // TODO: dragging
-  //cout << xpos - width / 2 << ' ' << ypos - height / 2 << endl;
+  //std::cout << xpos - width / 2 << ' ' << ypos - height / 2 << std::endl;
 }
 
 void cursorpos_callback(GLFWwindow* window, double xpos, double ypos) {
@@ -195,9 +180,10 @@ void redraw(GLFWwindow* window, int width, int height) {
   //glMatrixMode(GL_MODELVIEW);
 
   // draw the copied board, lock area could be reduced maybe
-  board_mutex.lock();
-  draw_board(board);
-  board_mutex.unlock();
+  {
+    std::lock_guard<std::mutex> _(*board_mutex);
+    draw_board(*board);
+  }
 
   // poll events
   glfwSwapBuffers(window);
@@ -209,57 +195,6 @@ void redraw(GLFWwindow* window, int width, int height) {
 //
 
 void run(GLFWwindow* window) {
-  //Timer tmr;
-  bool should_recv(true);
-
-  // Verify that the version of the library that we linked against is
-  // compatible with the version of the headers we compiled against.
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  thread zmq_thread([&] () {
-    zmq::context_t context (1);
-    zmq::socket_t socket(context, ZMQ_REP);
-
-    static const char * addr = "tcp://*:5555";
-    socket.bind(addr);
-    zmq::message_t buffer(1024);
-    string data;
-
-    cout << "listening on " << addr << endl;
-
-    Board local_board;
-
-    while (should_recv) {
-      try {
-        if (socket.recv(&buffer, ZMQ_RCVTIMEO)) {
-          string buffer_str((char*)buffer.data(), buffer.size());
-          roboime::Update u;
-          u.ParseFromString(buffer_str);
-          cout << u.ball().x() << endl;
-          // TODO: update local_board with u
-
-          board_mutex.lock();
-          board = local_board;
-          board_mutex.unlock();
-
-          zmq::message_t command_message(data.length());
-          memcpy((void *) command_message.data(), data.c_str(), data.length());
-          socket.send(command_message);
-        }
-      } catch(zmq::error_t e) {
-        cerr << "error" << endl;
-      }
-    }
-  });
-
-  while (!glfwWindowShouldClose(window)) {
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    redraw(window, width, height);
-  }
-
-  should_recv = false;
-  zmq_thread.join();
 }
 
 int main(int argc, char** argv) {
@@ -279,7 +214,14 @@ int main(int argc, char** argv) {
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
-  run(window);
+  Minimax::run_minimax([&window] (Board& board_, std::mutex& board_mutex_) {
+    board = &board_; board_mutex = &board_mutex_;
+    while (!glfwWindowShouldClose(window)) {
+      int width, height;
+      glfwGetFramebufferSize(window, &width, &height);
+      redraw(window, width, height);
+    }
+  });
 
   glfwDestroyWindow(window);
 

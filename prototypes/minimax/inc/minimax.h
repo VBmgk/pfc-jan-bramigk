@@ -1,11 +1,20 @@
 #ifndef MINIMAX_MINIMAX_H
 #define MINIMAX_MINIMAX_H
 
+#include "base.h"
+#include "body.h"
+
+#include <vector>
+#include <functional>
+#include <mutex>
+
 class Minimax {
  public:
   std::vector<class Action>* decision(class Board);
   float getValue(class Board);
   std::vector<class Board> getSuccessors(class Board);
+
+  static void run_minimax(std::function<void(Board&, std::mutex&)>);
 };
 
 class Team {
