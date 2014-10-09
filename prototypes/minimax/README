@@ -5,7 +5,7 @@
  --> Passe só se não for possível interceptar
  --> chutar não gera novo estado
  --> tempo da ação de um time/jogador é sempre o tempo da ação mais longa
- --> Bola sempre esta com alguém
+ --> Bola sempre esta com alguém: quem consegue pegar primeiro
  --> Ações para quem esta com a bola:
     1. Passe
     2. Chute
@@ -14,7 +14,7 @@
  --> próximas entregas:
    1. Move
    2. Quem esta com a bola
-   3. Função de avaliação
+   3. Função de avaliação: abertura do inimigo - abertura do nosso goal
    4. Função passe
 
   function MiNlMAX-DECISION(game) returns an operator

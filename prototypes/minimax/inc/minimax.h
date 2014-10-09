@@ -1,21 +1,14 @@
 #ifndef MINIMAX_MINIMAX_H
 #define MINIMAX_MINIMAX_H
+#include <cfloat>
 
 #include "base.h"
 #include "body.h"
+#include "action.h"
 
 #include <vector>
 #include <functional>
 #include <mutex>
-
-class Minimax {
- public:
-  std::vector<class Action>* decision(class Board);
-  float getValue(class Board);
-  std::vector<class Board> getSuccessors(class Board);
-
-  static void run_minimax(std::function<void(Board&, std::mutex&)>);
-};
 
 class Team {
   std::vector<Robot> robots;
@@ -41,11 +34,20 @@ class Board {
   Team max, min;
 
   Player player;  // current player
+  float actionsMaxTime;
 
 public:
-  Board() : min(Player::MIN), max(Player::MAX), ball() {}
-  Board(Team &min, Team &max) : min(min), max(max), ball() {}
-  Board(Team &min, Team &max, Ball &b) : min(min), max(max), ball(b) {}
+  Board() : min(Player::MIN), max(Player::MAX), ball(){
+    actionsMaxTime = FLT_MAX;
+  }
+
+  Board(Team &min, Team &max) : min(min), max(max), ball(){
+    actionsMaxTime = FLT_MAX;
+  }
+
+  Board(Team &min, Team &max, Ball &b) : min(min), max(max), ball(b){
+    actionsMaxTime = FLT_MAX;
+  }
 
   Team& GetTeam(Player p) {
     if(p == MIN) return min;
@@ -54,6 +56,7 @@ public:
 
   static Board randomBoard() {
     Board b;
+
     for (int i = 0; i < 5; i++) {
       Robot r(i);
       r.setPos(Vector::getURand(fieldWidth(), fieldHeight()));
@@ -61,6 +64,7 @@ public:
       r.setPos(Vector::getURand(fieldWidth(), fieldHeight()));
       b.max.addRobot(r);
     }
+
     b.ball.setPos(Vector::getURand(fieldWidth(), fieldHeight()));
     return b;
   }
@@ -69,23 +73,32 @@ public:
   const Team& getMax() const { return max; }
   const Team& getMin() const { return min; }
 
-  bool isGameOver();
-  Player currentPlayer();
-  std::vector<Action> getActions();
-  std::vector<std::vector<class Action> > getRobotsActions();
-  float evaluate();
-  float openGoalArea();
-  Player playerWithBall();
-  std::vector<Robot> canGetPass();
-  Robot& getRobotWithBall();
-  float getRobotsActionsTime(const std::vector<class Action> &);
-  std::vector<Robot>& getRobots2Move();
-  float getTimeToBall(const Robot& robot);
-  float getTimeToVirtualBall(const Robot& robot, const Ball ball);
-  Board applyRobotsActions(const std::vector<class Action> &);
+  bool isGameOver() const;
+  Player currentPlayer() const;
+  std::vector<Action> getActions() const;
+  std::vector<std::vector<class Action> > getRobotsActions() const;
+  float evaluate() const;
+  float openGoalArea() const;
+  Player playerWithBall() const;
+  std::vector<Robot> canGetPass() const;
+  Robot& getRobotWithBall() const;
+  float getRobotsActionsTime(const std::vector<class Action> &) const;
+  std::vector<Robot>& getRobots2Move() const;
+  float getTimeToBall(const Robot& robot) const;
+  float getTimeToVirtualBall(const Robot& robot, const Ball ball) const;
+  Board applyRobotsActions(const std::vector<class Action> &) const;
 
   static float fieldWidth()  { return 8.090; }
   static float fieldHeight() { return 6.050; }
+};
+
+class Minimax {
+ public:
+  std::vector<class Action>* decision(const Board&);
+  float getValue(const Board&);
+  std::vector<class Board>& getSuccessors(const Board&);
+
+  static void run_minimax(std::function<void(Board&, std::mutex&)>);
 };
 
 #endif
