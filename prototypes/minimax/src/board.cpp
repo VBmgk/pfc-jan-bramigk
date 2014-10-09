@@ -113,7 +113,8 @@ float Board::getTimeToVirtualBall(const Robot& robot, const Ball virt_ball) cons
       else return FLT_MAX;
     } else {
       // delta_div_4 > 0
-      float t1 = (-b_div_2 - sqrt(delta_div_4))/a , t2 = (-b_div_2 - sqrt(delta_div_4))/a;
+      float t1 = (-b_div_2 - sqrt(delta_div_4))/a , t2 = (-b_div_2 + sqrt(delta_div_4))/a;
+
       float t_min = std::min(t1, t2);
       float t_max = std::max(t1, t2);
 

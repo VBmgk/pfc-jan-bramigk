@@ -7,9 +7,9 @@ class Vector {
   arma::vec a_v;
   static const unsigned int VEC_SIZE = 2;
 
+public:
   Vector(const arma::vec &v) : a_v(v) {}
 
-public:
   Vector() : a_v(arma::zeros<arma::vec>(Vector::VEC_SIZE)) {}
 
   // Copy constructor
