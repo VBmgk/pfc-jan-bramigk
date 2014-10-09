@@ -221,6 +221,7 @@ int main(int argc, char** argv) {
       glfwGetFramebufferSize(window, &width, &height);
       redraw(window, width, height);
     }
+    std::cout << "\rGoodbye!" << std::endl;
   });
 
   glfwDestroyWindow(window);
