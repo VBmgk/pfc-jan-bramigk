@@ -3,9 +3,9 @@
 
 class Minimax {
  public:
-  std::vector<class Action>* decision(class Board);
-  float getValue(class Board);
-  std::vector<class Board> getSuccessors(class Board);
+  std::vector<class Action>* decision(const Board);
+  float getValue(const Board);
+  std::vector<class Board>& getSuccessors(const Board);
 };
 
 class Team {
@@ -32,11 +32,12 @@ class Board {
   Team max, min;
 
   Player player;  // current player
+  float actionsMaxTime;
 
 public:
-  Board() : min(Player::MIN), max(Player::MAX), ball() {}
-  Board(Team &min, Team &max) : min(min), max(max), ball() {}
-  Board(Team &min, Team &max, Ball &b) : min(min), max(max), ball(b) {}
+  Board() : min(Player::MIN), max(Player::MAX), ball(), actionsMaxTime(FLT_MAX){}
+  Board(Team &min, Team &max) : min(min), max(max), ball(), actionsMaxTime(FLT_MAX){}
+  Board(Team &min, Team &max, Ball &b) : min(min), max(max), ball(b), actionsMaxTime(FLT_MAX){}
 
   Team& GetTeam(Player p) {
     if(p == MIN) return min;
@@ -45,6 +46,7 @@ public:
 
   static Board randomBoard() {
     Board b;
+
     for (int i = 0; i < 5; i++) {
       Robot r(i);
       r.setPos(Vector::getURand(fieldWidth(), fieldHeight()));
@@ -52,6 +54,7 @@ public:
       r.setPos(Vector::getURand(fieldWidth(), fieldHeight()));
       b.max.addRobot(r);
     }
+
     b.ball.setPos(Vector::getURand(fieldWidth(), fieldHeight()));
     return b;
   }

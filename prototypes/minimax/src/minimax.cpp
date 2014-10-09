@@ -7,7 +7,7 @@
 
 using namespace std;
 
-vector<Action>* Minimax::decision(Board board){
+vector<Action>* Minimax::decision(const Board &board){
   float max_value = FLT_MIN;
   vector<Action>* max_action = nullptr;
 
@@ -23,14 +23,14 @@ vector<Action>* Minimax::decision(Board board){
   return max_action;
 }
 
-float Minimax::getValue(Board board){
+float Minimax::getValue(const Board &board){
   if(board.isGameOver())
     return board.evaluate();
 
   else if(board.currentPlayer() == MAX){
     float value = FLT_MIN;
 
-    for(auto state: getSuccessors(board)){
+    for(auto& state: getSuccessors(board)){
       float buffer = getValue(state);
 
       if(value < buffer) value = buffer;
@@ -50,6 +50,12 @@ float Minimax::getValue(Board board){
   }
 }
 
-vector<Board> Minimax::getSuccessors(Board){
-  // TODO
+vector<Board>& Minimax::getSuccessors(const Board &board){
+  vector<Board> successors;
+
+  for(auto& actions: board.getActions()){
+    successors.push_back(board.applyActions(actions));
+  }
+
+  return sucessors;
 }
