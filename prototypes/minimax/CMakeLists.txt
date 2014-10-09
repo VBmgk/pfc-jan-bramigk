@@ -37,17 +37,19 @@ find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)
 include_directories(${GLFW_INCLUDE_DIRS})
 
+find_package(Threads REQUIRED)
+
 #
 # BIN
 #
 
-add_library(minimax OBJECT ${SRC})
-set(COMMON_LIBRARIES ${PROTOBUF_LIBRARIES} ${ZMQ_LIBRARIES} ${ARMADILLO_LIBRARIES})
+add_library(minimax OBJECT ${PROTO_SRC} ${SRC})
+set(COMMON_LIBRARIES ${PROTOBUF_LIBRARIES} ${ZMQ_LIBRARIES} ${ARMADILLO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
-add_executable(minimax_cli ${PROTO_SRC} src/main.cpp $<TARGET_OBJECTS:minimax>)
+add_executable(minimax_cli src/main.cpp $<TARGET_OBJECTS:minimax>)
 target_link_libraries(minimax_cli ${COMMON_LIBRARIES})
 
-add_executable(minimax_gui ${PROTO_SRC} src/glfw_main.cpp $<TARGET_OBJECTS:minimax>)
+add_executable(minimax_gui src/glfw_main.cpp $<TARGET_OBJECTS:minimax>)
 target_link_libraries(minimax_gui ${COMMON_LIBRARIES} ${OPENGL_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
 
 #
