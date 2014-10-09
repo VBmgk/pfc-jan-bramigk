@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <mutex>
 #include <thread>
 #include <GLFW/glfw3.h>
 //#ifdef __APPLE__
