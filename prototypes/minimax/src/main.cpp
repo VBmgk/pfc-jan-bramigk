@@ -9,11 +9,12 @@ void signal_handler(int signal) {
   std::cout << "\rGoodbye!" << std::endl;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   std::signal(SIGINT, signal_handler);
 
-  Minimax::run_minimax([&] (Board& board_, std::mutex& board_mutex_) {
-    while (should_wait);
+  Minimax::run_minimax([&](Board &board_, std::mutex &board_mutex_) {
+    while (should_wait)
+      ;
   });
 
   exit(EXIT_SUCCESS);
