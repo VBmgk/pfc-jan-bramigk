@@ -81,7 +81,7 @@ public:
   float openGoalArea() const;
   Player playerWithBall() const;
   std::vector<Robot> canGetPass() const;
-  Robot& getRobotWithBall() const;
+  Robot getRobotWithBall() const;
   float getRobotsActionsTime(const std::vector<class Action> &) const;
   std::vector<Robot> getRobots2Move() const;
   float getTimeToBall(const Robot& robot) const;

@@ -54,7 +54,7 @@ vector<vector<Action> > Board::getRobotsActions() const {
   return robotsActions;
 }
 
-Robot& Board::getRobotWithBall() const {
+Robot Board::getRobotWithBall() const {
   // TODO: don't concatenate vectors
   vector<Robot> robots;
 
