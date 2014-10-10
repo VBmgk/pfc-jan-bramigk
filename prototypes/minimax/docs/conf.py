@@ -78,6 +78,13 @@ exclude_patterns = []
 # documents.
 #default_role = None
 
+# The name of the default domain. Can also be None to disable a default domain.
+# The default is 'py'. Those objects in other domains (whether the domain name
+# is given explicitly, or selected by a default-domain directive) will have the
+# domain name explicitly prepended when named (e.g., when the default domain is
+# C, Python functions will be named “Python function”, not just “function”).
+primary_domain = 'C++'
+
 # If true, '()' will be appended to :func: etc. cross-reference text.
 #add_function_parentheses = True
 
