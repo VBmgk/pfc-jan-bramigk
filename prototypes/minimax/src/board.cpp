@@ -54,7 +54,7 @@ vector<vector<Action> > Board::getRobotsActions() const {
   return robotsActions;
 }
 
-Robot& Board::getRobotWithBall() const {
+Robot Board::getRobotWithBall() const {
   // TODO: don't concatenate vectors
   vector<Robot> robots;
 
@@ -99,36 +99,35 @@ float Board::getTimeToVirtualBall(const Robot& robot, const Ball virt_ball) cons
 
   // vb.(pb - pr)
   float a = (robot.maxV2() - virt_ball.v() * virt_ball.v());
-  //float c = - ((robot.pos() - virt_ball.pos()) * (robot.pos() - virt_ball.pos()));
-  //float b_div_2 = virt_ball.v() * (ball.pos() - robot.pos());
-  //float delta_div_4 = b_div_2 * b_div_2 - a * c;
+  float c = - ((robot.pos() - virt_ball.pos()) * (robot.pos() - virt_ball.pos()));
+  float b_div_2 = virt_ball.v() * (ball.pos() - robot.pos());
+  float delta_div_4 = b_div_2 * b_div_2 - a * c;
 
-  return 0;
+  if(a != 0){
+    // It's impossible to reach the ball
+    if(delta_div_4 < 0) return FLT_MAX;
+    else if( delta_div_4 == 0){
+      float t = - b_div_2 / a;
 
-  //if(a != 0){
-  //  // It's impossible to reach the ball
-  //  if(delta_div_4 < 0) return FLT_MAX;
-  //  else if( delta_div_4 == 0){
-  //    float t = - b_div_2 / a;
+      if(t >= 0) return t;
+      else return FLT_MAX;
+    } else {
+      // delta_div_4 > 0
+      float t1 = (-b_div_2 - sqrt(delta_div_4))/a , t2 = (-b_div_2 + sqrt(delta_div_4))/a;
 
-  //    if(t >= 0) return t;
-  //    else return FLT_MAX;
-  //  } else {
-  //    // delta_div_4 > 0
-  //    float t1 = (-b_div_2 - sqrt(delta_div_4))/a , t2 = (-b_div_2 - sqrt(delta_div_4))/a;
-  //    float t_min = std::min(t1, t2);
-  //    float t_max = std::max(t1, t2);
+      float t_min = std::min(t1, t2);
+      float t_max = std::max(t1, t2);
 
-  //    if(t_max < 0) return FLT_MAX;
-  //    else if(t_min < 0) return t_max;
-  //    else return t_min;
-  //  }
-  //} else{
-  //  // 0 = |pr - pb|^2 + 2.vb.(pb - pr).t
-  //  // 0 =[(pr - pb) + 2.vb.t](pb - pr)
-  //  // TODO
-  //  return 0;
-  //}
+      if(t_max < 0) return FLT_MAX;
+      else if(t_min < 0) return t_max;
+      else return t_min;
+    }
+  } else{
+    // 0 = |pr - pb|^2 + 2.vb.(pb - pr).t
+    // 0 =[(pr - pb) + 2.vb.t](pb - pr)
+    // TODO
+    return 0;
+  }
 }
 
 Player Board::playerWithBall() const {
@@ -159,8 +158,7 @@ float Board::getRobotsActionsTime(const vector<class Action>& actions) const {
   // TODO: get maximum time
 }
 
-vector<class Robot>& Board::getRobots2Move() const {
-  // TODO: don't concatenate vectors
+vector<class Robot> Board::getRobots2Move() const {
   vector<Robot> robots;
 
   // preallocate memory
@@ -173,7 +171,7 @@ vector<class Robot>& Board::getRobots2Move() const {
 
 // print operator for Vector
 std::ostream& operator<<(std::ostream &os, const Vector &v){
-  os << v.a_v;
+  os << "\t" << v.a_v[0] << "\n\t" << v.a_v[1] << "\n";
 
   return os;
 }
