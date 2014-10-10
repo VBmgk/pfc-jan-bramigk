@@ -10,6 +10,7 @@ set(SRC
   src/minimax.cpp
   src/board.cpp
   src/run.cpp
+  src/draw.cpp
 )
 
 #
@@ -42,13 +43,13 @@ include_directories(${GLFW_INCLUDE_DIRS})
 #
 
 add_library(minimax OBJECT ${SRC})
-set(COMMON_LIBRARIES ${PROTOBUF_LIBRARIES} ${ZMQ_LIBRARIES} ${ARMADILLO_LIBRARIES})
+set(COMMON_LIBRARIES ${PROTOBUF_LIBRARIES} ${ZMQ_LIBRARIES} ${ARMADILLO_LIBRARIES} ${OPENGL_LIBRARIES})
 
 add_executable(minimax_cli ${PROTO_SRC} src/main.cpp $<TARGET_OBJECTS:minimax>)
 target_link_libraries(minimax_cli ${COMMON_LIBRARIES})
 
 add_executable(minimax_gui ${PROTO_SRC} src/glfw_main.cpp $<TARGET_OBJECTS:minimax>)
-target_link_libraries(minimax_gui ${COMMON_LIBRARIES} ${OPENGL_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
+target_link_libraries(minimax_gui ${COMMON_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
 
 #
 # DOCS
