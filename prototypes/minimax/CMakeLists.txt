@@ -3,7 +3,10 @@ cmake_minimum_required(VERSION 2.8.8)
 project(minimax)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/.cmake/modules)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+add_definitions("-std=c++11")
+if("${CMAKE_GENERATOR}" STREQUAL "Ninja" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  add_definitions("-Xclang -fcolor-diagnostics")
+endif()
 
 include_directories(inc)
 set(SRC
