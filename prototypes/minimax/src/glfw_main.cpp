@@ -96,13 +96,15 @@ void init_callbacks(GLFWwindow *window) {
 //
 
 void redraw(GLFWwindow *window, int width, int height) {
-  clear_for_drawing(width, height, zoom);
+  display(width, height, zoom);
 
   // draw the copied board, lock area could be reduced maybe
   {
     std::lock_guard<std::mutex> _(*board_mutex);
     draw_board(*board);
   }
+
+  draw_test(width, height);
 
   // poll events
   glfwSwapBuffers(window);
@@ -123,6 +125,7 @@ int main(int argc, char **argv) {
   }
 
   init_callbacks(window);
+  init_graphics();
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 

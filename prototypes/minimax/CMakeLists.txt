@@ -43,12 +43,22 @@ include_directories(${GLFW_INCLUDE_DIRS})
 
 find_package(Threads REQUIRED)
 
+find_package(Freetype REQUIRED)
+include_directories(${FREETYPE_INCLUDE_DIRS})
+
 #
 # BIN
 #
 
 add_library(minimax OBJECT ${PROTO_SRC} ${SRC})
-set(COMMON_LIBRARIES ${PROTOBUF_LIBRARIES} ${ZMQ_LIBRARIES} ${ARMADILLO_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+set(COMMON_LIBRARIES
+  ${PROTOBUF_LIBRARIES}
+  ${ZMQ_LIBRARIES}
+  ${ARMADILLO_LIBRARIES}
+  ${OPENGL_LIBRARIES}
+  ${CMAKE_THREAD_LIBS_INIT}
+  ${FREETYPE_LIBRARIES}
+)
 
 add_executable(minimax_cli src/main.cpp $<TARGET_OBJECTS:minimax>)
 target_link_libraries(minimax_cli ${COMMON_LIBRARIES})
