@@ -5,30 +5,25 @@
 #define FIELD_WIDTH 4.0
 #define FIELD_HIGHT 6.0
 
-class Action{
+class Action {
   Player player;
   int robot_id;
 
 public:
-  Action(Player p, int r_id) :
-    player(p), robot_id(r_id) {}
+  Action(Player p, int r_id) : player(p), robot_id(r_id) {}
 
-  virtual float getTime(){
-    return 0;
-  }
+  virtual float getTime() { return 0; }
 
   virtual void apply(Board &board) const {};
 };
 
-
-class Move: public Action{
+class Move : public Action {
   Vector nextPosition;
   static constexpr float MAX_SPEED = 4; // meters per second
   float time;
 
 public:
-  Move(const class Robot &robot) :
-    Action(robot.getPlayer(), robot.getId()) {
+  Move(const class Robot &robot) : Action(robot.getPlayer(), robot.getId()) {
     Vector position = robot.getLastPlanedPos();
     // srand(time(NULL));//XXX: ????
     if (rand() % 2 == 1) {
@@ -42,24 +37,19 @@ public:
     time = robot.getDist(nextPosition) / MAX_SPEED;
   }
 
-  float getTime(){
-    return time;
-  }
+  float getTime() { return time; }
 
-  void apply(Board &b) const {
-  }
+  void apply(Board &b) const {}
 };
 
-
-class Pass: public Action{
+class Pass : public Action {
   int rcv_id;
 
 public:
-  Pass(Robot r_b,Robot r_rcv) :
-    Action(r_b.getPlayer(), r_b.getId()), rcv_id(r_rcv.getId()) {}
+  Pass(Robot r_b, Robot r_rcv)
+      : Action(r_b.getPlayer(), r_b.getId()), rcv_id(r_rcv.getId()) {}
 
-  void apply(Board &b) const {
-  }
+  void apply(Board &b) const {}
 };
 
 class Kick : public Action {
@@ -67,11 +57,10 @@ class Kick : public Action {
   static constexpr float DEFAULT_SPEED = 10; // meters per second
 
 public:
-  Kick(Robot robot) :
-    Action(robot.getPlayer(), robot.getId()), speed(DEFAULT_SPEED) {}
+  Kick(Robot robot)
+      : Action(robot.getPlayer(), robot.getId()), speed(DEFAULT_SPEED) {}
 
-  void apply(Board &b) const {
-  }
+  void apply(Board &b) const {}
 };
 
 #endif

@@ -45,9 +45,7 @@ public:
 
   void setPlayer(Player p) const { player = p; }
 
-  Player getPlayer() const{
-    return player;
-  }
+  Player getPlayer() const { return player; }
 
   Vector getNRandPos() const { return Vector::getNRand(last_planed_pos); }
 

@@ -51,11 +51,9 @@ vector<vector<Action>> Board::getRobotsActions() const {
   return robotsActions;
 }
 
-Robot Board::getRobotWithBall() const {
-  return getRobotWithVirtualBall(ball);
-}
+Robot Board::getRobotWithBall() const { return getRobotWithVirtualBall(ball); }
 
-Robot Board::getRobotWithVirtualBall(const Ball& virt_ball) const {
+Robot Board::getRobotWithVirtualBall(const Ball &virt_ball) const {
   // TODO: don't concatenate vectors
   vector<Robot> robots;
 
@@ -68,7 +66,7 @@ Robot Board::getRobotWithVirtualBall(const Ball& virt_ball) const {
   Robot robotWithBall(-1); // Negative Id
 
   float time;
-  for(auto& robot: robots){
+  for (auto &robot : robots) {
     time = getTimeToVirtualBall(robot, virt_ball);
 
     if (time < min_time) {
@@ -84,7 +82,8 @@ float Board::getTimeToBall(const Robot &robot) const {
   return getTimeToVirtualBall(robot, this->ball);
 }
 
-float Board::getTimeToVirtualBall(const Robot& robot, const Ball &virt_ball) const {
+float Board::getTimeToVirtualBall(const Robot &robot,
+                                  const Ball &virt_ball) const {
   /* TODO
    * vb.t + pb = vr.t + pr, t_min? vr?
    * => 0 = (vr^2 - vb^2)t^2 - |pr - pb|^2 - 2.vb.(pb - pr).t
@@ -157,16 +156,16 @@ float Board::evaluate() const {
   return 0;
 }
 
-Board Board::applyRobotsActions(const vector<Action>& actions) const {
+Board Board::applyRobotsActions(const vector<Action> &actions) const {
   Board new_board(*this);
-  for(auto &action: actions){
+  for (auto &action : actions) {
     action.apply(new_board);
   }
 
   return new_board;
 }
 
-float Board::getRobotsActionsTime(const vector<Action>& actions) const {
+float Board::getRobotsActionsTime(const vector<Action> &actions) const {
   // TODO: get maximum time
 }
 
