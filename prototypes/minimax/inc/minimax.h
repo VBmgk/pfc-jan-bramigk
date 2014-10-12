@@ -16,6 +16,7 @@ class Team {
 
  public:
   Team(Player p) : player(p) {}
+  Team(Player p, std::vector<Robot> n_robots) : player(p), robots(n_robots){}
 
   std::vector<Robot>& getRobots() { return robots; }
   const std::vector<Robot>& getRobots() const { return robots; }
@@ -37,16 +38,19 @@ class Board {
   float actionsMaxTime;
 
 public:
-  Board() : min(Player::MIN), max(Player::MAX), ball(){
-    actionsMaxTime = FLT_MAX;
-  }
+  Board() : min(Player::MIN), max(Player::MAX), ball(),
+    actionsMaxTime(FLT_MAX){}
 
-  Board(Team &min, Team &max) : min(min), max(max), ball(){
-    actionsMaxTime = FLT_MAX;
-  }
+  Board(Team &min, Team &max) : min(min), max(max), ball(),
+    actionsMaxTime(FLT_MAX){}
 
-  Board(Team &min, Team &max, Ball &b) : min(min), max(max), ball(b){
-    actionsMaxTime = FLT_MAX;
+  Board(Team &min, Team &max, Ball &b) : min(min), max(max), ball(b),
+    actionsMaxTime(FLT_MAX){}
+
+  Board(const Board &b):
+    max(Player::MAX, b.max.getRobots()), min(Player::MIN, b.min.getRobots()) {
+    player = b.player;
+    actionsMaxTime = b.actionsMaxTime;
   }
 
   Team& GetTeam(Player p) {
@@ -75,17 +79,23 @@ public:
 
   bool isGameOver() const;
   Player currentPlayer() const;
+
   std::vector<Action> getActions() const;
   std::vector<std::vector<class Action> > getRobotsActions() const;
-  float evaluate() const;
+
   float openGoalArea() const;
-  Player playerWithBall() const;
+  float evaluate() const;
+
   std::vector<Robot> canGetPass() const;
-  Robot getRobotWithBall() const;
   float getRobotsActionsTime(const std::vector<class Action> &) const;
   std::vector<Robot> getRobots2Move() const;
+
+  Player playerWithBall() const;
+  Robot getRobotWithBall() const;
+  Robot getRobotWithVirtualBall(const Ball&) const;
+
   float getTimeToBall(const Robot& robot) const;
-  float getTimeToVirtualBall(const Robot& robot, const Ball ball) const;
+  float getTimeToVirtualBall(const Robot& robot, const Ball& ball) const;
   Board applyRobotsActions(const std::vector<class Action> &) const;
 
   static float fieldWidth()  { return 8.090; }

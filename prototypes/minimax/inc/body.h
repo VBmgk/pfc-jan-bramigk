@@ -1,6 +1,8 @@
 #ifndef MINIMAX_BODY_H
 #define MINIMAX_BODY_H
 
+class Board;
+
 class Body {
   Vector position;
   Vector speed;
@@ -59,7 +61,7 @@ public:
     player = p;
   }
 
-  Player getPlayer(){
+  Player getPlayer() const{
     return player;
   }
 
