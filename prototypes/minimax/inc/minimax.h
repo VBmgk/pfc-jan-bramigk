@@ -14,14 +14,14 @@ class Team {
   std::vector<Robot> robots;
   Player player;
 
- public:
+public:
   Team(Player p) : player(p) {}
   Team(Player p, std::vector<Robot> n_robots) : player(p), robots(n_robots){}
 
-  std::vector<Robot>& getRobots() { return robots; }
-  const std::vector<Robot>& getRobots() const { return robots; }
+  std::vector<Robot> &getRobots() { return robots; }
+  const std::vector<Robot> &getRobots() const { return robots; }
 
-  void addRobot(const Robot& robot) {
+  void addRobot(const Robot &robot) {
     robot.setPlayer(player);
     robots.push_back(robot);
   }
@@ -34,7 +34,7 @@ class Board {
   Ball ball;
   Team max, min;
 
-  Player player;  // current player
+  Player player; // current player
   float actionsMaxTime;
 
 public:
@@ -53,9 +53,11 @@ public:
     actionsMaxTime = b.actionsMaxTime;
   }
 
-  Team& GetTeam(Player p) {
-    if(p == MIN) return min;
-    else return max;
+  Team &GetTeam(Player p) {
+    if (p == MIN)
+      return min;
+    else
+      return max;
   }
 
   static Board randomBoard() {
@@ -73,9 +75,9 @@ public:
     return b;
   }
 
-  const Ball& getBall() const { return ball; }
-  const Team& getMax() const { return max; }
-  const Team& getMin() const { return min; }
+  const Ball &getBall() const { return ball; }
+  const Team &getMax() const { return max; }
+  const Team &getMin() const { return min; }
 
   bool isGameOver() const;
   Player currentPlayer() const;
@@ -98,17 +100,17 @@ public:
   float getTimeToVirtualBall(const Robot& robot, const Ball& ball) const;
   Board applyRobotsActions(const std::vector<class Action> &) const;
 
-  static float fieldWidth()  { return 8.090; }
+  static float fieldWidth() { return 8.090; }
   static float fieldHeight() { return 6.050; }
 };
 
 class Minimax {
- public:
-  std::vector<class Action>* decision(const Board&);
-  float getValue(const Board&);
-  std::vector<class Board>& getSuccessors(const Board&);
+public:
+  std::vector<class Action> *decision(const Board &);
+  float getValue(const Board &);
+  std::vector<class Board> getSuccessors(const Board &);
 
-  static void run_minimax(std::function<void(Board&, std::mutex&)>);
+  static void run_minimax(std::function<void(Board &, std::mutex &)>);
 };
 
 #endif

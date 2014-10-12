@@ -6,28 +6,25 @@
 #include "action.h"
 #include "minimax.h"
 
-
 using namespace std;
 
 bool Board::isGameOver() const {
-  if(openGoalArea() > MIN_AREA_TO_MARK)
+  if (openGoalArea() > MIN_AREA_TO_MARK)
     return true;
 
   return false;
 }
 
-Player Board::currentPlayer() const {
-  return player;
-}
+Player Board::currentPlayer() const { return player; }
 
 vector<Action> Board::getActions() const {
   vector<Action> actions;
 
-  if(playerWithBall() == player){
+  if (playerWithBall() == player) {
     // Pass
     Robot robotWithBall = getRobotWithBall();
 
-    for(auto robot: canGetPass()){
+    for (auto robot : canGetPass()) {
       Pass *pass = new Pass(robotWithBall, robot);
       actions.push_back(*pass);
     }
@@ -37,17 +34,17 @@ vector<Action> Board::getActions() const {
   }
 
   // Move
-  for(auto robot: getRobots2Move()){
+  for (auto robot : getRobots2Move()) {
     actions.push_back(*new Move(robot));
   }
 
   return actions;
 }
 
-vector<vector<Action> > Board::getRobotsActions() const {
-  vector<vector<Action> > robotsActions;
+vector<vector<Action>> Board::getRobotsActions() const {
+  vector<vector<Action>> robotsActions;
 
-  for(int i=0 ; i<RAMIFICATION_NUMBER ; i++){
+  for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
     robotsActions.push_back(getActions());
   }
 
@@ -68,13 +65,13 @@ Robot Board::getRobotWithVirtualBall(const Ball& virt_ball) const {
   robots.insert(robots.end(), max.getRobots().begin(), max.getRobots().end());
 
   float min_time = FLT_MAX;
-  Robot robotWithBall(-1);// Negative Id
+  Robot robotWithBall(-1); // Negative Id
 
   float time;
   for(auto& robot: robots){
     time = getTimeToVirtualBall(robot, virt_ball);
 
-    if(time < min_time){
+    if (time < min_time) {
       robotWithBall = robot;
       min_time = time;
     }
@@ -83,7 +80,7 @@ Robot Board::getRobotWithVirtualBall(const Ball& virt_ball) const {
   return robotWithBall;
 }
 
-float Board::getTimeToBall(const Robot& robot) const {
+float Board::getTimeToBall(const Robot &robot) const {
   return getTimeToVirtualBall(robot, this->ball);
 }
 
@@ -103,30 +100,38 @@ float Board::getTimeToVirtualBall(const Robot& robot, const Ball &virt_ball) con
 
   // vb.(pb - pr)
   float a = (robot.maxV2() - virt_ball.v() * virt_ball.v());
-  float c = - ((robot.pos() - virt_ball.pos()) * (robot.pos() - virt_ball.pos()));
+  float c =
+      -((robot.pos() - virt_ball.pos()) * (robot.pos() - virt_ball.pos()));
   float b_div_2 = virt_ball.v() * (ball.pos() - robot.pos());
   float delta_div_4 = b_div_2 * b_div_2 - a * c;
 
-  if(a != 0){
+  if (a != 0) {
     // It's impossible to reach the ball
-    if(delta_div_4 < 0) return FLT_MAX;
-    else if( delta_div_4 == 0){
-      float t = - b_div_2 / a;
+    if (delta_div_4 < 0)
+      return FLT_MAX;
+    else if (delta_div_4 == 0) {
+      float t = -b_div_2 / a;
 
-      if(t >= 0) return t;
-      else return FLT_MAX;
+      if (t >= 0)
+        return t;
+      else
+        return FLT_MAX;
     } else {
       // delta_div_4 > 0
-      float t1 = (-b_div_2 - sqrt(delta_div_4))/a , t2 = (-b_div_2 + sqrt(delta_div_4))/a;
+      float t1 = (-b_div_2 - sqrt(delta_div_4)) / a,
+            t2 = (-b_div_2 + sqrt(delta_div_4)) / a;
 
       float t_min = std::min(t1, t2);
       float t_max = std::max(t1, t2);
 
-      if(t_max < 0) return FLT_MAX;
-      else if(t_min < 0) return t_max;
-      else return t_min;
+      if (t_max < 0)
+        return FLT_MAX;
+      else if (t_min < 0)
+        return t_max;
+      else
+        return t_min;
     }
-  } else{
+  } else {
     // 0 = |pr - pb|^2 + 2.vb.(pb - pr).t
     // 0 =[(pr - pb) + 2.vb.t](pb - pr)
     // TODO
@@ -134,9 +139,7 @@ float Board::getTimeToVirtualBall(const Robot& robot, const Ball &virt_ball) con
   }
 }
 
-Player Board::playerWithBall() const {
-  return getRobotWithBall().getPlayer();
-}
+Player Board::playerWithBall() const { return getRobotWithBall().getPlayer(); }
 
 vector<Robot> Board::canGetPass() const {
   // TODO
@@ -179,7 +182,7 @@ vector<class Robot> Board::getRobots2Move() const {
 }
 
 // print operator for Vector
-std::ostream& operator<<(std::ostream &os, const Vector &v){
+std::ostream &operator<<(std::ostream &os, const Vector &v) {
   os << "\t" << v.a_v[0] << "\n\t" << v.a_v[1] << "\n";
 
   return os;

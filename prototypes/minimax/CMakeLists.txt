@@ -1,15 +1,19 @@
-cmake_minimum_required(VERSION 2.8.5)
+cmake_minimum_required(VERSION 2.8.8)
 
 project(minimax)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/.cmake/modules)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+add_definitions("-std=c++11")
+if("${CMAKE_GENERATOR}" STREQUAL "Ninja" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  add_definitions("-Xclang -fcolor-diagnostics")
+endif()
 
 include_directories(inc)
 set(SRC
   src/minimax.cpp
   src/board.cpp
   src/run.cpp
+  src/draw.cpp
 )
 
 #
@@ -44,13 +48,13 @@ find_package(Threads REQUIRED)
 #
 
 add_library(minimax OBJECT ${PROTO_SRC} ${SRC})
-set(COMMON_LIBRARIES ${PROTOBUF_LIBRARIES} ${ZMQ_LIBRARIES} ${ARMADILLO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+set(COMMON_LIBRARIES ${PROTOBUF_LIBRARIES} ${ZMQ_LIBRARIES} ${ARMADILLO_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(minimax_cli src/main.cpp $<TARGET_OBJECTS:minimax>)
 target_link_libraries(minimax_cli ${COMMON_LIBRARIES})
 
 add_executable(minimax_gui src/glfw_main.cpp $<TARGET_OBJECTS:minimax>)
-target_link_libraries(minimax_gui ${COMMON_LIBRARIES} ${OPENGL_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
+target_link_libraries(minimax_gui ${COMMON_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
 
 #
 # DOCS

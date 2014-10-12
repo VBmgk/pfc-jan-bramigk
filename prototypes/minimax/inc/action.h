@@ -23,18 +23,18 @@ public:
 
 class Move: public Action{
   Vector nextPosition;
-  static constexpr float MAX_SPEED = 4;// meters per second
+  static constexpr float MAX_SPEED = 4; // meters per second
   float time;
 
 public:
   Move(const class Robot &robot) :
     Action(robot.getPlayer(), robot.getId()) {
     Vector position = robot.getLastPlanedPos();
-    //srand(time(NULL));//XXX: ????
-    if(rand()%2 == 1){
+    // srand(time(NULL));//XXX: ????
+    if (rand() % 2 == 1) {
       // Move with uniforme distribution
       nextPosition = robot.getURandPos();
-    } else{
+    } else {
       // Move with normal distribution
       nextPosition = robot.getNRandPos();
     }
@@ -62,10 +62,9 @@ public:
   }
 };
 
-
-class Kick: public Action{
+class Kick : public Action {
   float speed, angle;
-  static constexpr float DEFAULT_SPEED = 10;// meters per second
+  static constexpr float DEFAULT_SPEED = 10; // meters per second
 
 public:
   Kick(Robot robot) :

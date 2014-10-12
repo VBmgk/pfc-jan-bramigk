@@ -36,36 +36,32 @@ public:
     return Vector(v.a_v + arma::randn<arma::vec>(Vector::VEC_SIZE));
   }
 
-  float norm() {
-    return (float) arma::norm(a_v);
-  }
+  float norm() { return (float)arma::norm(a_v); }
 
-  Vector operator+(const Vector& v2) const {
+  Vector operator+(const Vector &v2) const {
     Vector vr(a_v + v2.a_v);
     return vr;
   }
 
-  Vector operator-(const Vector& v2) const {
+  Vector operator-(const Vector &v2) const {
     Vector vr(a_v - v2.a_v);
     return vr;
   }
 
-  float operator*(const Vector& v2) const {
+  float operator*(const Vector &v2) const {
     // Using trace to avoid conversion operator
     return arma::trace((a_v.t() * v2.a_v));
   }
 
-  Vector operator*(float k) const {
-    return Vector(a_v * k);
-  }
+  Vector operator*(float k) const { return Vector(a_v * k); }
 
   float operator[](int i) const {
-    //return (float) a_v[i];// this is a fast but unsafe alternative
-    return (float) a_v(i);
+    // return (float) a_v[i];// this is a fast but unsafe alternative
+    return (float)a_v(i);
   }
 
   // Overloading output stream operator
-  friend std::ostream& operator<<(std::ostream &os, const Vector &v);
+  friend std::ostream &operator<<(std::ostream &os, const Vector &v);
 };
 
 #endif
