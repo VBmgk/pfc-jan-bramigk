@@ -28,7 +28,6 @@ public:
 };
 
 class Board {
-  static constexpr int RAMIFICATION_NUMBER = 10;
   static constexpr int MIN_AREA_TO_MARK = 30; // TODO: set correct value
 
   Ball ball;
@@ -83,8 +82,9 @@ public:
   bool isGameOver() const;
   Player currentPlayer() const;
 
-  std::vector<Action> genActions() const;
-  std::vector<std::vector<class Action>> genTeamActions() const;
+  TeamAction genActions(bool) const;
+  TeamAction genKickTeamAction() const;
+  TeamAction genPassTeamAction() const;
 
   float openGoalArea() const;
   float evaluate() const;
@@ -99,17 +99,18 @@ public:
 
   float timeToBall(const Robot &robot) const;
   float timeToVirtualBall(const Robot &robot, const Ball &ball) const;
-  Board applyTeamActions(const std::vector<class Action> &) const;
+  Board applyTeamAction(const TeamAction &) const;
 
   static float fieldWidth() { return 8.090; }
   static float fieldHeight() { return 6.050; }
 };
 
 class Minimax {
+  static constexpr int RAMIFICATION_NUMBER = 10;
+
 public:
-  std::vector<class Action> *decision(const Board &);
-  float value(const Board &);
-  std::vector<class Board> genSuccessors(const Board &);
+  TeamAction decision(const Board &);
+  std::pair<float, TeamAction> value(const Board &, TeamAction *);
 };
 
 struct App {
