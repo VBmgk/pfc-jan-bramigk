@@ -9,6 +9,7 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL
 endif()
 
 include_directories(inc)
+include_directories(vendor/cppzmq)
 set(SRC
   src/action.cpp
   src/minimax.cpp
