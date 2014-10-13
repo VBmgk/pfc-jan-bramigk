@@ -35,16 +35,16 @@ find_package(ZMQ REQUIRED)
 include_directories(${ZMQ_INCLUDE_DIRS})
 
 find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIR})
+include_directories(${OPENGL_INCLUDE_DIRS})
+
+find_package(GLUT REQUIRED)
+include_directories(${GLUT_INCLUDE_DIRS})
 
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)
 include_directories(${GLFW_INCLUDE_DIRS})
 
 find_package(Threads REQUIRED)
-
-find_package(Freetype REQUIRED)
-include_directories(${FREETYPE_INCLUDE_DIRS})
 
 #
 # BIN
@@ -56,8 +56,8 @@ set(COMMON_LIBRARIES
   ${ZMQ_LIBRARIES}
   ${ARMADILLO_LIBRARIES}
   ${OPENGL_LIBRARIES}
+  ${GLUT_LIBRARY}
   ${CMAKE_THREAD_LIBS_INIT}
-  ${FREETYPE_LIBRARIES}
 )
 
 add_executable(minimax_cli src/main.cpp $<TARGET_OBJECTS:minimax>)

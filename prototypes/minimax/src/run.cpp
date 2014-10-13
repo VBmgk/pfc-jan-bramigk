@@ -2,6 +2,7 @@
 #include <iostream>
 #include <atomic>
 #include <chrono>
+#include <stdio.h>
 
 #include <zmq.hpp>
 
@@ -10,9 +11,8 @@
 #include "update.pb.h"
 #include "timer.h"
 
-void Minimax::run_minimax(std::function<void(Board &, std::mutex &)> run) {
-  Board board;
-  std::mutex board_mutex;
+void App::run(std::function<void(App &)> run) {
+  App app;
 
   // Timer tmr;
   bool should_recv(true);
@@ -26,9 +26,10 @@ void Minimax::run_minimax(std::function<void(Board &, std::mutex &)> run) {
 
   std::thread count_thread([&]() {
     std::this_thread::sleep_for(std::chrono::seconds(1));
+    int n_ticks = 0;
     while (should_recv) {
       int count = req_count.exchange(0);
-      std::cout << "recv: " << count << std::endl;
+      sprintf(app.text, "uptime: %is\n%i packets/s\n", ++n_ticks, count);
       std::this_thread::sleep_for(std::chrono::seconds(1));
     }
   });
@@ -57,8 +58,8 @@ void Minimax::run_minimax(std::function<void(Board &, std::mutex &)> run) {
           // TODO: update local_board with u
 
           {
-            std::lock_guard<std::mutex> _(board_mutex);
-            board = local_board;
+            std::lock_guard<std::mutex> _(app.board_mutex);
+            app.board = local_board;
           }
 
           zmq::message_t command_message(data.length());
@@ -71,7 +72,7 @@ void Minimax::run_minimax(std::function<void(Board &, std::mutex &)> run) {
     }
   });
 
-  run(board, board_mutex);
+  run(app);
 
   should_recv = false;
   zmq_thread.join();

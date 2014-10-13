@@ -13,5 +13,6 @@ void draw_robot(const Robot &robot, const GLubyte *color);
 void draw_ball(const Ball &ball);
 void draw_board(const Board &board);
 void draw_test(int width, int height);
+void draw_text(const char *text, int width, int height);
 
 #endif
