@@ -22,29 +22,16 @@ public:
   float getDist(Vector target) const { return (position - target).norm(); }
 };
 
-typedef enum { MIN, MAX } Player;
-
 class Robot : public Body {
   int id;
-  mutable Player player;
   Vector last_planed_pos;
 
 public:
-  Robot(int id) : id(id) {
-    player = MIN;
-    Vector zero;
-  }
+  Robot(int id) : id(id) {}
 
-  Robot(int id, Vector pos, Vector speed) : Body(pos, speed), id(id) {
-    player = MIN;
-    Vector zero;
-  }
+  Robot(int id, Vector pos, Vector speed) : Body(pos, speed), id(id) {}
 
   int getId() const { return id; }
-
-  void setPlayer(Player p) const { player = p; }
-
-  Player getPlayer() const { return player; }
 
   Vector getNRandPos() const { return Vector::getNRand(last_planed_pos); }
 

@@ -137,8 +137,8 @@ void render(GLFWwindow *window, int width, int height) {
   char text[1024];
   {
     std::lock_guard<std::mutex> _(app->display_mutex);
-    snprintf(text, 1024, "%2.0ffps\nuptime: %is\n%i packets/s\n", fps,
-             app->display.uptime, app->display.pps);
+    snprintf(text, 1024, "%2.0ffps\nuptime: %is\n%i packets/s\n%i minimax/s\n",
+             fps, app->display.uptime, app->display.pps, app->display.mps);
   }
   draw_text(text, width, height);
 

@@ -13,18 +13,14 @@
 class Team {
   friend class Board;
   std::vector<Robot> robots;
-  Player player;
 
 public:
-  Team(Player p) : player(p) {}
-  Team(Player p, std::vector<Robot> n_robots) : player(p), robots(n_robots) {}
+  Team() {}
+  Team(std::vector<Robot> n_robots) : robots(n_robots) {}
 
   const std::vector<Robot> &getRobots() const { return robots; }
 
-  void addRobot(const Robot &robot) {
-    robot.setPlayer(player);
-    robots.push_back(robot);
-  }
+  void addRobot(const Robot &robot) { robots.push_back(robot); }
 };
 
 class Board {
@@ -32,13 +28,10 @@ class Board {
 
   Ball ball;
   Team max, min;
-
-  Player player; // current player
   float actionsMaxTime;
 
 public:
-  Board()
-      : min(Player::MIN), max(Player::MAX), ball(), actionsMaxTime(FLT_MAX) {}
+  Board() : min(), max(), ball(), actionsMaxTime(FLT_MAX) {}
 
   Board(Team &min, Team &max)
       : min(min), max(max), ball(), actionsMaxTime(FLT_MAX) {}
@@ -47,17 +40,25 @@ public:
       : min(min), max(max), ball(b), actionsMaxTime(FLT_MAX) {}
 
   Board(const Board &b)
-      : max(Player::MAX, b.max.getRobots()),
-        min(Player::MIN, b.min.getRobots()) {
-    player = b.player;
-    actionsMaxTime = b.actionsMaxTime;
-  }
+      : max(b.max.getRobots()), min(b.min.getRobots()),
+        actionsMaxTime(b.actionsMaxTime) {}
 
   const Team &getTeam(Player p) const {
-    if (p == MIN)
-      return min;
-    else
+    switch (p) {
+    case MAX:
       return max;
+    case MIN:
+      return min;
+    }
+  }
+
+  const Team &getOtherTeam(Player p) const {
+    switch (p) {
+    case MAX:
+      return min;
+    case MIN:
+      return max;
+    }
   }
 
   static Board randomBoard() {
@@ -80,30 +81,31 @@ public:
   const Team &getMin() const { return min; }
 
   bool isGameOver() const;
-  Player currentPlayer() const;
+  // Player currentPlayer() const;
 
-  TeamAction genActions(bool) const;
-  TeamAction genKickTeamAction() const;
-  TeamAction genPassTeamAction() const;
+  TeamAction genKickTeamAction(Player) const;
+  TeamAction genPassTeamAction(Player) const;
+  TeamAction genActions(Player, bool) const;
 
   float openGoalArea() const;
   float evaluate() const;
 
   Board virtualStep(float time) const;
-  std::vector<Robot> canGetPass() const;
+  std::vector<const Robot *> canGetPass(Player) const;
   float teamActionsTime(const std::vector<class Action> &) const;
-  std::vector<Robot> getRobots2Move() const;
 
-  Player playerWithBall() const;
-  Player playerWithVirtualBall(const Ball &virt_ball, const Robot robot) const;
-  const Robot &getRobotWithBall() const;
-  const Robot &getRobotWithVirtualBall(const Ball &) const;
-  const Robot &getRobotWithVirtualBall(const Ball &virt_ball,
-                                       const Robot &r_rcv) const;
+  // Player playerWithBall() const;
+  // Player playerWithVirtualBall(const Ball &virt_ball, const Robot robot)
+  // const;
+  std::pair<const Robot &, Player> getRobotWithBall() const;
+  std::pair<const Robot &, Player> getRobotWithVirtualBall(const Ball &) const;
+  std::pair<const Robot &, Player>
+  getRobotWithVirtualBall(const Ball &virt_ball, const Robot *r_rcv) const;
+  std::vector<const Robot *> getOtherRobots(Player, const Robot &) const;
 
   float timeToBall(const Robot &robot) const;
   float timeToVirtualBall(const Robot &robot, const Ball &ball) const;
-  Board applyTeamAction(const TeamAction &) const;
+  Board applyTeamAction(const TeamAction &max_a, const TeamAction &min_a) const;
 
   static float fieldWidth() { return 8.090; }
   static float fieldHeight() { return 6.050; }
@@ -111,18 +113,21 @@ public:
 
 class Minimax {
   static constexpr int RAMIFICATION_NUMBER = 10;
+  std::pair<float, TeamAction> value(const Board &, Player, TeamAction *);
 
 public:
   TeamAction decision(const Board &);
-  std::pair<float, TeamAction> value(const Board &, TeamAction *);
 };
 
 struct App {
   Board board;
   std::mutex board_mutex;
+  TeamAction command;
+  std::mutex command_mutex;
   struct {
     int uptime;
     int pps;
+    int mps;
   } display;
   std::mutex display_mutex;
 

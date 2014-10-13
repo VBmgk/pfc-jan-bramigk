@@ -6,8 +6,7 @@
 #include "action.h"
 #include "minimax.h"
 
-Move::Move(const class Robot &robot)
-    : Action(robot.getPlayer(), robot.getId()) {
+Move::Move(const class Robot &robot) : Action(robot.getId()) {
   Vector position = robot.getLastPlanedPos();
   // srand(time(NULL));//XXX: ????
   if (rand() % 2 == 1) {
@@ -23,10 +22,8 @@ Move::Move(const class Robot &robot)
 
 float Move::getTime() { return time; }
 
-void Move::apply(Board &b) const {
-  // b.getRobot(player, robot_id).setPosition(nextPosition);
-}
+void Move::apply(Player, Board &b) const {}
 
-void Pass::apply(Board &b) const {}
+void Pass::apply(Player, Board &b) const {}
 
-void Kick::apply(Board &b) const {}
+void Kick::apply(Player, Board &b) const {}

@@ -22,16 +22,19 @@ void App::run(std::function<void(App &)> run) {
 
   // for counting received messages
   std::atomic<int> req_count(0);
+  std::atomic<int> mnmx_count(0);
 
   std::thread count_thread([&]() {
     std::this_thread::sleep_for(std::chrono::seconds(1));
     int n_ticks = 0;
     while (should_recv) {
       int count = req_count.exchange(0);
+      int mcount = mnmx_count.exchange(0);
       {
         std::lock_guard<std::mutex> _(app.display_mutex);
         app.display.uptime = ++n_ticks;
         app.display.pps = count;
+        app.display.mps = mcount;
       }
       std::this_thread::sleep_for(std::chrono::seconds(1));
     }
@@ -60,7 +63,7 @@ void App::run(std::function<void(App &)> run) {
           roboime::Update u;
           u.ParseFromString(buffer_str);
 
-          Team min_t(MIN), max_t(MAX);
+          Team min_t, max_t;
           for (int i = 0; i < u.min_team_size(); i++) {
             const ::roboime::Robot &r = u.min_team(i);
             min_t.addRobot(
@@ -73,11 +76,17 @@ void App::run(std::function<void(App &)> run) {
           }
           Ball ball(Vector(u.ball().x(), u.ball().y()),
                     Vector(u.ball().vx(), u.ball().vy()));
-          Board local_board(min_t, max_t, ball);
 
+          Board local_board(min_t, max_t, ball);
           {
             std::lock_guard<std::mutex> _(app.board_mutex);
             app.board = local_board;
+          }
+
+          TeamAction local_command;
+          {
+            std::lock_guard<std::mutex> _(app.command_mutex);
+            local_command = app.command;
           }
 
           zmq::message_t command_message(data.length());
@@ -90,9 +99,33 @@ void App::run(std::function<void(App &)> run) {
     }
   });
 
+  std::thread minimax_thread([&]() {
+    // single minimax instance, may make use of cache in the future
+    Minimax minimax;
+
+    while (should_recv) {
+      Board local_board;
+      {
+        std::lock_guard<std::mutex> _(app.board_mutex);
+        local_board = app.board;
+      }
+
+      // TeamAction local_command = minimax.decision(local_board);
+      TeamAction local_command;
+      mnmx_count++;
+      {
+        std::lock_guard<std::mutex> _(app.command_mutex);
+        app.command = local_command;
+      }
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+  });
+
   run(app);
 
   should_recv = false;
-  zmq_thread.join();
   count_thread.join();
+  minimax_thread.join();
+  zmq_thread.join();
 }

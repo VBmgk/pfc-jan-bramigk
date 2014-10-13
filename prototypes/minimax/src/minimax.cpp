@@ -1,53 +1,55 @@
 #include <vector>
 #include <cfloat>
 #include <tuple>
-#include "base.h"
-#include "body.h"
-#include "action.h"
 #include "minimax.h"
 
-using namespace std;
-
 TeamAction Minimax::decision(const Board &board) {
-  return value(board, nullptr).second;
+  return value(board, MAX, nullptr).second;
 }
 
-pair<float, TeamAction> Minimax::value(const Board &board,
-                                       TeamAction *maxAction) {
-  pair<float, TeamAction> v, buffer;
+std::pair<float, TeamAction> Minimax::value(const Board &board, Player player,
+                                            TeamAction *max_action) {
 
-  if (board.isGameOver()) { // TODO: implement isTerminaç
-    v.first = board.evaluate();
-    v.second = board.genKickTeamAction();
+  if (board.isGameOver()) {
+    // TODO: implement isGameOver
+    return std::make_pair(board.evaluate(), board.genKickTeamAction(player));
   }
 
-  else if (board.currentPlayer() == MAX) {
-    v.first = FLT_MIN;
-    v.second = board.genPassTeamAction();
+  if (player == MAX) {
+    auto v = std::make_pair(FLT_MIN, board.genPassTeamAction(MAX));
 
     for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
-      TeamAction team_action = board.genPassTeamAction();
+      auto max_action = board.genPassTeamAction(MAX);
 
-      buffer = value(board, &team_action);
-      buffer.second = team_action;
+      // recurse
+      auto buffer = value(board, MIN, &max_action);
 
+      // minimize loss
       if (v.first < buffer.first)
         v = buffer;
+
+      buffer.second = max_action;
     }
+
+    return v;
+
   } else {
-    v.first = FLT_MAX;
-    v.second = board.genPassTeamAction();
+    auto v = std::make_pair(FLT_MAX, board.genPassTeamAction(MIN));
 
     for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
-      TeamAction team_action = board.genPassTeamAction();
+      auto min_action = board.genPassTeamAction(MIN);
+      auto next_board = board.applyTeamAction(*max_action, min_action);
 
-      buffer = value(board.applyTeamAction(team_action), nullptr);
-      buffer.second = team_action;
+      // recurse
+      auto buffer = value(next_board, MAX, nullptr);
 
+      // minimize loss
       if (v.first > buffer.first)
         v = buffer;
-    }
-  }
 
-  return v;
+      buffer.second = min_action;
+    }
+
+    return v;
+  }
 }
