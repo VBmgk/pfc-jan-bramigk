@@ -98,7 +98,8 @@ public:
   Player playerWithVirtualBall(const Ball &virt_ball, const Robot robot) const;
   const Robot &getRobotWithBall() const;
   const Robot &getRobotWithVirtualBall(const Ball &) const;
-  const Robot &getRobotWithVirtualBall(const Ball &virt_ball, const Robot &r_rcv) const;
+  const Robot &getRobotWithVirtualBall(const Ball &virt_ball,
+                                       const Robot &r_rcv) const;
 
   float timeToBall(const Robot &robot) const;
   float timeToVirtualBall(const Robot &robot, const Ball &ball) const;

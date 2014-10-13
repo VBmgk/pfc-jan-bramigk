@@ -40,7 +40,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
 
 static void render(GLFWwindow *window, int width, int height);
 
-//static void resize_callback(GLFWwindow *window, int width, int height) {
+// static void resize_callback(GLFWwindow *window, int width, int height) {
 //  render(window, width, height);
 //}
 
@@ -83,7 +83,6 @@ void mousebutton_callback(GLFWwindow *window, int button, int action,
   }
 }
 
-
 void refresh_callback(GLFWwindow *window) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
@@ -98,7 +97,7 @@ void focus_callback(GLFWwindow *window, int focus) {
 void init_callbacks(GLFWwindow *window) {
   zoom = 0.28;
   is_drag = false;
-  //glfwSetWindowSizeCallback(window, resize_callback);
+  // glfwSetWindowSizeCallback(window, resize_callback);
   glfwSetScrollCallback(window, scroll_callback);
   glfwSetCursorPosCallback(window, cursorpos_callback);
   glfwSetMouseButtonCallback(window, mousebutton_callback);
@@ -121,9 +120,9 @@ void render(GLFWwindow *window, int width, int height) {
   // calculate current FPS
   double current_time = glfwGetTime();
   n_frames++;
-  if (current_time - last_time >= 1.0 ) { // If last cout was more than 1 sec ago
-    fps = (double) n_frames;
-    //glfwSetWindowTitle(window, title);
+  if (current_time - last_time >= 1.0) { // If last cout was more than 1 sec ago
+    fps = (double)n_frames;
+    // glfwSetWindowTitle(window, title);
     n_frames = 0;
     last_time += 1.0;
   }
@@ -138,7 +137,8 @@ void render(GLFWwindow *window, int width, int height) {
   char text[1024];
   {
     std::lock_guard<std::mutex> _(app->display_mutex);
-    snprintf(text, 1024, "%2.0ffps\nuptime: %is\n%i packets/s\n", fps, app->display.uptime, app->display.pps);
+    snprintf(text, 1024, "%2.0ffps\nuptime: %is\n%i packets/s\n", fps,
+             app->display.uptime, app->display.pps);
   }
   draw_text(text, width, height);
 
@@ -170,7 +170,8 @@ int main(int argc, char **argv) {
     while (!glfwWindowShouldClose(window)) {
 
       refresh_callback(window);
-      if (!is_active) // if running in background idle avoid high cpu usage, empirical parameter
+      if (!is_active) // if running in background idle avoid high cpu usage,
+                      // empirical parameter
         std::this_thread::sleep_for(std::chrono::milliseconds(96));
 
       glfwPollEvents();

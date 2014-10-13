@@ -63,13 +63,16 @@ void App::run(std::function<void(App &)> run) {
           Team min_t(MIN), max_t(MAX);
           for (int i = 0; i < u.min_team_size(); i++) {
             const ::roboime::Robot &r = u.min_team(i);
-            min_t.addRobot(Robot(r.i(), Vector(r.x(), r.y()), Vector(r.vx(), r.vy())));
+            min_t.addRobot(
+                Robot(r.i(), Vector(r.x(), r.y()), Vector(r.vx(), r.vy())));
           }
           for (int i = 0; i < u.max_team_size(); i++) {
             const ::roboime::Robot &r = u.max_team(i);
-            max_t.addRobot(Robot(r.i(), Vector(r.x(), r.y()), Vector(r.vx(), r.vy())));
+            max_t.addRobot(
+                Robot(r.i(), Vector(r.x(), r.y()), Vector(r.vx(), r.vy())));
           }
-          Ball ball(Vector(u.ball().x(), u.ball().y()), Vector(u.ball().vx(), u.ball().vy()));
+          Ball ball(Vector(u.ball().x(), u.ball().y()),
+                    Vector(u.ball().vx(), u.ball().vy()));
           Board local_board(min_t, max_t, ball);
 
           {

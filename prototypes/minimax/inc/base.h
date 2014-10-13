@@ -62,7 +62,7 @@ public:
     return (float)a_v(i);
   }
 
-  static Vector unit(Vector v){
+  static Vector unit(Vector v) {
     Vector vec(arma::normalise(v.a_v));
 
     return vec;

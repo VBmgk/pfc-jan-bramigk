@@ -158,7 +158,7 @@ void display(int width, int height, float zoom) {
   glClearColor(((float)DARK_GREEN[0]) / 255.0, ((float)DARK_GREEN[1]) / 255.0,
                ((float)DARK_GREEN[2]) / 255.0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT);
-  //glPushMatrix();
+  // glPushMatrix();
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -171,13 +171,13 @@ void output(const char *text) {
   glRasterPos2f(x, y);
   for (const char *p = text; *p; p++) {
     switch (*p) {
-      case '\n':
-        y += 15.0;
-      case '\r':
-        glRasterPos2f(x, y);
-        break;
-      default:
-        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *p);
+    case '\n':
+      y += 15.0;
+    case '\r':
+      glRasterPos2f(x, y);
+      break;
+    default:
+      glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *p);
     }
   }
 }
@@ -191,7 +191,7 @@ void draw_text(const char *text, int width, int height) {
   glPushMatrix();
   glLoadIdentity();
 
-  //glMatrixMode(GL_MODELVIEW);
+  // glMatrixMode(GL_MODELVIEW);
   glOrtho(0, width, height, 0, 1.0, -1.0);
   output(text);
 
@@ -205,5 +205,5 @@ void draw_test(int width, int height) {
   int sx = width;
   int sy = height;
 
-  //draw_text("The Quick Brown Fox\nJumps Over The Lazy Dog.", width, height);
+  // draw_text("The Quick Brown Fox\nJumps Over The Lazy Dog.", width, height);
 }
