@@ -115,11 +115,11 @@ public:
 struct App {
   Board board;
   std::mutex board_mutex;
-  char *text;
-  std::mutex text_mutex;
-
-  App() : text(new char[1024]) { text[0] = '\0'; }
-  ~App() { delete text; }
+  struct {
+    int uptime;
+    int pps;
+  } display;
+  std::mutex display_mutex;
 
   static void run(std::function<void(App &)>);
 };
