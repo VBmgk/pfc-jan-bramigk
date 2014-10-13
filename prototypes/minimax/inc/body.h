@@ -28,7 +28,6 @@ class Robot : public Body {
   int id;
   mutable Player player;
   Vector last_planed_pos;
-  static constexpr float MAX_SPEED_SQUARE = 16; // 4 m/s * 4 m/s
 
 public:
   Robot(int id) : id(id) {
@@ -53,7 +52,9 @@ public:
 
   Vector getLastPlanedPos() const { return last_planed_pos; }
 
-  float maxV2() const { return MAX_SPEED_SQUARE; }
+  static constexpr float maxV2() { return 4*4; }
+
+  static constexpr float kickV() { return 7; }
 
   static constexpr float radius() { return 0.180 / 2; }
 };

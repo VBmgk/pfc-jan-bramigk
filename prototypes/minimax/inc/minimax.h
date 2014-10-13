@@ -11,6 +11,7 @@
 #include <mutex>
 
 class Team {
+  friend class Board;
   std::vector<Robot> robots;
   Player player;
 
@@ -18,7 +19,6 @@ public:
   Team(Player p) : player(p) {}
   Team(Player p, std::vector<Robot> n_robots) : player(p), robots(n_robots) {}
 
-  std::vector<Robot> &getRobots() { return robots; }
   const std::vector<Robot> &getRobots() const { return robots; }
 
   void addRobot(const Robot &robot) {
@@ -53,7 +53,7 @@ public:
     actionsMaxTime = b.actionsMaxTime;
   }
 
-  Team &GetTeam(Player p) {
+  const Team &getTeam(Player p) const {
     if (p == MIN)
       return min;
     else
@@ -89,13 +89,16 @@ public:
   float openGoalArea() const;
   float evaluate() const;
 
+  Board virtualStep(float time) const;
   std::vector<Robot> canGetPass() const;
   float teamActionsTime(const std::vector<class Action> &) const;
   std::vector<Robot> getRobots2Move() const;
 
   Player playerWithBall() const;
-  Robot getRobotWithBall() const;
-  Robot getRobotWithVirtualBall(const Ball &) const;
+  Player playerWithVirtualBall(const Ball &virt_ball, const Robot robot) const;
+  const Robot &getRobotWithBall() const;
+  const Robot &getRobotWithVirtualBall(const Ball &) const;
+  const Robot &getRobotWithVirtualBall(const Ball &virt_ball, const Robot &r_rcv) const;
 
   float timeToBall(const Robot &robot) const;
   float timeToVirtualBall(const Robot &robot, const Ball &ball) const;

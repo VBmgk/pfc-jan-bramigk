@@ -49,31 +49,60 @@ TeamAction Board::genPassTeamAction() const {
   return genActions(false);
 }
 
-Robot Board::getRobotWithBall() const { return getRobotWithVirtualBall(ball); }
+const Robot &Board::getRobotWithBall() const { return getRobotWithVirtualBall(ball); }
 
-Robot Board::getRobotWithVirtualBall(const Ball &virt_ball) const {
+const Robot &Board::getRobotWithVirtualBall(const Ball &virt_ball) const {
   // TODO: don't concatenate vectors
   vector<Robot> robots;
 
   // preallocate memory
-  robots.reserve(min.getRobots().size() + max.getRobots().size());
-  robots.insert(robots.end(), min.getRobots().begin(), min.getRobots().end());
-  robots.insert(robots.end(), max.getRobots().begin(), max.getRobots().end());
+  //robots.reserve(min.getRobots().size() + max.getRobots().size());
+  //robots.insert(robots.end(), min.getRobots().begin(), min.getRobots().end());
+  //robots.insert(robots.end(), max.getRobots().begin(), max.getRobots().end());
 
   float min_time = FLT_MAX;
-  Robot robotWithBall(-1); // Negative Id
+  //Robot robotWithBall(-1); // Negative Id
+  const Robot *robotWithBall(&min.robots[0]);
 
   float time;
-  for (auto &robot : robots) {
-    time = timeToVirtualBall(robot, virt_ball);
+#define FOR_ROBOT_IN_TEAM(TEAM) \
+  for (const Robot &robot : TEAM) {\
+    time = timeToVirtualBall(robot, virt_ball);\
+    if (time < min_time) {\
+      robotWithBall = &robot;\
+      min_time = time;\
+    }\
+  }
+  FOR_ROBOT_IN_TEAM(min.robots)
+  FOR_ROBOT_IN_TEAM(max.robots)
 
-    if (time < min_time) {
-      robotWithBall = robot;
-      min_time = time;
-    }
+  return *robotWithBall;
+}
+
+const Robot &Board::getRobotWithVirtualBall(const Ball &virt_ball, const Robot &r_rcv) const {
+  float min_time = FLT_MAX;
+  //Robot robotWithBall(-1); // Negative Id
+  const Robot *robotWithBall(&min.robots[0]);
+
+  float time;
+  //vector<Robot> robots = (r_rcv.getPlayer() == Player::MIN ? max : min).getRobots();
+
+#define FOR_ROBOT_IN_TEAM(TEAM) \
+  for (const Robot &robot : TEAM) {\
+    time = timeToVirtualBall(robot, virt_ball);\
+    if (time < min_time) {\
+      robotWithBall = &robot;\
+      min_time = time;\
+    }\
+  }
+  FOR_ROBOT_IN_TEAM(min.robots)
+  FOR_ROBOT_IN_TEAM(max.robots)
+
+  if (timeToVirtualBall(r_rcv, virt_ball) < min_time) {
+    robotWithBall = &r_rcv;
   }
 
-  return robotWithBall;
+  return *robotWithBall;
 }
 
 float Board::timeToBall(const Robot &robot) const {
@@ -138,10 +167,45 @@ float Board::timeToVirtualBall(const Robot &robot,
 
 Player Board::playerWithBall() const { return getRobotWithBall().getPlayer(); }
 
+Player Board::playerWithVirtualBall(const Ball &virt_ball, const Robot robot) const {
+  return getRobotWithVirtualBall(virt_ball, robot).getPlayer();
+}
+
+Board Board::virtualStep(float time) const {
+  Board n_board;
+  n_board.ball = Ball(ball.pos() + ball.v() * time, ball.v());
+
+  for(auto& robot: min.getRobots())
+    n_board.min.addRobot(Robot(robot.getId(), robot.pos() + robot.v() * time, robot.v()));
+
+  Team n_max(MAX);
+  for(auto& robot: max.getRobots())
+    n_board.max.addRobot(Robot(robot.getId(), robot.pos() + robot.v() * time, robot.v()));
+
+  return n_board;
+}
+
 vector<Robot> Board::canGetPass() const {
-  // TODO
-  // create ball with after kick
-  // float getTimeToBall(const Robot& robot, const Ball ball){
+  vector<Robot> robots;
+  Robot robot_with_ball = getRobotWithBall();
+
+  if (robot_with_ball.getPlayer() == player) {
+    float step_time = timeToBall(timeToBall(getRobotWithBall()));
+    Board vrt_board = virtualStep(step_time);
+    Ball vrt_ball = vrt_board.ball;
+
+    for(auto& robot: vrt_board.getTeam(player).getRobots()){
+      if(robot.getId() != robot_with_ball.getId()){
+        vrt_ball.setV(Vector::unit(robot.pos() - vrt_ball.pos()) * Robot::kickV());
+
+        // Add robot if the atual player still
+        // have the ball after kick
+        if(vrt_board.playerWithVirtualBall(vrt_ball, robot) == player) robots.push_back(robot);
+      }
+    }
+  }
+
+  return robots;
 }
 
 float Board::openGoalArea() const {
@@ -167,15 +231,21 @@ float Board::teamActionsTime(const TeamAction &actions) const {
   // TODO: get maximum time
 }
 
-vector<class Robot> Board::getRobots2Move() const {
-  vector<Robot> robots;
+vector<Robot> Board::getRobots2Move() const {
+  const Robot &robot_with_ball = getRobotWithBall();
 
   // preallocate memory
-  robots.reserve(min.getRobots().size() + max.getRobots().size());
-  robots.insert(robots.end(), min.getRobots().begin(), min.getRobots().end());
-  robots.insert(robots.end(), max.getRobots().begin(), max.getRobots().end());
+  if(robot_with_ball.getPlayer() == player){
+    vector<Robot> robots;
 
-  return robots;
+    for(auto& robot: getTeam(player).getRobots()){
+      if(robot.getId() != robot_with_ball.getId()) robots.push_back(robot);
+    }
+
+    return robots;
+  } else {
+    return getTeam(player).getRobots();
+  }
 }
 
 // print operator for Vector
