@@ -151,21 +151,23 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
 
   glfwSetErrorCallback(error_callback);
-  glfwWindowHint(GLFW_SAMPLES, 4);
 
-  GLFWwindow *window = glfwCreateWindow(944, 740, "Minimax GUI", NULL, NULL);
-  if (!window) {
-    glfwTerminate();
-    exit(EXIT_FAILURE);
-  }
-
-  init_callbacks(window);
-  init_graphics();
-  glfwMakeContextCurrent(window);
-  glfwSwapInterval(1);
-
-  App::run([&window](App &app_) {
+  App::run([&](App &app_) {
     app = &app_;
+
+    glfwWindowHint(GLFW_SAMPLES, 4);
+
+    GLFWwindow *window = glfwCreateWindow(944, 740, "Minimax GUI", NULL, NULL);
+    if (!window) {
+      glfwTerminate();
+      exit(EXIT_FAILURE);
+    }
+
+    init_callbacks(window);
+    init_graphics();
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(2);
+
     double last_time = 0.0;
     while (!glfwWindowShouldClose(window)) {
 
@@ -176,10 +178,10 @@ int main(int argc, char **argv) {
 
       glfwPollEvents();
     }
+
+    glfwDestroyWindow(window);
     std::cout << "\rGoodbye!" << std::endl;
   });
-
-  glfwDestroyWindow(window);
 
   glfwTerminate();
   exit(EXIT_SUCCESS);
