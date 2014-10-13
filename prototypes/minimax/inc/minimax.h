@@ -11,6 +11,7 @@
 #include <mutex>
 
 class Team {
+  friend class Board;
   std::vector<Robot> robots;
   Player player;
 
@@ -52,7 +53,7 @@ public:
     actionsMaxTime = b.actionsMaxTime;
   }
 
-  Team &GetTeam(Player p) {
+  const Team &getTeam(Player p) const {
     if (p == MIN)
       return min;
     else
@@ -95,9 +96,9 @@ public:
 
   Player playerWithBall() const;
   Player playerWithVirtualBall(const Ball &virt_ball, const Robot robot) const;
-  Robot getRobotWithBall() const;
-  Robot getRobotWithVirtualBall(const Ball &) const;
-  Robot getRobotWithVirtualBall(const Ball &virt_ball, const Robot &r_rcv) const;
+  const Robot &getRobotWithBall() const;
+  const Robot &getRobotWithVirtualBall(const Ball &) const;
+  const Robot &getRobotWithVirtualBall(const Ball &virt_ball, const Robot &r_rcv) const;
 
   float timeToBall(const Robot &robot) const;
   float timeToVirtualBall(const Robot &robot, const Ball &ball) const;
