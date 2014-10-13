@@ -30,3 +30,8 @@ install:
 # Install
 before_script: "cd prototypes/minimax"
 script: "mkdir build && cd build && cmake .. && make"
+notifications:
+  email:
+    recipients:
+      - jansegre@gmail.com
+      - victorbramigk@gmail.com
