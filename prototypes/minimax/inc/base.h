@@ -60,6 +60,12 @@ public:
     return (float)a_v(i);
   }
 
+  static Vector unit(Vector v){
+    Vector v(arma::normalize(v.a_v));
+
+    return v;
+  }
+
   // Overloading output stream operator
   friend std::ostream &operator<<(std::ostream &os, const Vector &v);
 };

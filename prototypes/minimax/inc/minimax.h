@@ -18,7 +18,6 @@ public:
   Team(Player p) : player(p) {}
   Team(Player p, std::vector<Robot> n_robots) : player(p), robots(n_robots) {}
 
-  std::vector<Robot> &getRobots() { return robots; }
   const std::vector<Robot> &getRobots() const { return robots; }
 
   void addRobot(const Robot &robot) {
@@ -89,6 +88,7 @@ public:
   float openGoalArea() const;
   float evaluate() const;
 
+  Board virtualStep(float time);
   std::vector<Robot> canGetPass() const;
   float teamActionsTime(const std::vector<class Action> &) const;
   std::vector<Robot> getRobots2Move() const;
