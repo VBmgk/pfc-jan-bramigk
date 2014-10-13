@@ -21,7 +21,7 @@ Move::Move(const class Robot &robot)
   time = robot.getDist(nextPosition) / MAX_SPEED;
 }
 
-float Move::getTime() { return time; }
+float Move::getTime() const { return time; }
 
 void Move::apply(Board &b) const {
   // b.getRobot(player, robot_id).setPosition(nextPosition);

@@ -235,7 +235,11 @@ Board Board::applyTeamAction(const TeamAction &actions) const {
 }
 
 float Board::teamActionsTime(const TeamAction &actions) const {
-  // TODO: get maximum time
+  float time = FLT_MIN;
+  for(auto &action: actions)
+    if(action.getTime() > time) time = action.getTime();
+
+  return time;
 }
 
 vector<Robot> Board::getRobots2Move() const {
