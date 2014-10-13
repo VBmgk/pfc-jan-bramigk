@@ -61,9 +61,9 @@ public:
   }
 
   static Vector unit(Vector v){
-    Vector v(arma::normalize(v.a_v));
+    Vector vec(arma::normalise(v.a_v));
 
-    return v;
+    return vec;
   }
 
   // Overloading output stream operator

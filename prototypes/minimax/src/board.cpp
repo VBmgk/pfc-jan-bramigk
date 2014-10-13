@@ -81,7 +81,7 @@ Robot Board::getRobotWithVirtualBall(const Ball &virt_ball, const Robot &r_rcv) 
   Robot robotWithBall(-1); // Negative Id
 
   float time;
-  vector<Robot> robots = r_rcv.getPlayer() == Player::MIN ? max : min;
+  vector<Robot> robots = (r_rcv.getPlayer() == Player::MIN ? max : min).getRobots();
 
   for (auto &robot : robots) {
     time = timeToVirtualBall(robot, virt_ball);
@@ -165,13 +165,16 @@ Player Board::playerWithVirtualBall(const Ball &virt_ball, const Robot robot) co
   return getRobotWithVirtualBall(virt_ball, robot).getPlayer();
 }
 
-Board virtualStep(float time){
-  Board new_board = *this;
+Board Board::virtualStep(float time) const {
+  Team n_min = min;
+  Team n_max = max;
+  Ball n_ball = ball;
+  Board new_board(n_min, n_max, n_ball);
 
-  for(auto& robot: new_board.min.getRobots)
+  for(auto& robot: new_board.min.getRobots())
     robot.setPos(robot.pos() + robot.v() * time);
 
-  for(auto& robot: new_board.max.getRobots)
+  for(auto& robot: new_board.max.getRobots())
     robot.setPos(robot.pos() + robot.v() * time);
 
   new_board.ball.setPos(ball.pos() + ball.v() * time);
@@ -181,10 +184,10 @@ Board virtualStep(float time){
 
 vector<Robot> Board::canGetPass() const {
   vector<Robot> robots;
-  Robot &robot_with_ball = getRobotWithBall();
+  Robot robot_with_ball = getRobotWithBall();
 
   if(robot_with_ball.player() == player){
-    float step_time = timeToBall(getRobotWithBall().timeToBall());
+    float step_time = timeToBall(timeToBall(getRobotWithBall()));
     Board vrt_board = virtualStep(step_time);
     Ball vrt_ball = vrt_board.ball;
 

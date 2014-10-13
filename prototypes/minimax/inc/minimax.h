@@ -88,14 +88,16 @@ public:
   float openGoalArea() const;
   float evaluate() const;
 
-  Board virtualStep(float time);
+  Board virtualStep(float time) const;
   std::vector<Robot> canGetPass() const;
   float teamActionsTime(const std::vector<class Action> &) const;
   std::vector<Robot> getRobots2Move() const;
 
   Player playerWithBall() const;
+  Player playerWithVirtualBall(const Ball &virt_ball, const Robot robot) const;
   Robot getRobotWithBall() const;
   Robot getRobotWithVirtualBall(const Ball &) const;
+  Robot getRobotWithVirtualBall(const Ball &virt_ball, const Robot &r_rcv) const;
 
   float timeToBall(const Robot &robot) const;
   float timeToVirtualBall(const Robot &robot, const Ball &ball) const;
