@@ -7,9 +7,9 @@
 
 using namespace std;
 
-vector<Action> *Minimax::decision(const Board &board) {
+TeamAction *Minimax::decision(const Board &board) {
   float max_value = FLT_MIN;
-  vector<Action> *max_action = nullptr;
+  TeamAction *max_action = nullptr;
 
   for (auto &robotsActions : board.genTeamActions()) {
     float v = value(board.applyTeamActions(robotsActions));

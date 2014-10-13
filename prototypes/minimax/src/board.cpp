@@ -17,8 +17,8 @@ bool Board::isGameOver() const {
 
 Player Board::currentPlayer() const { return player; }
 
-vector<Action> Board::genActions() const {
-  vector<Action> actions;
+TeamAction Board::genActions() const {
+  TeamAction actions;
 
   if (playerWithBall() == player) {
     // Pass
@@ -41,8 +41,8 @@ vector<Action> Board::genActions() const {
   return actions;
 }
 
-vector<vector<Action>> Board::genTeamActions() const {
-  vector<vector<Action>> robotsActions;
+vector<TeamAction> Board::genTeamActions() const {
+  vector<TeamAction> robotsActions;
 
   for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
     robotsActions.push_back(genActions());
@@ -156,7 +156,7 @@ float Board::evaluate() const {
   return 0;
 }
 
-Board Board::applyTeamActions(const vector<Action> &actions) const {
+Board Board::applyTeamActions(const TeamAction &actions) const {
   Board new_board(*this);
   for (auto &action : actions) {
     action.apply(new_board);
@@ -165,7 +165,7 @@ Board Board::applyTeamActions(const vector<Action> &actions) const {
   return new_board;
 }
 
-float Board::teamActionsTime(const vector<Action> &actions) const {
+float Board::teamActionsTime(const TeamAction &actions) const {
   // TODO: get maximum time
 }
 

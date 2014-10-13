@@ -51,4 +51,6 @@ public:
   void apply(Board &b) const;
 };
 
+typedef std::vector<Action> TeamAction;
+
 #endif
