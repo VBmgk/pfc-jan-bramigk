@@ -28,7 +28,6 @@ public:
 };
 
 class Board {
-  static constexpr int RAMIFICATION_NUMBER = 10;
   static constexpr int MIN_AREA_TO_MARK = 30; // TODO: set correct value
 
   Ball ball;
@@ -106,6 +105,8 @@ public:
 };
 
 class Minimax {
+  static constexpr int RAMIFICATION_NUMBER = 10;
+
 public:
   std::vector<class Action> *decision(const Board &);
   float value(const Board &);

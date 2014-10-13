@@ -17,20 +17,20 @@ bool Board::isGameOver() const {
 
 Player Board::currentPlayer() const { return player; }
 
-TeamAction Board::genActions() const {
+TeamAction Board::genActions(bool kickAction) const {
   TeamAction actions;
 
   if (playerWithBall() == player) {
-    // Pass
-    Robot robotWithBall = getRobotWithBall();
+    if(kickAction) // Kick
+      actions.push_back(*new Kick(robotWithBall));
+    else { // Pass
+      Robot robotWithBall = getRobotWithBall();
 
-    for (auto robot : canGetPass()) {
-      Pass *pass = new Pass(robotWithBall, robot);
-      actions.push_back(*pass);
+      for (auto robot : canGetPass()) {
+        Pass *pass = new Pass(robotWithBall, robot);
+        actions.push_back(*pass);
+      }
     }
-
-    // Kick
-    actions.push_back(*new Kick(robotWithBall));
   }
 
   // Move
@@ -41,14 +41,12 @@ TeamAction Board::genActions() const {
   return actions;
 }
 
-vector<TeamAction> Board::genTeamActions() const {
-  vector<TeamAction> robotsActions;
+TeamAction Board::genKickTeamAction() const {
+  return getActions(true);
+}
 
-  for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
-    robotsActions.push_back(genActions());
-  }
-
-  return robotsActions;
+TeamAction Board::genPassTeamAction() const {
+  return getActions(false);
 }
 
 Robot Board::getRobotWithBall() const { return getRobotWithVirtualBall(ball); }
