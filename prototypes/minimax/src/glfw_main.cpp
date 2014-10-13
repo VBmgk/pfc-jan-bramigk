@@ -9,8 +9,7 @@
 // STATIC DATA
 //
 
-static Board *board;
-static std::mutex *board_mutex;
+static App *app;
 
 //
 // CALLBACKS
@@ -28,8 +27,8 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
   if (action == GLFW_PRESS) {
     switch (key) {
     case GLFW_KEY_R: {
-      std::lock_guard<std::mutex> _(*board_mutex);
-      *board = Board::randomBoard();
+      std::lock_guard<std::mutex> _(app->board_mutex);
+      app->board = Board::randomBoard();
     } break;
     default:
       break;
@@ -37,9 +36,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
   }
 }
 
-static void redraw(GLFWwindow *window, int width, int height);
+static void render(GLFWwindow *window, int width, int height);
 static void resize_callback(GLFWwindow *window, int width, int height) {
-  redraw(window, width, height);
+  render(window, width, height);
 }
 
 static double zoom;
@@ -95,13 +94,19 @@ void init_callbacks(GLFWwindow *window) {
 // MAIN LOGIC
 //
 
-void redraw(GLFWwindow *window, int width, int height) {
-  clear_for_drawing(width, height, zoom);
+void render(GLFWwindow *window, int width, int height) {
+  display(width, height, zoom);
 
   // draw the copied board, lock area could be reduced maybe
   {
-    std::lock_guard<std::mutex> _(*board_mutex);
-    draw_board(*board);
+    std::lock_guard<std::mutex> _(app->board_mutex);
+    draw_board(app->board);
+  }
+
+  // draw the text buffer
+  {
+    std::lock_guard<std::mutex> _(app->text_mutex);
+    draw_text(app->text, width, height);
   }
 
   // poll events
@@ -123,16 +128,16 @@ int main(int argc, char **argv) {
   }
 
   init_callbacks(window);
+  init_graphics();
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
 
-  Minimax::run_minimax([&window](Board &board_, std::mutex &board_mutex_) {
-    board = &board_;
-    board_mutex = &board_mutex_;
+  App::run([&window](App &app_) {
+    app = &app_;
     while (!glfwWindowShouldClose(window)) {
       int width, height;
       glfwGetFramebufferSize(window, &width, &height);
-      redraw(window, width, height);
+      render(window, width, height);
     }
     std::cout << "\rGoodbye!" << std::endl;
   });

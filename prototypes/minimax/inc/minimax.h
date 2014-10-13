@@ -110,8 +110,18 @@ public:
   std::vector<class Action> *decision(const Board &);
   float value(const Board &);
   std::vector<class Board> genSuccessors(const Board &);
+};
 
-  static void run_minimax(std::function<void(Board &, std::mutex &)>);
+struct App {
+  Board board;
+  std::mutex board_mutex;
+  char *text;
+  std::mutex text_mutex;
+
+  App() : text(new char[1024]) { text[0] = '\0'; }
+  ~App() { delete text; }
+
+  static void run(std::function<void(App &)>);
 };
 
 #endif

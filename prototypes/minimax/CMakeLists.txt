@@ -36,7 +36,10 @@ find_package(ZMQ REQUIRED)
 include_directories(${ZMQ_INCLUDE_DIRS})
 
 find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIR})
+include_directories(${OPENGL_INCLUDE_DIRS})
+
+find_package(GLUT REQUIRED)
+include_directories(${GLUT_INCLUDE_DIRS})
 
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)
@@ -49,7 +52,14 @@ find_package(Threads REQUIRED)
 #
 
 add_library(minimax OBJECT ${PROTO_SRC} ${SRC})
-set(COMMON_LIBRARIES ${PROTOBUF_LIBRARIES} ${ZMQ_LIBRARIES} ${ARMADILLO_LIBRARIES} ${OPENGL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+set(COMMON_LIBRARIES
+  ${PROTOBUF_LIBRARIES}
+  ${ZMQ_LIBRARIES}
+  ${ARMADILLO_LIBRARIES}
+  ${OPENGL_LIBRARIES}
+  ${GLUT_LIBRARY}
+  ${CMAKE_THREAD_LIBS_INIT}
+)
 
 add_executable(minimax_cli src/main.cpp $<TARGET_OBJECTS:minimax>)
 target_link_libraries(minimax_cli ${COMMON_LIBRARIES})
