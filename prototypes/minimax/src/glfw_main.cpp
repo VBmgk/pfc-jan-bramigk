@@ -169,12 +169,11 @@ int main(int argc, char **argv) {
     double last_time = 0.0;
     while (!glfwWindowShouldClose(window)) {
 
-      if (is_active) {
-        refresh_callback(window);
-        glfwPollEvents();
-      } else {
-        glfwWaitEvents();
-      }
+      refresh_callback(window);
+      if (!is_active) // if running in background idle avoid high cpu usage, empirical parameter
+        std::this_thread::sleep_for(std::chrono::milliseconds(96));
+
+      glfwPollEvents();
     }
     std::cout << "\rGoodbye!" << std::endl;
   });
