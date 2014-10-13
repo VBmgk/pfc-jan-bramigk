@@ -12,6 +12,8 @@ public:
 
   Vector() : a_v(arma::zeros<arma::vec>(Vector::VEC_SIZE)) {}
 
+  Vector(float x, float y) : a_v({x, y}) {}
+
   // Copy constructor
   Vector(const Vector &vec) : a_v(vec.a_v) {}
 
