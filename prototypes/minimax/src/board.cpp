@@ -21,11 +21,11 @@ TeamAction Board::genActions(bool kickAction) const {
   TeamAction actions;
 
   if (playerWithBall() == player) {
+    Robot robotWithBall = getRobotWithBall();
+
     if(kickAction) // Kick
       actions.push_back(*new Kick(robotWithBall));
     else { // Pass
-      Robot robotWithBall = getRobotWithBall();
-
       for (auto robot : canGetPass()) {
         Pass *pass = new Pass(robotWithBall, robot);
         actions.push_back(*pass);
@@ -42,11 +42,11 @@ TeamAction Board::genActions(bool kickAction) const {
 }
 
 TeamAction Board::genKickTeamAction() const {
-  return getActions(true);
+  return genActions(true);
 }
 
 TeamAction Board::genPassTeamAction() const {
-  return getActions(false);
+  return genActions(false);
 }
 
 Robot Board::getRobotWithBall() const { return getRobotWithVirtualBall(ball); }
@@ -154,7 +154,7 @@ float Board::evaluate() const {
   return 0;
 }
 
-Board Board::applyTeamActions(const TeamAction &actions) const {
+Board Board::applyTeamAction(const TeamAction &actions) const {
   Board new_board(*this);
   for (auto &action : actions) {
     action.apply(new_board);

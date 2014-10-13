@@ -1,5 +1,6 @@
 #include <vector>
 #include <cfloat>
+#include <tuple>
 #include "base.h"
 #include "body.h"
 #include "action.h"
@@ -7,57 +8,45 @@
 
 using namespace std;
 
-TeamAction *Minimax::decision(const Board &board) {
-  float max_value = FLT_MIN;
-  TeamAction *max_action = nullptr;
-
-  for (auto &robotsActions : board.genTeamActions()) {
-    float v = value(board.applyTeamActions(robotsActions));
-
-    if (v > max_value) {
-      max_value = v;
-      max_action = &robotsActions;
-    }
-  }
-
-  return max_action;
+TeamAction Minimax::decision(const Board &board) {
+  return value(board, nullptr).second;
 }
 
-float Minimax::value(const Board &board) {
-  if (board.isGameOver())
-    return board.evaluate();
+pair<float,TeamAction> Minimax::value(const Board &board, TeamAction *maxAction) {
+  pair<float,TeamAction > v, buffer;
+
+  if (board.isGameOver()){ // TODO: implement isTerminaç
+    v.first = board.evaluate();
+    v.second = board.genKickTeamAction();
+  }
 
   else if (board.currentPlayer() == MAX) {
-    float v = FLT_MIN;
+    v.first = FLT_MIN;
+    v.second = board.genPassTeamAction();
 
-    for (auto &state : genSuccessors(board)) {
-      float buffer = value(state);
+    for (int i=0; i<RAMIFICATION_NUMBER ; i++) {
+      TeamAction team_action = board.genPassTeamAction();
 
-      if (v < buffer)
+      buffer = value(board, &team_action);
+      buffer.second = team_action;
+
+      if (v.first < buffer.first)
         v = buffer;
     }
-
-    return v;
   } else {
-    float v = FLT_MAX;
+    v.first = FLT_MAX;
+    v.second = board.genPassTeamAction();
 
-    for (auto state : genSuccessors(board)) {
-      float buffer = value(state);
+    for (int i=0; i<RAMIFICATION_NUMBER ; i++) {
+      TeamAction team_action = board.genPassTeamAction();
 
-      if (v > buffer)
+      buffer = value(board.applyTeamAction(team_action), nullptr);
+      buffer.second = team_action;
+
+      if (v.first > buffer.first)
         v = buffer;
     }
-
-    return v;
-  }
-}
-
-vector<Board> Minimax::genSuccessors(const Board &board) {
-  vector<Board> successors;
-
-  for (auto &actions : board.genTeamActions()) {
-    successors.push_back(board.applyTeamActions(actions));
   }
 
-  return successors;
+  return v;
 }
