@@ -83,23 +83,23 @@ public:
   bool isGameOver() const;
   Player currentPlayer() const;
 
-  std::vector<Action> getActions() const;
-  std::vector<std::vector<class Action>> getRobotsActions() const;
+  std::vector<Action> genActions() const;
+  std::vector<std::vector<class Action>> genTeamActions() const;
 
   float openGoalArea() const;
   float evaluate() const;
 
   std::vector<Robot> canGetPass() const;
-  float getRobotsActionsTime(const std::vector<class Action> &) const;
+  float teamActionsTime(const std::vector<class Action> &) const;
   std::vector<Robot> getRobots2Move() const;
 
   Player playerWithBall() const;
   Robot getRobotWithBall() const;
   Robot getRobotWithVirtualBall(const Ball &) const;
 
-  float getTimeToBall(const Robot &robot) const;
-  float getTimeToVirtualBall(const Robot &robot, const Ball &ball) const;
-  Board applyRobotsActions(const std::vector<class Action> &) const;
+  float timeToBall(const Robot &robot) const;
+  float timeToVirtualBall(const Robot &robot, const Ball &ball) const;
+  Board applyTeamActions(const std::vector<class Action> &) const;
 
   static float fieldWidth() { return 8.090; }
   static float fieldHeight() { return 6.050; }
@@ -108,8 +108,8 @@ public:
 class Minimax {
 public:
   std::vector<class Action> *decision(const Board &);
-  float getValue(const Board &);
-  std::vector<class Board> getSuccessors(const Board &);
+  float value(const Board &);
+  std::vector<class Board> genSuccessors(const Board &);
 
   static void run_minimax(std::function<void(Board &, std::mutex &)>);
 };

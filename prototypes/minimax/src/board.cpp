@@ -17,7 +17,7 @@ bool Board::isGameOver() const {
 
 Player Board::currentPlayer() const { return player; }
 
-vector<Action> Board::getActions() const {
+vector<Action> Board::genActions() const {
   vector<Action> actions;
 
   if (playerWithBall() == player) {
@@ -41,11 +41,11 @@ vector<Action> Board::getActions() const {
   return actions;
 }
 
-vector<vector<Action>> Board::getRobotsActions() const {
+vector<vector<Action>> Board::genTeamActions() const {
   vector<vector<Action>> robotsActions;
 
   for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
-    robotsActions.push_back(getActions());
+    robotsActions.push_back(genActions());
   }
 
   return robotsActions;
@@ -67,7 +67,7 @@ Robot Board::getRobotWithVirtualBall(const Ball &virt_ball) const {
 
   float time;
   for (auto &robot : robots) {
-    time = getTimeToVirtualBall(robot, virt_ball);
+    time = timeToVirtualBall(robot, virt_ball);
 
     if (time < min_time) {
       robotWithBall = robot;
@@ -78,13 +78,13 @@ Robot Board::getRobotWithVirtualBall(const Ball &virt_ball) const {
   return robotWithBall;
 }
 
-float Board::getTimeToBall(const Robot &robot) const {
-  return getTimeToVirtualBall(robot, this->ball);
+float Board::timeToBall(const Robot &robot) const {
+  return timeToVirtualBall(robot, this->ball);
 }
 
-float Board::getTimeToVirtualBall(const Robot &robot,
+float Board::timeToVirtualBall(const Robot &robot,
                                   const Ball &virt_ball) const {
-  /* TODO
+  /*
    * vb.t + pb = vr.t + pr, t_min? vr?
    * => 0 = (vr^2 - vb^2)t^2 - |pr - pb|^2 - 2.vb.(pb - pr).t
    * => delta = 4.[ (vb.(pb - pr))^2 + (vr^2 - vb^2).|pr - pb|^2]
@@ -156,7 +156,7 @@ float Board::evaluate() const {
   return 0;
 }
 
-Board Board::applyRobotsActions(const vector<Action> &actions) const {
+Board Board::applyTeamActions(const vector<Action> &actions) const {
   Board new_board(*this);
   for (auto &action : actions) {
     action.apply(new_board);
@@ -165,7 +165,7 @@ Board Board::applyRobotsActions(const vector<Action> &actions) const {
   return new_board;
 }
 
-float Board::getRobotsActionsTime(const vector<Action> &actions) const {
+float Board::teamActionsTime(const vector<Action> &actions) const {
   // TODO: get maximum time
 }
 

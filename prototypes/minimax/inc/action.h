@@ -23,23 +23,11 @@ class Move : public Action {
   float time;
 
 public:
-  Move(const class Robot &robot) : Action(robot.getPlayer(), robot.getId()) {
-    Vector position = robot.getLastPlanedPos();
-    // srand(time(NULL));//XXX: ????
-    if (rand() % 2 == 1) {
-      // Move with uniforme distribution
-      nextPosition = robot.getURandPos();
-    } else {
-      // Move with normal distribution
-      nextPosition = robot.getNRandPos();
-    }
-    // Compute minimum time
-    time = robot.getDist(nextPosition) / MAX_SPEED;
-  }
+  Move(const class Robot &robot);
 
-  float getTime() { return time; }
+  float getTime();
 
-  void apply(Board &b) const {}
+  void apply(Board &b) const;
 };
 
 class Pass : public Action {
@@ -49,7 +37,7 @@ public:
   Pass(Robot r_b, Robot r_rcv)
       : Action(r_b.getPlayer(), r_b.getId()), rcv_id(r_rcv.getId()) {}
 
-  void apply(Board &b) const {}
+  void apply(Board &b) const;
 };
 
 class Kick : public Action {
@@ -60,7 +48,7 @@ public:
   Kick(Robot robot)
       : Action(robot.getPlayer(), robot.getId()), speed(DEFAULT_SPEED) {}
 
-  void apply(Board &b) const {}
+  void apply(Board &b) const;
 };
 
 #endif

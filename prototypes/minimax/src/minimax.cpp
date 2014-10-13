@@ -11,11 +11,11 @@ vector<Action> *Minimax::decision(const Board &board) {
   float max_value = FLT_MIN;
   vector<Action> *max_action = nullptr;
 
-  for (auto &robotsActions : board.getRobotsActions()) {
-    float value = getValue(board.applyRobotsActions(robotsActions));
+  for (auto &robotsActions : board.genTeamActions()) {
+    float v = value(board.applyTeamActions(robotsActions));
 
-    if (value > max_value) {
-      max_value = value;
+    if (v > max_value) {
+      max_value = v;
       max_action = &robotsActions;
     }
   }
@@ -23,40 +23,40 @@ vector<Action> *Minimax::decision(const Board &board) {
   return max_action;
 }
 
-float Minimax::getValue(const Board &board) {
+float Minimax::value(const Board &board) {
   if (board.isGameOver())
     return board.evaluate();
 
   else if (board.currentPlayer() == MAX) {
-    float value = FLT_MIN;
+    float v = FLT_MIN;
 
-    for (auto &state : getSuccessors(board)) {
-      float buffer = getValue(state);
+    for (auto &state : genSuccessors(board)) {
+      float buffer = value(state);
 
-      if (value < buffer)
-        value = buffer;
+      if (v < buffer)
+        v = buffer;
     }
 
-    return value;
+    return v;
   } else {
-    float value = FLT_MAX;
+    float v = FLT_MAX;
 
-    for (auto state : getSuccessors(board)) {
-      float buffer = getValue(state);
+    for (auto state : genSuccessors(board)) {
+      float buffer = value(state);
 
-      if (value > buffer)
-        value = buffer;
+      if (v > buffer)
+        v = buffer;
     }
 
-    return value;
+    return v;
   }
 }
 
-vector<Board> Minimax::getSuccessors(const Board &board) {
+vector<Board> Minimax::genSuccessors(const Board &board) {
   vector<Board> successors;
 
-  for (auto &actions : board.getRobotsActions()) {
-    successors.push_back(board.applyRobotsActions(actions));
+  for (auto &actions : board.genTeamActions()) {
+    successors.push_back(board.applyTeamActions(actions));
   }
 
   return successors;

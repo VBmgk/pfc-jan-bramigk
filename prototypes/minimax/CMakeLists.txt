@@ -10,6 +10,7 @@ endif()
 
 include_directories(inc)
 set(SRC
+  src/action.cpp
   src/minimax.cpp
   src/board.cpp
   src/run.cpp
