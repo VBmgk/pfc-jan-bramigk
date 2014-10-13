@@ -12,6 +12,8 @@ public:
 
   Vector() : a_v(arma::zeros<arma::vec>(Vector::VEC_SIZE)) {}
 
+  Vector(float x, float y) : a_v({x, y}) {}
+
   // Copy constructor
   Vector(const Vector &vec) : a_v(vec.a_v) {}
 
@@ -60,10 +62,10 @@ public:
     return (float)a_v(i);
   }
 
-  static Vector unit(Vector v){
-    Vector v(arma::normalize(v.a_v));
+  static Vector unit(Vector v) {
+    Vector vec(arma::normalise(v.a_v));
 
-    return v;
+    return vec;
   }
 
   // Overloading output stream operator

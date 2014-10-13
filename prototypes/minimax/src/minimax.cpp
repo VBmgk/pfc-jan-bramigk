@@ -12,10 +12,11 @@ TeamAction Minimax::decision(const Board &board) {
   return value(board, nullptr).second;
 }
 
-pair<float,TeamAction> Minimax::value(const Board &board, TeamAction *maxAction) {
-  pair<float,TeamAction > v, buffer;
+pair<float, TeamAction> Minimax::value(const Board &board,
+                                       TeamAction *maxAction) {
+  pair<float, TeamAction> v, buffer;
 
-  if (board.isGameOver()){ // TODO: implement isTerminaç
+  if (board.isGameOver()) { // TODO: implement isTerminaç
     v.first = board.evaluate();
     v.second = board.genKickTeamAction();
   }
@@ -24,7 +25,7 @@ pair<float,TeamAction> Minimax::value(const Board &board, TeamAction *maxAction)
     v.first = FLT_MIN;
     v.second = board.genPassTeamAction();
 
-    for (int i=0; i<RAMIFICATION_NUMBER ; i++) {
+    for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
       TeamAction team_action = board.genPassTeamAction();
 
       buffer = value(board, &team_action);
@@ -37,7 +38,7 @@ pair<float,TeamAction> Minimax::value(const Board &board, TeamAction *maxAction)
     v.first = FLT_MAX;
     v.second = board.genPassTeamAction();
 
-    for (int i=0; i<RAMIFICATION_NUMBER ; i++) {
+    for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
       TeamAction team_action = board.genPassTeamAction();
 
       buffer = value(board.applyTeamAction(team_action), nullptr);
