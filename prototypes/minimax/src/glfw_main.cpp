@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <iostream>
+#include <chrono>
+#include <thread>
 #include <GLFW/glfw3.h>
 
 #include "minimax.h"
@@ -37,9 +39,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
 }
 
 static void render(GLFWwindow *window, int width, int height);
-static void resize_callback(GLFWwindow *window, int width, int height) {
-  render(window, width, height);
-}
+
+//static void resize_callback(GLFWwindow *window, int width, int height) {
+//  render(window, width, height);
+//}
 
 static double zoom;
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
@@ -80,22 +83,50 @@ void mousebutton_callback(GLFWwindow *window, int button, int action,
   }
 }
 
+
+void refresh_callback(GLFWwindow *window) {
+  int width, height;
+  glfwGetFramebufferSize(window, &width, &height);
+  render(window, width, height);
+}
+
+static bool is_active = false;
+void focus_callback(GLFWwindow *window, int focus) {
+  is_active = focus == GL_TRUE;
+}
+
 void init_callbacks(GLFWwindow *window) {
   zoom = 0.28;
   is_drag = false;
-  glfwSetWindowSizeCallback(window, resize_callback);
+  //glfwSetWindowSizeCallback(window, resize_callback);
   glfwSetScrollCallback(window, scroll_callback);
   glfwSetCursorPosCallback(window, cursorpos_callback);
   glfwSetMouseButtonCallback(window, mousebutton_callback);
   glfwSetKeyCallback(window, key_callback);
+  glfwSetWindowRefreshCallback(window, refresh_callback);
+  glfwSetWindowFocusCallback(window, focus_callback);
 }
 
 //
 // MAIN LOGIC
 //
 
+static int n_frames = 0;
+static double last_time = 0.0;
+static double fps = 0;
+
 void render(GLFWwindow *window, int width, int height) {
   display(width, height, zoom);
+
+  // calculate current FPS
+  double current_time = glfwGetTime();
+  n_frames++;
+  if (current_time - last_time >= 1.0 ) { // If last cout was more than 1 sec ago
+    fps = (double) n_frames;
+    //glfwSetWindowTitle(window, title);
+    n_frames = 0;
+    last_time += 1.0;
+  }
 
   // draw the copied board, lock area could be reduced maybe
   {
@@ -104,14 +135,15 @@ void render(GLFWwindow *window, int width, int height) {
   }
 
   // draw the text buffer
+  char text[1024];
   {
-    std::lock_guard<std::mutex> _(app->text_mutex);
-    draw_text(app->text, width, height);
+    std::lock_guard<std::mutex> _(app->display_mutex);
+    snprintf(text, 1024, "%2.0ffps\nuptime: %is\n%i packets/s\n", fps, app->display.uptime, app->display.pps);
   }
+  draw_text(text, width, height);
 
   // poll events
   glfwSwapBuffers(window);
-  glfwPollEvents();
 }
 
 int main(int argc, char **argv) {
@@ -134,10 +166,15 @@ int main(int argc, char **argv) {
 
   App::run([&window](App &app_) {
     app = &app_;
+    double last_time = 0.0;
     while (!glfwWindowShouldClose(window)) {
-      int width, height;
-      glfwGetFramebufferSize(window, &width, &height);
-      render(window, width, height);
+
+      if (is_active) {
+        refresh_callback(window);
+        glfwPollEvents();
+      } else {
+        glfwWaitEvents();
+      }
     }
     std::cout << "\rGoodbye!" << std::endl;
   });

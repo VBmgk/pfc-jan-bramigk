@@ -2,7 +2,6 @@
 #include <iostream>
 #include <atomic>
 #include <chrono>
-#include <stdio.h>
 
 #include <zmq.hpp>
 
@@ -29,7 +28,11 @@ void App::run(std::function<void(App &)> run) {
     int n_ticks = 0;
     while (should_recv) {
       int count = req_count.exchange(0);
-      sprintf(app.text, "uptime: %is\n%i packets/s\n", ++n_ticks, count);
+      {
+        std::lock_guard<std::mutex> _(app.display_mutex);
+        app.display.uptime = ++n_ticks;
+        app.display.pps = count;
+      }
       std::this_thread::sleep_for(std::chrono::seconds(1));
     }
   });
@@ -40,6 +43,10 @@ void App::run(std::function<void(App &)> run) {
 
     static const char *addr = "tcp://*:5555";
     socket.bind(addr);
+    int timeout = 100; // ms
+    socket.setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof timeout);
+    socket.setsockopt(ZMQ_SNDTIMEO, &timeout, sizeof timeout);
+
     zmq::message_t buffer(1024);
     std::string data;
 
@@ -49,7 +56,7 @@ void App::run(std::function<void(App &)> run) {
 
     while (should_recv) {
       try {
-        if (socket.recv(&buffer, ZMQ_RCVTIMEO)) {
+        if (socket.recv(&buffer)) {
           std::string buffer_str((char *)buffer.data(), buffer.size());
           req_count++;
           roboime::Update u;
