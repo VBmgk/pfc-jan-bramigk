@@ -91,6 +91,9 @@ public:
   TeamAction genPassTeamAction() const;
 
   float openGoalArea() const;
+  bool freeKickLine(int point_index) const;
+  std::vector<Robot> getRobotsMoving() const;
+  bool kickLineCrossRobot(const int point_index, const Robot &robot) const;
   float evaluate() const;
 
   Board virtualStep(float time) const;

@@ -224,38 +224,39 @@ float Board::openGoalArea() const {
   return area;
 }
 
-bool Board::freeKickLine(int point_index){
+bool Board::freeKickLine(int point_index) const {
   for(auto& robot: getRobotsMoving())
     if(kickLineCrossRobot(point_index, robot)) return false;
 
   return true;
 }
 
-vector<Robot> getRobotsMoving(){
+vector<Robot> Board::getRobotsMoving() const {
   vector<Robot> robotsMoving;
-  Robot &robot_with_ball = getRobotWithBall();
+  Robot robot_with_ball = getRobotWithBall();
 
   if(playerWithBall() == Player::MAX){
     robotsMoving = min.getRobots();
 
     for (auto &robot : max.getRobots())
       if (robot.getId() != robot_with_ball.getId())
-        robotsMovings.push_back(robot);
+        robotsMoving.push_back(robot);
   } else {
     robotsMoving = max.getRobots();
 
     for (auto &robot : min.getRobots())
       if (robot.getId() != robot_with_ball.getId())
-        robotsMovings.push_back(robot);
+        robotsMoving.push_back(robot);
   }
 
   return robotsMoving;
 }
 
-bool Board::kickLineCrossRobot(const int point_index, const Robot &robot){
+bool Board::kickLineCrossRobot(const int point_index, const Robot &robot) const {
   Vector point(goalX(), goalY() + point_index * goalWidth() * 1.0 / NUM_SAMPLE_POINTS);
 
-  if(Vector::lineSegmentCrossCircle(point, getRobotWithBall().pos(), robot.pos(), Robot::radius()) return true;
+  if(Vector::lineSegmentCrossCircle(point, getRobotWithBall().pos(), robot.pos(), Robot::radius()))
+    return true;
 
   return false;
 }
@@ -268,7 +269,7 @@ float Board::evaluate() const {
 
   float value = WEIGHT_GOAL_OPEN_AREA   * goal_area +
                 WEIGHT_RECEIVERS_NUM    * receivers_num +
-                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball.distaceToEnemyGoal();
+                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball.distanceToEnemyGoal();
 
   if(robot_with_ball.getPlayer() == Player::MAX) return value;
 
