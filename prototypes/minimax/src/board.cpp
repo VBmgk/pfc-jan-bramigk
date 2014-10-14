@@ -234,10 +234,14 @@ std::vector<const Robot *> Board::getRobotsMoving() const {
 
 bool Board::kickLineCrossRobot(const int point_index,
                                const Robot &robot) const {
-  Vector point(goalX(),
-               goalY() + point_index * goalWidth() * 1.0 / NUM_SAMPLE_POINTS);
+  auto robot_player = getRobotWithBall();
+  auto &robot_with_ball = robot_player.first;
+  auto player_with_ball = robot_player.second;
 
-  auto &robot_with_ball = getRobotWithBall().first;
+  Vector point(0, goalWidth() * (1/2 - point_index * 1.0 / NUM_SAMPLE_POINTS));
+
+  point = enemyGoalPos(player_with_ball) + point;
+
   if (Vector::lineSegmentCrossCircle(point, robot_with_ball.pos(), robot.pos(),
                                      Robot::radius()))
     return true;
@@ -255,7 +259,7 @@ float Board::evaluate() const {
 
   float value = WEIGHT_GOAL_OPEN_AREA * goal_area +
                 WEIGHT_RECEIVERS_NUM * receivers_num +
-                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball.distanceToEnemyGoal();
+                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball.getDist(enemyGoalPos(player_with_ball));
 
   if (player_with_ball == MAX)
     return value;

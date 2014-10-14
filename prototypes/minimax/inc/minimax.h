@@ -34,6 +34,7 @@ class Board {
   Ball ball;
   Team max, min;
   float actionsMaxTime;
+  bool maxOnLeft = true;
 
 public:
   Board() : min(), max(), ball(), actionsMaxTime(FLT_MAX) {}
@@ -122,6 +123,30 @@ public:
   static float goalX() { return fieldWidth()/2; }
   static float goalY() { return fieldHeight()/2; }
   static float goalWidth() { return 1; }
+
+  Vector goalPos(Player p) const {
+    float goal_x = goalX();
+
+    if(maxOnLeft)
+      if(p == MAX)
+        goal_x *= -1;
+      else
+        if(p == MIN)
+          goal_x *= -1;
+
+    Vector goal_pos(goal_x, goalY());
+
+    return goal_pos;
+  }
+
+  Vector enemyGoalPos(Player p) const {
+    switch(p){
+      case MAX:
+        return goalPos(MIN);
+      case MIN:
+        return goalPos(MAX);
+    }
+  }
 };
 
 class Minimax {
