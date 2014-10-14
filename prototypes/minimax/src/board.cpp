@@ -209,15 +209,17 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
 float Board::openGoalArea() const {
   float area = 0;
 
-  for(int i=0; i<NUM_SAMPLE_POINTS; i++)
-    if(freeKickLine(i)) area++;
+  for (int i = 0; i < NUM_SAMPLE_POINTS; i++)
+    if (freeKickLine(i))
+      area++;
 
   return area;
 }
 
 bool Board::freeKickLine(int point_index) const {
-  for(auto robot: getRobotsMoving())
-    if(kickLineCrossRobot(point_index, *robot)) return false;
+  for (auto robot : getRobotsMoving())
+    if (kickLineCrossRobot(point_index, *robot))
+      return false;
 
   return true;
 }
@@ -230,11 +232,15 @@ std::vector<const Robot *> Board::getRobotsMoving() const {
   return robots;
 }
 
-bool Board::kickLineCrossRobot(const int point_index, const Robot &robot) const {
-  Vector point(goalX(), goalY() + point_index * goalWidth() * 1.0 / NUM_SAMPLE_POINTS);
+bool Board::kickLineCrossRobot(const int point_index,
+                               const Robot &robot) const {
+  Vector point(goalX(),
+               goalY() + point_index * goalWidth() * 1.0 / NUM_SAMPLE_POINTS);
 
-  auto & robot_with_ball = getRobotWithBall().first;
-  if(Vector::lineSegmentCrossCircle(point, robot_with_ball.pos(), robot.pos(), Robot::radius())) return true;
+  auto &robot_with_ball = getRobotWithBall().first;
+  if (Vector::lineSegmentCrossCircle(point, robot_with_ball.pos(), robot.pos(),
+                                     Robot::radius()))
+    return true;
 
   return false;
 }
@@ -247,11 +253,12 @@ float Board::evaluate() const {
   auto &robot_with_ball = with_ball.first;
   auto &player_with_ball = with_ball.second;
 
-  float value = WEIGHT_GOAL_OPEN_AREA   * goal_area +
-                WEIGHT_RECEIVERS_NUM    * receivers_num +
+  float value = WEIGHT_GOAL_OPEN_AREA * goal_area +
+                WEIGHT_RECEIVERS_NUM * receivers_num +
                 WEIGHT_DISTANCE_TO_GOAL * robot_with_ball.distanceToEnemyGoal();
 
-  if (player_with_ball == MAX) return value;
+  if (player_with_ball == MAX)
+    return value;
 
   return -value;
 }
@@ -272,8 +279,9 @@ Board Board::applyTeamAction(const TeamAction &max_a,
 float Board::teamActionsTime(const TeamAction &actions) const {
   float time = FLT_MIN;
 
-  for(auto &action: actions)
-    if(action.getTime() > time) time = action.getTime();
+  for (auto &action : actions)
+    if (action.getTime() > time)
+      time = action.getTime();
 
   return time;
 }

@@ -68,7 +68,8 @@ public:
     return vec;
   }
 
-  static bool lineSegmentCrossCircle(const Vector &p1, const Vector &p2, const Vector &center, const float radius){
+  static bool lineSegmentCrossCircle(const Vector &p1, const Vector &p2,
+                                     const Vector &center, const float radius) {
     // TODO
     return true;
   }

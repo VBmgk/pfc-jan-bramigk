@@ -24,11 +24,12 @@ public:
 };
 
 class Board {
-  static constexpr int MIN_AREA_TO_MARK = 30; // TODO: set correct value
-  static constexpr int NUM_SAMPLE_POINTS = 300; // TODO: set correct value
-  static constexpr float WEIGHT_GOAL_OPEN_AREA         = 1.0; // TODO: set correct value
-  static constexpr float WEIGHT_RECEIVERS_NUM    = 1.0; // TODO: set correct value
-  static constexpr float WEIGHT_DISTANCE_TO_GOAL = 1.0; // TODO: set correct value
+  static constexpr int MIN_AREA_TO_MARK = 30;         // TODO: set correct value
+  static constexpr int NUM_SAMPLE_POINTS = 300;       // TODO: set correct value
+  static constexpr float WEIGHT_GOAL_OPEN_AREA = 1.0; // TODO: set correct value
+  static constexpr float WEIGHT_RECEIVERS_NUM = 1.0;  // TODO: set correct value
+  static constexpr float WEIGHT_DISTANCE_TO_GOAL =
+      1.0; // TODO: set correct value
 
   Ball ball;
   Team max, min;
