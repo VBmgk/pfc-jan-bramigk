@@ -82,10 +82,12 @@ void draw_board(const Board &board) {
 // GLuint tex;
 
 void init_graphics() {
+#ifndef __APPLE__
   char *arg0 = "minimax";
   int argc = 1;
 
   glutInit(&argc, &arg0);
+#endif
   // if (FT_Init_FreeType(&ft)) {
   //  std::cerr << "Could not init freetype library" << std::endl;
   //  exit(EXIT_FAILURE);
