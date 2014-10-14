@@ -24,12 +24,12 @@ public:
 };
 
 class Board {
-  static constexpr int MIN_AREA_TO_MARK = 30;         // TODO: set correct value
-  static constexpr int NUM_SAMPLE_POINTS = 300;       // TODO: set correct value
-  static constexpr float WEIGHT_GOAL_OPEN_AREA = 1.0; // TODO: set correct value
-  static constexpr float WEIGHT_RECEIVERS_NUM = 1.0;  // TODO: set correct value
-  static constexpr float WEIGHT_DISTANCE_TO_GOAL =
-      1.0; // TODO: set correct value
+  // TODO> calibrate
+  static constexpr int MIN_AREA_TO_MARK = 30;
+  static constexpr int NUM_SAMPLE_POINTS = 300;
+  static constexpr float WEIGHT_GOAL_OPEN_AREA = 1.0;
+  static constexpr float WEIGHT_RECEIVERS_NUM = 1.0;
+  static constexpr float WEIGHT_DISTANCE_TO_GOAL = 1.0;
 
   Ball ball;
   Team max, min;
@@ -118,10 +118,10 @@ public:
   static float fieldWidth() { return 8.090; }
   static float fieldHeight() { return 6.050; }
 
-  // TODO; set correct values
-  static float goalX() { return 6.050; }
-  static float goalY() { return 6.050; }
-  static float goalWidth() { return 4; }
+  // Double-size field
+  static float goalX() { return fieldWidth()/2; }
+  static float goalY() { return fieldHeight()/2; }
+  static float goalWidth() { return 1; }
 };
 
 class Minimax {

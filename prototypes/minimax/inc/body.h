@@ -40,8 +40,8 @@ public:
   Vector getLastPlanedPos() const { return last_planed_pos; }
 
   float distanceToEnemyGoal() const {
-    // TODO
-    return 0;
+    Vector goal(Board::goalX(),Board::goalY());
+    return getDist(goal);
   }
 
   static constexpr float maxV2() { return 4 * 4; }
