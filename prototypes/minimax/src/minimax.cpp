@@ -4,13 +4,13 @@
 #include "minimax.h"
 
 TeamAction Minimax::decision(const Board &board) {
-  return value(board, MAX, nullptr).second;
+  return value(board, MAX, nullptr, 1).second;
 }
 
 std::pair<float, TeamAction> Minimax::value(const Board &board, Player player,
-                                            TeamAction *max_action) {
+                                            TeamAction *max_action, int depth) {
 
-  if (board.isGameOver()) {
+  if (board.isGameOver() || depth >= MAX_DEPTH) {
     // TODO: implement isGameOver
     return std::make_pair(board.evaluate(), board.genKickTeamAction(player));
   }
@@ -22,7 +22,7 @@ std::pair<float, TeamAction> Minimax::value(const Board &board, Player player,
       auto max_action = board.genPassTeamAction(MAX);
 
       // recurse
-      auto buffer = value(board, MIN, &max_action);
+      auto buffer = value(board, MIN, &max_action, depth + 1);
 
       // minimize loss
       if (v.first < buffer.first)
@@ -41,7 +41,7 @@ std::pair<float, TeamAction> Minimax::value(const Board &board, Player player,
       auto next_board = board.applyTeamAction(*max_action, min_action);
 
       // recurse
-      auto buffer = value(next_board, MAX, nullptr);
+      auto buffer = value(next_board, MAX, nullptr, depth + 1);
 
       // minimize loss
       if (v.first > buffer.first)

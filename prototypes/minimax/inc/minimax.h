@@ -102,12 +102,9 @@ public:
   std::vector<const Robot *> canGetPass(Player) const;
   float teamActionsTime(const std::vector<class Action> &) const;
 
-  // Player playerWithBall() const;
-  // Player playerWithVirtualBall(const Ball &virt_ball, const Robot robot)
-  // const;
-  std::pair<const Robot &, Player> getRobotWithBall() const;
-  std::pair<const Robot &, Player> getRobotWithVirtualBall(const Ball &) const;
-  std::pair<const Robot &, Player>
+  std::pair<const Robot *, Player> getRobotWithBall() const;
+  std::pair<const Robot *, Player> getRobotWithVirtualBall(const Ball &) const;
+  std::pair<const Robot *, Player>
   getRobotWithVirtualBall(const Ball &virt_ball, const Robot *r_rcv) const;
   std::vector<const Robot *> getOtherRobots(Player, const Robot &) const;
 
@@ -126,7 +123,8 @@ public:
 
 class Minimax {
   static constexpr int RAMIFICATION_NUMBER = 10;
-  std::pair<float, TeamAction> value(const Board &, Player, TeamAction *);
+  static constexpr int MAX_DEPTH = 2;
+  std::pair<float, TeamAction> value(const Board &, Player, TeamAction *, int depth);
 
 public:
   TeamAction decision(const Board &);

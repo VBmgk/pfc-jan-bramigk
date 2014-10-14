@@ -25,19 +25,21 @@ TeamAction Board::genActions(Player player, bool kickAction) const {
   TeamAction actions;
 
   auto with_ball = getRobotWithBall();
-  auto &robot_with_ball = with_ball.first;
+  auto robot_with_ball = with_ball.first;
   auto player_with_ball = with_ball.second;
 
   // push an action for the robot with ball, if it's us
   if (player_with_ball == player) {
     // Kick
     if (kickAction) {
-      actions.push_back(*new Kick(robot_with_ball));
+      // FIXME: this is will lead to memory leak
+      actions.push_back(*new Kick(*robot_with_ball));
       // Pass
     } else {
       bool any_pass = false;
       for (auto robot : canGetPass(player)) {
-        Pass *pass = new Pass(robot_with_ball, *robot);
+        // FIXME: this is will lead to memory leak
+        Pass *pass = new Pass(*robot_with_ball, *robot);
         actions.push_back(*pass);
         any_pass = true;
         // FIXME: only a single action per robot!
@@ -47,29 +49,31 @@ TeamAction Board::genActions(Player player, bool kickAction) const {
       // in the rare case there isn't any possible pass
       // for the robot with ball, we'll make it move
       if (!any_pass) {
-        actions.push_back(*new Move(robot_with_ball));
+        // FIXME: this is will lead to memory leak
+        actions.push_back(*new Move(*robot_with_ball));
       }
     }
   }
 
   // push a Move action for every other robot
-  for (auto robot : getOtherRobots(player, robot_with_ball)) {
+  for (auto robot : getOtherRobots(player, *robot_with_ball)) {
+    // FIXME: this is will lead to memory leak
     actions.push_back(*new Move(*robot));
   }
 
   return actions;
 }
 
-std::pair<const Robot &, Player> Board::getRobotWithBall() const {
+std::pair<const Robot *, Player> Board::getRobotWithBall() const {
   return getRobotWithVirtualBall(ball);
 }
 
-std::pair<const Robot &, Player>
+std::pair<const Robot *, Player>
 Board::getRobotWithVirtualBall(const Ball &virt_ball) const {
   return getRobotWithVirtualBall(virt_ball, nullptr);
 }
 
-std::pair<const Robot &, Player>
+std::pair<const Robot *, Player>
 Board::getRobotWithVirtualBall(const Ball &virt_ball,
                                const Robot *r_rcv) const {
   float min_time = FLT_MAX;
@@ -95,7 +99,7 @@ Board::getRobotWithVirtualBall(const Ball &virt_ball,
     robot_with_ball = r_rcv;
   }
 
-  return std::make_pair(*robot_with_ball, player_with_ball);
+  return std::make_pair(robot_with_ball, player_with_ball);
 }
 
 float Board::timeToBall(const Robot &robot) const {
@@ -177,17 +181,17 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
   std::vector<const Robot *> robots;
 
   auto with_ball = getRobotWithBall();
-  auto &robot_with_ball = with_ball.first;
+  auto robot_with_ball = with_ball.first;
   auto player_with_ball = with_ball.second;
 
   // it only makes sense if the player has the ball
   if (player_with_ball == player) {
-    float step_time = timeToBall(robot_with_ball);
+    float step_time = timeToBall(*robot_with_ball);
     Board vrt_board = virtualStep(step_time);
 
     // test against every friend except for self
     for (auto &robot : vrt_board.getTeam(player).getRobots()) {
-      if (&robot == &robot_with_ball)
+      if (&robot == robot_with_ball)
         continue;
 
       // create a virtual ball with future position
@@ -198,7 +202,7 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
       // Add robot if the same robot will have the ball after kick
       auto with_ball = getRobotWithVirtualBall(vrt_ball, &robot);
       auto robot_with_ball_after_kick = with_ball.first;
-      if (&robot == &robot_with_ball_after_kick)
+      if (&robot == robot_with_ball_after_kick)
         robots.push_back(&robot);
     }
   }
@@ -225,9 +229,9 @@ bool Board::freeKickLine(int point_index) const {
 }
 
 std::vector<const Robot *> Board::getRobotsMoving() const {
-  auto &robot_with_ball = getRobotWithBall().first;
-  auto robots = getOtherRobots(MIN, robot_with_ball);
-  auto robots2 = getOtherRobots(MAX, robot_with_ball);
+  auto robot_with_ball = getRobotWithBall().first;
+  auto robots = getOtherRobots(MIN, *robot_with_ball);
+  auto robots2 = getOtherRobots(MAX, *robot_with_ball);
   robots.insert(robots.end(), robots2.begin(), robots2.end());
   return robots;
 }
@@ -237,8 +241,8 @@ bool Board::kickLineCrossRobot(const int point_index,
   Vector point(goalX(),
                goalY() + point_index * goalWidth() * 1.0 / NUM_SAMPLE_POINTS);
 
-  auto &robot_with_ball = getRobotWithBall().first;
-  if (Vector::lineSegmentCrossCircle(point, robot_with_ball.pos(), robot.pos(),
+  auto robot_with_ball = getRobotWithBall().first;
+  if (Vector::lineSegmentCrossCircle(point, robot_with_ball->pos(), robot.pos(),
                                      Robot::radius()))
     return true;
 
@@ -250,12 +254,12 @@ float Board::evaluate() const {
   float receivers_num = canGetPass(MAX).size();
 
   auto with_ball = getRobotWithBall();
-  auto &robot_with_ball = with_ball.first;
-  auto &player_with_ball = with_ball.second;
+  auto robot_with_ball = with_ball.first;
+  auto player_with_ball = with_ball.second;
 
   float value = WEIGHT_GOAL_OPEN_AREA * goal_area +
                 WEIGHT_RECEIVERS_NUM * receivers_num +
-                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball.distanceToEnemyGoal();
+                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball->distanceToEnemyGoal();
 
   if (player_with_ball == MAX)
     return value;
