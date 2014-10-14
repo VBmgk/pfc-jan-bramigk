@@ -34,9 +34,6 @@ class Board {
   Team max, min;
   float actionsMaxTime;
 
-  bool freeKickLine(int point_index) const;
-  bool kickLineCrossRobot(const int point_index, const Robot &robot) const;
-
 public:
   Board() : min(), max(), ball(), actionsMaxTime(FLT_MAX) {}
 
@@ -95,6 +92,9 @@ public:
   TeamAction genActions(Player, bool) const;
 
   float openGoalArea() const;
+  bool freeKickLine(int point_index) const;
+  std::vector<const Robot *> getRobotsMoving() const;
+  bool kickLineCrossRobot(const int point_index, const Robot &robot) const;
   float evaluate() const;
 
   Board virtualStep(float time) const;
@@ -109,7 +109,6 @@ public:
   std::pair<const Robot &, Player>
   getRobotWithVirtualBall(const Ball &virt_ball, const Robot *r_rcv) const;
   std::vector<const Robot *> getOtherRobots(Player, const Robot &) const;
-  std::vector<const Robot *> getRobotsMoving() const;
 
   float timeToBall(const Robot &robot) const;
   float timeToVirtualBall(const Robot &robot, const Ball &ball) const;
