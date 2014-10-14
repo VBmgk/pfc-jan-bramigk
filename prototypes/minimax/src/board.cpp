@@ -215,53 +215,43 @@ float Board::openGoalArea() const {
   return area;
 }
 
-bool Board::freeKickLine(int point_index){
-  for(auto& robot: getRobotsMoving())
-    if(kickLineCrossRobot(point_index, robot)) return false;
+bool Board::freeKickLine(int point_index) const {
+  for(auto robot: getRobotsMoving())
+    if(kickLineCrossRobot(point_index, *robot)) return false;
 
   return true;
 }
 
-vector<Robot> getRobotsMoving(){
-  vector<Robot> robotsMoving;
-  Robot &robot_with_ball = getRobotWithBall();
-
-  if(playerWithBall() == Player::MAX){
-    robotsMoving = min.getRobots();
-
-    for (auto &robot : max.getRobots())
-      if (robot.getId() != robot_with_ball.getId())
-        robotsMovings.push_back(robot);
-  } else {
-    robotsMoving = max.getRobots();
-
-    for (auto &robot : min.getRobots())
-      if (robot.getId() != robot_with_ball.getId())
-        robotsMovings.push_back(robot);
-  }
-
-  return robotsMoving;
+std::vector<const Robot *> Board::getRobotsMoving() const {
+  auto &robot_with_ball = getRobotWithBall().first;
+  auto robots = getOtherRobots(MIN, robot_with_ball);
+  auto robots2 = getOtherRobots(MAX, robot_with_ball);
+  robots.insert(robots.end(), robots2.begin(), robots2.end());
+  return robots;
 }
 
-bool Board::kickLineCrossRobot(const int point_index, const Robot &robot){
+bool Board::kickLineCrossRobot(const int point_index, const Robot &robot) const {
   Vector point(goalX(), goalY() + point_index * goalWidth() * 1.0 / NUM_SAMPLE_POINTS);
 
-  if(Vector::lineSegmentCrossCircle(point, getRobotWithBall().pos(), robot.pos(), Robot::radius()) return true;
+  auto & robot_with_ball = getRobotWithBall().first;
+  if(Vector::lineSegmentCrossCircle(point, robot_with_ball.pos(), robot.pos(), Robot::radius())) return true;
 
   return false;
 }
 
 float Board::evaluate() const {
   float goal_area = openGoalArea();
-  float receivers_num = canGetPass().size();
+  float receivers_num = canGetPass(MAX).size();
 
-  Robot robot_with_ball = getRobotWithBall();
+  auto with_ball = getRobotWithBall();
+  auto &robot_with_ball = with_ball.first;
+  auto &player_with_ball = with_ball.second;
 
   float value = WEIGHT_GOAL_OPEN_AREA   * goal_area +
                 WEIGHT_RECEIVERS_NUM    * receivers_num +
-                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball.distaceToEnemyGoal();
+                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball.distanceToEnemyGoal();
 
-  if(robot_with_ball.getPlayer() == Player::MAX) return value;
+  if (player_with_ball == MAX) return value;
 
   return -value;
 }

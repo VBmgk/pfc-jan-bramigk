@@ -39,7 +39,7 @@ public:
 
   Vector getLastPlanedPos() const { return last_planed_pos; }
 
-  float distanceToEnemyGoal(){
+  float distanceToEnemyGoal() const {
     // TODO
     return 0;
   }
