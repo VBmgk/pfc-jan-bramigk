@@ -39,11 +39,6 @@ public:
 
   Vector getLastPlanedPos() const { return last_planed_pos; }
 
-  float distanceToEnemyGoal() const {
-    // TODO
-    return 0;
-  }
-
   static constexpr float maxV2() { return 4 * 4; }
 
   static constexpr float kickV() { return 7; }
