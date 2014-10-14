@@ -111,7 +111,7 @@ void App::run(std::function<void(App &)> run) {
       }
 
       TeamAction local_command = minimax.decision(local_board);
-      //TeamAction local_command;
+      // TeamAction local_command;
       mnmx_count++;
       {
         std::lock_guard<std::mutex> _(app.command_mutex);

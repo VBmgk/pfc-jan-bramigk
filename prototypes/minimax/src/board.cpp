@@ -242,7 +242,8 @@ bool Board::kickLineCrossRobot(const int point_index,
   auto robot_with_ball = robot_player.first;
   auto player_with_ball = robot_player.second;
 
-  Vector point(0, goalWidth() * (1/2 - point_index * 1.0 / NUM_SAMPLE_POINTS));
+  Vector point(0,
+               goalWidth() * (1 / 2 - point_index * 1.0 / NUM_SAMPLE_POINTS));
 
   point = enemyGoalPos(player_with_ball) + point;
 
@@ -254,16 +255,22 @@ bool Board::kickLineCrossRobot(const int point_index,
 }
 
 float Board::evaluate() const {
+
+  // special case for it not to crash when no robots on a team
+  if (min.size() == 0 || max.size() == 0)
+    return 0.0;
+
   float goal_area = openGoalArea();
   float receivers_num = canGetPass(MAX).size();
 
   auto with_ball = getRobotWithBall();
   auto robot_with_ball = with_ball.first;
   auto player_with_ball = with_ball.second;
+  auto enemy_goal = enemyGoalPos(player_with_ball);
 
   float value = WEIGHT_GOAL_OPEN_AREA * goal_area +
                 WEIGHT_RECEIVERS_NUM * receivers_num +
-                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball->getDist(enemyGoalPos(player_with_ball));
+                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball->getDist(enemy_goal);
 
   if (player_with_ball == MAX)
     return value;

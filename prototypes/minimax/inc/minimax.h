@@ -20,6 +20,8 @@ public:
 
   const std::vector<Robot> &getRobots() const { return robots; }
 
+  int size() const { return robots.size(); }
+
   void addRobot(const Robot &robot) { robots.push_back(robot); }
 };
 
@@ -117,19 +119,15 @@ public:
   static float fieldHeight() { return 6.050; }
 
   // Double-size field
-  static float goalX() { return fieldWidth()/2; }
-  static float goalY() { return fieldHeight()/2; }
+  static float goalX() { return fieldWidth() / 2; }
+  static float goalY() { return fieldHeight() / 2; }
   static float goalWidth() { return 1; }
 
   Vector goalPos(Player p) const {
     float goal_x = goalX();
 
-    if(maxOnLeft)
-      if(p == MAX)
-        goal_x *= -1;
-      else
-        if(p == MIN)
-          goal_x *= -1;
+    if ((maxOnLeft && p == MAX) || (!maxOnLeft && p == MIN))
+      goal_x *= -1;
 
     Vector goal_pos(goal_x, goalY());
 
@@ -137,11 +135,11 @@ public:
   }
 
   Vector enemyGoalPos(Player p) const {
-    switch(p){
-      case MAX:
-        return goalPos(MIN);
-      case MIN:
-        return goalPos(MAX);
+    switch (p) {
+    case MAX:
+      return goalPos(MIN);
+    case MIN:
+      return goalPos(MAX);
     }
   }
 };
@@ -149,7 +147,8 @@ public:
 class Minimax {
   static constexpr int RAMIFICATION_NUMBER = 10;
   static constexpr int MAX_DEPTH = 2;
-  std::pair<float, TeamAction> value(const Board &, Player, TeamAction *, int depth);
+  std::pair<float, TeamAction> value(const Board &, Player, TeamAction *,
+                                     int depth);
 
 public:
   TeamAction decision(const Board &);
