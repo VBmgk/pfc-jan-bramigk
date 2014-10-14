@@ -195,7 +195,7 @@ vector<Robot> Board::canGetPass() const {
   Robot robot_with_ball = getRobotWithBall();
 
   if (robot_with_ball.getPlayer() == player) {
-    float step_time = timeToBall(timeToBall(getRobotWithBall()));
+    float step_time = timeToBall(getRobotWithBall());
     Board vrt_board = virtualStep(step_time);
     Ball vrt_ball = vrt_board.ball;
 
@@ -216,13 +216,63 @@ vector<Robot> Board::canGetPass() const {
 }
 
 float Board::openGoalArea() const {
-  // TODO
-  return 0;
+  float area = 0;
+
+  for(int i=0; i<NUM_SAMPLE_POINTS; i++)
+    if(freeKickLine(i)) area++;
+
+  return area;
+}
+
+bool Board::freeKickLine(int point_index){
+  for(auto& robot: getRobotsMoving())
+    if(kickLineCrossRobot(point_index, robot)) return false;
+
+  return true;
+}
+
+vector<Robot> getRobotsMoving(){
+  vector<Robot> robotsMoving;
+  Robot &robot_with_ball = getRobotWithBall();
+
+  if(playerWithBall() == Player::MAX){
+    robotsMoving = min.getRobots();
+
+    for (auto &robot : max.getRobots())
+      if (robot.getId() != robot_with_ball.getId())
+        robotsMovings.push_back(robot);
+  } else {
+    robotsMoving = max.getRobots();
+
+    for (auto &robot : min.getRobots())
+      if (robot.getId() != robot_with_ball.getId())
+        robotsMovings.push_back(robot);
+  }
+
+  return robotsMoving;
+}
+
+bool Board::kickLineCrossRobot(const int point_index, const Robot &robot){
+  Vector point(goalX(), goalY() + point_index * goalWidth() * 1.0 / NUM_SAMPLE_POINTS);
+
+  if(Vector::lineSegmentCrossCircle(point, getRobotWithBall().pos(), robot.pos(), Robot::radius()) return true;
+
+  return false;
 }
 
 float Board::evaluate() const {
-  // TODO
-  return 0;
+  float goal_area = openGoalArea();
+  float receivers_num = canGetPass().size();
+
+  Robot robot_with_ball = getRobotWithBall();
+
+  float value = WEIGHT_GOAL_OPEN_AREA   * goal_area +
+                WEIGHT_RECEIVERS_NUM    * receivers_num +
+                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball.distaceToEnemyGoal();
+
+  if(robot_with_ball.getPlayer() == Player::MAX) return value;
+
+  return -value;
 }
 
 Board Board::applyTeamAction(const TeamAction &actions) const {
@@ -236,6 +286,7 @@ Board Board::applyTeamAction(const TeamAction &actions) const {
 
 float Board::teamActionsTime(const TeamAction &actions) const {
   float time = FLT_MIN;
+
   for(auto &action: actions)
     if(action.getTime() > time) time = action.getTime();
 

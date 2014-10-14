@@ -68,6 +68,11 @@ public:
     return vec;
   }
 
+  static bool lineSegmentCrossCircle(const Vector &p1, const Vector &p2, const Vector &center, const float radius){
+    // TODO
+    return true;
+  }
+
   // Overloading output stream operator
   friend std::ostream &operator<<(std::ostream &os, const Vector &v);
 };
