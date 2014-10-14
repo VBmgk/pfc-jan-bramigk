@@ -103,6 +103,7 @@ void App::run(std::function<void(App &)> run) {
     // single minimax instance, may make use of cache in the future
     Minimax minimax;
 
+    int n_ticks = 0;
     while (should_recv) {
       Board local_board;
       {
@@ -118,6 +119,8 @@ void App::run(std::function<void(App &)> run) {
         app.command = local_command;
       }
 
+      n_ticks++;
+      app.display.minimax_count = n_ticks;
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
   });

@@ -161,6 +161,7 @@ struct App {
   std::mutex command_mutex;
   struct {
     int uptime;
+    int minimax_count;
     int pps;
     int mps;
   } display;

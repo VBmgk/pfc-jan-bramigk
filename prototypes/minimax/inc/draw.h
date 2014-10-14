@@ -4,6 +4,7 @@
 class Robot;
 class Ball;
 class Board;
+class App;
 typedef uint8_t GLubyte;
 
 void init_graphics();
@@ -14,5 +15,6 @@ void draw_ball(const Ball &ball);
 void draw_board(const Board &board);
 void draw_test(int width, int height);
 void draw_text(const char *text, int width, int height);
+void draw_text_display(App *, double fps, int width, int height);
 
 #endif

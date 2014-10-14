@@ -210,3 +210,15 @@ void draw_test(int width, int height) {
 
   // draw_text("The Quick Brown Fox\nJumps Over The Lazy Dog.", width, height);
 }
+
+void draw_text_display(App *app, double fps, int width, int height) {
+  char text[256];
+  snprintf(text, 256, "%2.0ffps\n"
+                      "uptime: %is\n"
+                      "minimax: #%i\n"
+                      "%i packets/s\n"
+                      "%i minimax/s\n",
+           fps, app->display.uptime, app->display.minimax_count,
+           app->display.pps, app->display.mps);
+  draw_text(text, width, height);
+}
