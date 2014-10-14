@@ -20,7 +20,7 @@ Move::Move(const class Robot &robot) : Action(robot.getId()) {
   time = robot.getDist(nextPosition) / MAX_SPEED;
 }
 
-float Move::getTime() { return time; }
+float Move::getTime() const { return time; }
 
 void Move::apply(Player, Board &b) const {}
 

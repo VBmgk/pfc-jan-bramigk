@@ -230,8 +230,11 @@ Board Board::applyTeamAction(const TeamAction &max_a,
 }
 
 float Board::teamActionsTime(const TeamAction &actions) const {
-  // TODO: get maximum time
-  return 1.0;
+  float time = FLT_MIN;
+  for(auto &action: actions)
+    if(action.getTime() > time) time = action.getTime();
+
+  return time;
 }
 
 std::vector<const Robot *>

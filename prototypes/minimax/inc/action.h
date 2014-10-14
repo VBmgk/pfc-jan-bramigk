@@ -13,7 +13,7 @@ class Action {
 public:
   Action(int r_id) : robot_id(r_id) {}
 
-  virtual float getTime() { return 0; }
+  virtual float getTime() const { return 0; }
 
   virtual void apply(Player, Board &) const {};
 };
@@ -26,7 +26,7 @@ class Move : public Action {
 public:
   Move(const class Robot &robot);
 
-  float getTime();
+  float getTime() const;
 
   void apply(Player, Board &) const;
 };
