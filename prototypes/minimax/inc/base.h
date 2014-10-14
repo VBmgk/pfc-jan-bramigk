@@ -70,8 +70,20 @@ public:
 
   static bool lineSegmentCrossCircle(const Vector &p1, const Vector &p2,
                                      const Vector &center, const float radius) {
-    // TODO
-    return true;
+    // Note: this only works because the robot
+    // is not a point
+    Vector v_u = unit(p1 - p2);
+    Vector u = p1 - center;
+    Vector w = p2 - center;
+
+    // center of circle behind p1
+    if( w * v_u < 0) return false;
+
+    // perpendicular vector from center of the cirle to the line
+    else if((u - v_u * (u * v_u)).norm() <= radius) return true;
+
+    // circle far away
+    else return false;
   }
 
   // Overloading output stream operator
