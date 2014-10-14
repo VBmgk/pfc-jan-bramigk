@@ -83,10 +83,11 @@ void draw_board(const Board &board) {
 
 void init_graphics() {
 #ifndef __APPLE__
-  char *arg0 = "minimax";
+  char name[] = "minimax";
+  char *argv[] = {name};
   int argc = 1;
 
-  glutInit(&argc, &arg0);
+  glutInit(&argc, argv);
 #endif
   // if (FT_Init_FreeType(&ft)) {
   //  std::cerr << "Could not init freetype library" << std::endl;
