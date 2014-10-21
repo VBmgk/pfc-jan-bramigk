@@ -1,3 +1,4 @@
+#include <memory>
 #include <vector>
 #include <armadillo>
 #include <cfloat>
@@ -33,14 +34,15 @@ TeamAction Board::genActions(Player player, bool kickAction) const {
     // Kick
     if (kickAction) {
       // FIXME: this is will lead to memory leak
-      actions.push_back(*new Kick(*robot_with_ball));
+      std::shared_ptr<Action> action(new Kick(*robot_with_ball));
+      actions.push_back(std::move(action));
       // Pass
     } else {
       bool any_pass = false;
       for (auto robot : canGetPass(player)) {
         // FIXME: this is will lead to memory leak
-        Pass *pass = new Pass(*robot_with_ball, *robot);
-        actions.push_back(*pass);
+        std::shared_ptr<Action> action(new Pass(*robot_with_ball, *robot));
+        actions.push_back(std::move(action));
         any_pass = true;
         // FIXME: only a single action per robot!
         //        there has to be many TeamAction's for this
@@ -50,7 +52,8 @@ TeamAction Board::genActions(Player player, bool kickAction) const {
       // for the robot with ball, we'll make it move
       if (!any_pass) {
         // FIXME: this is will lead to memory leak
-        actions.push_back(*new Move(*robot_with_ball));
+        std::shared_ptr<Action> action(new Move(*robot_with_ball));
+        actions.push_back(std::move(action));
       }
     }
   }
@@ -58,7 +61,8 @@ TeamAction Board::genActions(Player player, bool kickAction) const {
   // push a Move action for every other robot
   for (auto robot : getOtherRobots(player, *robot_with_ball)) {
     // FIXME: this is will lead to memory leak
-    actions.push_back(*new Move(*robot));
+    std::shared_ptr<Action> action(new Move(*robot));
+    actions.push_back(std::move(action));
   }
 
   return actions;
@@ -282,21 +286,23 @@ Board Board::applyTeamAction(const TeamAction &max_a,
                              const TeamAction &min_a) const {
   Board new_board(*this);
 
-  for (auto &action : max_a)
-    action.apply(MAX, new_board);
+  for (auto action : max_a)
+    action->apply(MAX, new_board);
 
-  for (auto &action : min_a)
-    action.apply(MIN, new_board);
+  for (auto action : min_a)
+    action->apply(MIN, new_board);
 
   return new_board;
 }
 
-float Board::teamActionsTime(const TeamAction &actions) const {
+float Board::teamActionTime(const TeamAction &actions) const {
   float time = FLT_MIN;
 
-  for (auto &action : actions)
-    if (action.getTime() > time)
-      time = action.getTime();
+  for (auto &action : actions) {
+    float a_time = action->getTime();
+    if (a_time > time)
+      time = a_time;
+  }
 
   return time;
 }

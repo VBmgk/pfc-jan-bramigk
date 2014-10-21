@@ -50,6 +50,6 @@ public:
   void apply(Player, Board &) const;
 };
 
-typedef std::vector<Action> TeamAction;
+typedef std::vector<std::shared_ptr<Action>> TeamAction;
 
 #endif

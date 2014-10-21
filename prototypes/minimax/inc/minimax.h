@@ -103,7 +103,7 @@ public:
 
   Board virtualStep(float time) const;
   std::vector<const Robot *> canGetPass(Player) const;
-  float teamActionsTime(const std::vector<class Action> &) const;
+  float teamActionTime(const TeamAction &actions) const;
 
   std::pair<const Robot *, Player> getRobotWithBall() const;
   std::pair<const Robot *, Player> getRobotWithVirtualBall(const Ball &) const;
