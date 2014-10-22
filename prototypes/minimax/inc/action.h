@@ -1,9 +1,7 @@
 #ifndef MINIMAX_ACTION_H
 #define MINIMAX_ACTION_H
 
-// dimensions in meters
-#define FIELD_WIDTH 4.0
-#define FIELD_HIGHT 6.0
+#include <memory>
 
 enum Player { MIN, MAX };
 
