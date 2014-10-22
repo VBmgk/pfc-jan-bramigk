@@ -18,6 +18,7 @@
 #include <cmath>
 
 static const GLubyte BLACK[3] = {3, 3, 3};
+static const GLubyte GREY[3] = {20, 20, 20};
 static const GLubyte BLUE[3] = {50, 118, 177};
 static const GLubyte BLUE2[3] = {40, 94, 142};
 static const GLubyte DARK_GREEN[3] = {12, 60, 8};
@@ -26,16 +27,22 @@ static const GLubyte ORANGE[3] = {255, 147, 31};
 static const GLubyte ORANGE2[3] = {197, 122, 41};
 static const GLubyte WHITE[3] = {239, 239, 239};
 static const GLubyte YELLOW[3] = {237, 229, 40};
+static const GLubyte RED[3] = {177, 84, 84};
+static const GLubyte RED2[3] = {142, 67, 67};
 static const int NSIDES = 64;
 
-void draw_circle(float radius) {
-  glBegin(GL_TRIANGLE_FAN);
+void raw_circle(float radius) {
   glVertex2f(0.0, 0.0);
   for (int i = 0; i <= NSIDES; i++) {
     auto s = sin((2.0 * M_PI * i) / NSIDES) * radius;
     auto c = cos((2.0 * M_PI * i) / NSIDES) * radius;
     glVertex2f(s, c);
   }
+}
+
+void draw_circle(float radius) {
+  glBegin(GL_TRIANGLE_FAN);
+  raw_circle(radius);
   glEnd();
 }
 
@@ -211,7 +218,63 @@ void draw_test(int width, int height) {
   // draw_text("The Quick Brown Fox\nJumps Over The Lazy Dog.", width, height);
 }
 
-void draw_text_display(App *app, double fps, int width, int height) {
+const Robot & get_robot(int id, const Board &board) {
+  for (auto &robot : board.getMax().getRobots()) {
+    if (robot.getId() == id) {
+      return robot;
+    }
+  }
+  throw "robot not found!!!";
+}
+
+void draw_teamaction(const TeamAction &t_action, const Board &board) {
+  for (auto action : t_action) {
+    auto robot = get_robot(action->getId(), board);
+    switch(action->type()) {
+      case Action::MOVE: {
+          auto move = std::dynamic_pointer_cast<Move>(action);
+          glColor3ubv(BLACK);
+          glBegin(GL_LINES);
+          auto pos_i = robot.pos();
+          glVertex3f(pos_i[0], pos_i[1], 0.0f);
+          auto pos_f = move->pos();
+          glVertex3f(pos_f[0], pos_f[1], 0.0f);
+          glEnd();
+          glPushMatrix();
+          glTranslatef(pos_f[0], pos_f[1], 0.f);
+          draw_circle(robot.radius() / 3);
+          glPopMatrix();
+        } break;
+      case Action::PASS: {
+          auto pass = std::dynamic_pointer_cast<Pass>(action);
+          auto rcv = get_robot(pass->getId(), board);
+          glColor3ubv(RED2);
+          glBegin(GL_LINES);
+          auto pos_i = robot.pos();
+          glVertex3f(pos_i[0], pos_i[1], 0.0f);
+          auto pos_b = board.getBall().pos();
+          glVertex3f(pos_b[0], pos_b[1], 0.0f);
+          auto pos_f = rcv.pos();
+          glVertex3f(pos_f[0], pos_f[1], 0.0f);
+          glEnd();
+        } break;
+      case Action::KICK: {
+          auto kick = std::dynamic_pointer_cast<Kick>(action);
+          glColor3ubv(RED);
+          glBegin(GL_LINES);
+          auto pos_i = robot.pos();
+          glVertex3f(pos_i[0], pos_i[1], 0.0f);
+          auto pos_b = board.getBall().pos();
+          glVertex3f(pos_b[0], pos_b[1], 0.0f);
+          //auto pos_f = rcv.pos();
+          //glVertex3f(pos_f[0], pos_f[1], 0.0f);
+          glEnd();
+        } break;
+    }
+  }
+}
+
+void draw_display(App *app, double fps, int width, int height) {
   char text[256];
   snprintf(text, 256, "%2.0ffps\n"
                       "uptime: %is\n"
@@ -221,4 +284,10 @@ void draw_text_display(App *app, double fps, int width, int height) {
            fps, app->display.uptime, app->display.minimax_count,
            app->display.pps, app->display.mps);
   draw_text(text, width, height);
+}
+
+void draw_app(App *app, double fps, int width, int height) {
+  draw_board(app->command_board);
+  draw_teamaction(app->command, app->command_board);
+  draw_display(app, fps, width, height);
 }

@@ -108,7 +108,8 @@ void App::run(std::function<void(App &)> run) {
       Board local_board;
       {
         std::lock_guard<std::mutex> _(app.board_mutex);
-        local_board = app.board;
+        app.command_board = app.board;
+        local_board = app.command_board;
       }
 
       TeamAction local_command = minimax.decision(local_board);

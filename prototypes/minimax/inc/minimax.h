@@ -158,6 +158,7 @@ struct App {
   Board board;
   std::mutex board_mutex;
   TeamAction command;
+  Board command_board;
   std::mutex command_mutex;
   struct {
     int uptime;
