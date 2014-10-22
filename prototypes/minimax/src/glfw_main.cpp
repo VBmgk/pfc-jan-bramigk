@@ -128,15 +128,13 @@ void render(GLFWwindow *window, int width, int height) {
   }
 
   // draw the copied board, lock area could be reduced maybe
-  {
-    std::lock_guard<std::mutex> _(app->board_mutex);
-    draw_board(app->board);
-  }
 
   // draw the text buffer
   {
     std::lock_guard<std::mutex> _(app->display_mutex);
-    draw_text_display(app, fps, width, height);
+    draw_board(app->command_board);
+    draw_teamaction(app->command, app->command_board);
+    draw_display(app, fps, width, height);
   }
 
   // poll events
