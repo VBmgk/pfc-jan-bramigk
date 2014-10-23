@@ -46,11 +46,9 @@ public:
     a->set_robot_id(getId());
     a->set_type(roboime::Action::MOVE);
 
-    roboime::Action::Move *move = new roboime::Action::Move();
+    roboime::Action::Move *move = a->mutable_move();
     move->set_x(ux * next_position);
     move->set_y(uy * next_position);
-
-    a->set_allocated_move(move);
   }
 };
 
@@ -70,10 +68,8 @@ public:
     a->set_robot_id(Action::getId());
     a->set_type(roboime::Action::PASS);
 
-    roboime::Action::Pass *pass = new roboime::Action::Pass();
+    roboime::Action::Pass *pass = a->mutable_pass();
     pass->set_robot_id(rcv_id);
-
-    a->set_allocated_pass(pass);
   }
 };
 
@@ -100,12 +96,10 @@ public:
     a->set_robot_id(getId());
     a->set_type(roboime::Action::KICK);
 
-    roboime::Action::Kick *kick = new roboime::Action::Kick();
+    roboime::Action::Kick *kick = a->mutable_kick();
     Vector point_to_kick = point2Kick();
     kick->set_x(ux * point_to_kick);
     kick->set_y(uy * point_to_kick);
-
-    a->set_allocated_kick(kick);
   }
 };
 
