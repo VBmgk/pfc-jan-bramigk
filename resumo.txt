@@ -1,0 +1,19 @@
+18 nov 09 00 hs
+
+Alunos: Victor Bramigk e Jan Segre
+Título: Técnicas de IA aplicadas a sistemas multiagentes cooperativos e competitivos
+Resumo:
+  Atualmente são utilizadas em sua maioria heurísticas puras para controlar os times da
+  ssl. Isso restringe o movimento dos robôs a um determinado conjunto fixo de comportamentos.
+  Este tipo de inteligência pode ser aprimorada por uma que faz
+  uso da capacidade que o computador tem de simular varior ambientes. Para tanto é necessário
+  abstrair o jogo de modo que se possa simular várias situações e permitir várias sequências de jogadas
+  possam ser consideradas. Assim um jogo competitivo e contínuo é abstraido em um discreto e sequencial,
+  como se fosse um jogo de xadrez. Partindo-se desta abstração, aplica-se o algoritimo de busca em arvore.
+  Com o objetivo de verificar a viabilidade dessa abordagem, foi implementa uma arquitetura de
+  controle baseada em um modelo discreto sequencial para a o jogo de futebol de robôs da categoria
+  ssl da robocup. Tambem foi implementada uma interface gráfica para visualizar as soluções providas
+  por essa abordagem.
+
+Palavras-chaves: inteligência artificial, minimax, discretização, multiagentes.
+  Membros da Banca: Prof. Paulo Rosa e Cap Madeira.
