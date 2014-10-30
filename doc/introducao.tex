@@ -42,10 +42,10 @@ estendida ao âmbito internacional. Surgia então, a Robot World Cup Initiative
 RoboCup é uma competição destinada a desenvolver os estudos na área de robótica
 e Inteligência Artificial (IA) por meio de uma competição amigável. Além disso,
 ela tem como objetivo, até 2050, desenvolver uma equipe de robôs humanoides
-totalmente autô- nomos capazes de derrotar a equipe campeã mundial de futebol
+totalmente autônomos capazes de derrotar a equipe campeã mundial de futebol
 humano. A competição possui várias modalidades. Neste trabalho, será analisada a
 Small Size Robot League (SSL), também conhecida como F180. De acordo com as
-regras da SSL, as equipes devem ser compostas por 6 robôs, sendo um deles o
+regras da SSL de 2013, as equipes devem ser compostas por 6 robôs, sendo um deles o
 goleiro, que deve ser designado antes do início do jogo. Durante o jogo, nenhuma
 interferência humana é permitida com o sistema de controle dos robôs. É
 fornecido aos times um sistema de visão global e esses controlam seus robôs com
@@ -54,9 +54,17 @@ os dados de um conjunto de duas câmeras localizadas acima do campo. Esse sis-
 tema de controle processa os dados, determina qual comando deve ser executado
 por cada robô e envia este comando através de ondas de rádio aos robôs. Embora
 seja permitido que as equipes utilizem sistemas próprios de visão, a maioria das
-equipes utiliza a visão centralizada. A figura 1 mostra uma imagem da SSL
-Robocup 2013, da qual a RoboIME (Equipe de Futebol de Robôs do Laboratório de
-Robótica do IME) participou.
+equipes utiliza a visão centralizada. Uma arquitetura típica utilizada pelas
+equipes da SSL é apresentada na figura~\ref{fig:arq_ssl}. A
+figura~\ref{fig:robocup2013} mostra uma imagem da SSL Robocup 2013, da qual a
+RoboIME (Equipe de Futebol de Robôs do Laboratório de Robótica do IME)
+participou.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\linewidth]{arquitetura_ssl}
+  \caption{Arquitetura típica da SSL}\label{fig:arq_ssl}
+\end{figure}
 
 \section{Motivação}
 
@@ -84,14 +92,18 @@ soluções ao problema.
 
 Isso é muito mais desejável que um modelo heurístico de IA, onde as soluções são
 criadas com base nos ambientes identificados pelos modeladores. Isso, pois a
-modelagem heurística limita o número de jogadas que se pode executar e limita a
-capacidade que o computador tem de testar um grande número de possibilidades.
+modelagem puramente heurística limita o número de jogadas que se pode executar e
+limita a capacidade que o computador tem de testar um grande número de possibilidades.
 
 \section{Objetivo}
-% TODO: explorar mais os objetivos secundários
 
-Implementação de uma arquitetura de controle com um modelo discreto e sequencial
-da RoboCup Small Size League.
+O objetivo deste trabalho é desenvolver um algoritmo de controle para o futebol
+de robôs que obtenha um desempenho melhor que o utilizado atualmente, de acordo
+com um critério que será definido posteriormente.
+Como objetivos secondários, este trabalho objetiva criar um modelo discreto para
+o problema do futebol de robôs, que é um jogo contínuo de soma zero.
+A partir desta discretização, pretende-se desenvolver uma arquitetura de
+controle com base no algorítmo minimax para se planejar jogadas.
 
 \section{Justificativa}
 % TODO: incluir referências
@@ -99,7 +111,10 @@ da RoboCup Small Size League.
 Uma arquitetura de controle que simule os diversos ambientes dinamicamente de
 maneira sequencial de um ambiente multiagente permite que várias jogadas sejam
 criadas dinamicamente, diferentemente de uma arquitetura estática baseada em uma
-heuristicamente. Com tal mecanismo é possível melhorar a IA em uso pela RoboIME
+heuristica. Essa abordagem heurística é legada da maneira como estratégias são
+planejadas nos times de futebol humano.
+
+Com tal mecanismo é possível melhorar a IA em uso pela RoboIME
 para tomar decisões que levem a resultados melhores e, como consequência, ganhar
 mais partidas. Nenhuma equipe atualmente esta seguindo esta abordagem, mas os
 autores acreditam que essa é uma linha de pesquisa promissora.
