@@ -33,7 +33,7 @@
 \usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
 \usepackage{color}			% Controle das cores
 \usepackage{graphicx}			% Inclusão de gráficos
-\usepackage{algorithm2e}		% Para escrever algorítimos
+\usepackage[portuguese]{algorithm2e}		% Para escrever algorítimos
 \usepackage{lscape}			% Para usar landscape
 \usepackage{amsthm}			% Para usar Definições e lemas
 \usepackage{amssymb}			% \mathbb{•}
@@ -44,7 +44,8 @@
 \newtheorem{defi}[teo]{Definição}
 % o seguinte é necessário para corrigir um bug no algorithm2e
 % http://tex.stackexchange.com/questions/113325/problem-with-algorithm2e-and-portuguese-option
-\SetKwFor{Para}{para}{fa\c{c}a}{fim para}
+\SetKwFor{Para}{para}{fa\c{c}a}{fimpara}
+\SetKwBlock{Inicio}{início}{fim}
 % não era pra precisar do seguinte, mas precisa para traduzir a captions dos algoritmos
 \renewcommand{\algorithmcfname}{Algoritmo}%
 % ---
