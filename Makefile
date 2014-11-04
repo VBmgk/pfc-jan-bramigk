@@ -1,8 +1,10 @@
+OPEN = $(shell which -s gnome-open && echo gnome-open \
+            || which -s xdg-open && echo xdg-open \
+            || which -s open && echo open)
 
 
-.PHONY:
+.PHONY: all
 all: relatorio.pdf apresentacao.pdf
-
 
 neverclean := *.pdf
 -include latex.make
@@ -10,7 +12,12 @@ neverclean := *.pdf
 
 # UTILS
 #
-.PHONY:
+
+.PHONY: open
+open: all
+	$(OPEN) relatorio.pdf
+
+.PHONY: todos
 todos:
 	@grep -rn "TODO" *.tex partes
 
