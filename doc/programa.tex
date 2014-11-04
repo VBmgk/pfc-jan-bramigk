@@ -49,48 +49,46 @@ estado do tabuleiro apresentada no arquivo~\ref{alg:minimax_req_proto}.
 Para otimizar os cálculos foi utilizada a API armadillo.
 
 % Arquivo de resposta
-\lstinputlisting [caption={Arquivo de definição do protocolo de resposta},
-label={alg:minimax_resp_proto}] {prototypes/minimax/proto/discrete.proto}
+\lstinputlisting[caption={Arquivo de definição do protocolo de resposta},
+label={alg:minimax_resp_proto}]{prototypes/minimax/proto/discrete.proto}
 
 % Arquivo de requisição
-\lstinputlisting [caption={Arquivo de definição do protocolo de atualização do
-  estado do tabuleiro},
-label={alg:minimax_req_proto}] {prototypes/minimax/proto/update.proto}
+\lstinputlisting[caption={Arquivo de definição do protocolo de atualização do estado do tabuleiro},
+label={alg:minimax_req_proto}]{prototypes/minimax/proto/update.proto}
 
 \section{Pyroboime}\label{sec:pyroboime}
 % disclaim: google translate of tdp software file
 
 O projeto pyroboime atualmente é responsável pela inteligência artificial do
-sistema de controle. Ele é baseado na arquitetura STP (\textit{Skill-Tactic-Play}
-implementada em python.
+sistema de controle. Ele é baseado na arquitetura STP
+(\textit{Skill-Tactic-Play}) implementada em python.
 Ele é composto pelo seguintes componentes: interface com a ssl-vision,
 ssl-refbox e grSim, também possui um módulo de comunicação interno para o
 sistema de transmissão via rádio.
 
-O STP é uma arquitetura de três camadas, onde o nível mais baixo, habilidades,
+A STP é uma arquitetura de três camadas, onde o nível mais baixo, \textit{skill},
 permite as manipulações de baixo nível em um único robô. A camada do meio,
-tácticas, faz uso da camada de habilidade de executar nível mais elevado
-comportamento, possivelmente permitindo coopration, mas ainda atuando em um
-único robô. A camada superior, jogos, coordena as táticas associadas a cada
-robô. Para maximizar o desempenho, cada jogo é implementado para se comportar de
-acordo com estados específicos: parada, parada, chutes indiretos e reprodução normal. 
-Uma camada de nível superior implmented como um jogo alterna entre outras peças
-baseadas em o estado atual árbitro.
+\textit{tactics}, faz uso da camada de \textit{skills} para executar um nível
+mais elevado de comportamento, possivelmente permitindo cooperação, mas ainda
+atuando em um único robô. A camada superior, \textit{plays}, coordena as táticas
+associadas a cada robô. Para maximizar o desempenho, cada \textit{play} é
+implementada para se comportar de acordo com estados específicos:
+\textit{stop}, \textit{halt}, \textit{indirect kicks} e jogo normal.
+Uma camada de nível superior implementa como uma \textit{play} alterna entre
+outras \textit{plays} baseada no estado atual do árbitro.
 %Esta arquitetura é melhor representado na figura ~ \ ref {fig: stp}.
-                                                                                
-Há também uma habilidade implementado entradas para redireccionar a partir de um
-joystick tal que é possível testar o robô com pouco esforço.
-                                                                                
-A interface é estruturado como uma pilha de filtro que liga o AI para uma
-cobrança flexível de atualizadores (que recebe informações de estado) e
-  comandantes (que entregam comandos aos robôs, em ambos os ambientes simulados
-e reais).
-Ele abstrai o ambiente externo, onde o jogo é jogado a partir do AI \ @.
-Entre os filtros na referida pilha é um filtro de Kalman que reduz o ruído vindo
-a partir dos dados atualizador.
-                                                                                                                                                                                                                                         
-As interfaces do sistema de rádio trasmitter embutidos com libusb para controlar
-o hardware do transmissor, o qual está ligado por USB.
+Há também uma \textit{skill} para redireccionar a partir de um joystick tal que
+seja possível testar o robô com pouco esforço.
+
+A interface é estruturada como uma pilha de filtros que liga o AI para um
+conjunto flexível de \textit{updaters} (que recebe informações de estado) e
+\textit{commanders} (que entregam comandos aos robôs, em ambos os ambientes simulados
+e reais). Ele abstrai o ambiente externo, onde o jogo é jogado a partir da AI\@.
+Entre os filtros na referida pilha, o filtro de Kalman é o responsável por
+reduzir ruído vindo a partir dos dados do \textit{updater}.
+
+O sistema de transmissão via rádio é interfaceado através da  API libusb para
+controlar o hardware do transmissor, o qual está conectado via USB\@.
 
 \section{Métricas de avaliação}\label{sec:metricas}
 
