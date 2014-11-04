@@ -100,10 +100,10 @@ limita a capacidade que o computador tem de testar um grande número de possibil
 O objetivo deste trabalho é desenvolver um algoritmo de controle para o futebol
 de robôs que obtenha um desempenho melhor que o utilizado atualmente, de acordo
 com um critério que será definido posteriormente.
-Como objetivos secondários, este trabalho objetiva criar um modelo discreto para
+Como objetivos secundários, este trabalho objetiva criar um modelo discreto para
 o problema do futebol de robôs, que é um jogo contínuo de soma zero.
 A partir desta discretização, pretende-se desenvolver uma arquitetura de
-controle com base no algorítmo minimax para se planejar jogadas.
+controle com base no algoritmo minimax para se planejar jogadas.
 
 \section{Justificativa}
 % TODO: incluir referências
@@ -111,7 +111,7 @@ controle com base no algorítmo minimax para se planejar jogadas.
 Uma arquitetura de controle que simule os diversos ambientes dinamicamente de
 maneira sequencial de um ambiente multiagente permite que várias jogadas sejam
 criadas dinamicamente, diferentemente de uma arquitetura estática baseada em uma
-heuristica. Essa abordagem heurística é legada da maneira como estratégias são
+heurística. Essa abordagem heurística é legada da maneira como estratégias são
 planejadas nos times de futebol humano.
 
 Com tal mecanismo é possível melhorar a IA em uso pela RoboIME
@@ -120,8 +120,19 @@ mais partidas. Nenhuma equipe atualmente esta seguindo esta abordagem, mas os
 autores acreditam que essa é uma linha de pesquisa promissora.
 
 \section{Metodologia}
-% TODO: escrever metodologia
+
+Para atingir os objetivos propostos será seguida a seguinte metodologia.
+Inicialmente a teoria sobre jogos será revisada. São apresentados alguns
+dados empíricos observados com teste informais realizados anteriormente.
+
+Em sequência, um modelo abstrato do futebol de robôs é proposto para que seja
+aplicado o algoritmo minimax. A partir deste modelo uma arquitetura
+de controle é desenvolvida.
+
+Em seguida são definidas métricas para comparar a arquitetura anteriormente
+utilizada com a arquitetura atual.
+
+Finalmente são apresentadas as conclusões parciais do projeto.
 
 \section{Estrutura}
-% TODO: escrever estrutura
 % vim: tw=80 et ts=2 sw=2 sts=2
