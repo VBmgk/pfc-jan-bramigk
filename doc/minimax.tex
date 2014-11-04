@@ -18,11 +18,6 @@ jogo e uma estratégia ótima para ambos jogadores.
 Em que $A$ e $B$ são as estratégias dos jogadores 1 e 2 respectivamente e $H$ é a
 função de utilidade que é positiva quando o jogador 1 está ganhando.
 
-% TODO: explicar funcionamento
-% TODO: Mostrar pseudo código
-
-O algoritmo~\ref{lst:minimax} é um exemplo de pseudocódigo para o Minimax.
-
 \begin{algorithm}
   \SetKwBlock{Procedimento}{Procedimento}{fim}
   \SetKwFunction{Utilidade}{Utilidade}
@@ -54,6 +49,16 @@ O algoritmo~\ref{lst:minimax} é um exemplo de pseudocódigo para o Minimax.
 
   \caption{Pseudocódigo para tomada de decisão com o Minimax.}\label{lst:minimax}
 \end{algorithm}
+
+O algoritmo~\ref{lst:minimax} é um exemplo de pseudocódigo para o Minimax cujo
+funcionamento é o seguinte: é definido uma rotina recursiva que fará retornará
+um valor para um dado estado e seu jogador atual assumindo jogadas alternadas;
+tal rotina irá escolher o máximo ou mínimo do valor dos próximos estados
+possíveis baseado no jogador atual, e quando o estado for final irá retornar a
+função utilidade daquele estado, normalmente $1$ para vitória de $MAX$, $-1$
+para vitória de $MIN$ e $0$ para empate; por fim o procedimento principal irá
+decidir o estado de valor máximo ou mínimo baseado no jogador.
+
 
 \section{Exemplo}
 
