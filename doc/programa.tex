@@ -30,6 +30,7 @@ o desenvolvimento deste projeto é apresentado na figura~\ref{fig:arq_prog}.
 \end{figure}
 
 \section{Processo do Minimax}\label{sec:minimax}
+% disclaim: I don't think this is a good name ether...
 
 O fluxo do programa é apresentado na figura~\ref{fig:minimax_flow}.
 
@@ -57,5 +58,38 @@ label={alg:minimax_resp_proto}] {prototypes/minimax/proto/discrete.proto}
 label={alg:minimax_req_proto}] {prototypes/minimax/proto/update.proto}
 
 \section{Pyroboime}\label{sec:pyroboime}
+% disclaim: google translate of tdp software file
+
+O projeto pyroboime atualmente é responsável pela inteligência artificial do
+sistema de controle. Ele é baseado na arquitetura STP (\textit{Skill-Tactic-Play}
+implementada em python.
+Ele é composto pelo seguintes componentes: interface com a ssl-vision,
+ssl-refbox e grSim, também possui um módulo de comunicação interno para o
+sistema de transmissão via rádio.
+
+O STP é uma arquitetura de três camadas, onde o nível mais baixo, habilidades,
+permite as manipulações de baixo nível em um único robô. A camada do meio,
+tácticas, faz uso da camada de habilidade de executar nível mais elevado
+comportamento, possivelmente permitindo coopration, mas ainda atuando em um
+único robô. A camada superior, jogos, coordena as táticas associadas a cada
+robô. Para maximizar o desempenho, cada jogo é implementado para se comportar de
+acordo com estados específicos: parada, parada, chutes indiretos e reprodução normal. 
+Uma camada de nível superior implmented como um jogo alterna entre outras peças
+baseadas em o estado atual árbitro.
+%Esta arquitetura é melhor representado na figura ~ \ ref {fig: stp}.
+                                                                                
+Há também uma habilidade implementado entradas para redireccionar a partir de um
+joystick tal que é possível testar o robô com pouco esforço.
+                                                                                
+A interface é estruturado como uma pilha de filtro que liga o AI para uma
+cobrança flexível de atualizadores (que recebe informações de estado) e
+  comandantes (que entregam comandos aos robôs, em ambos os ambientes simulados
+e reais).
+Ele abstrai o ambiente externo, onde o jogo é jogado a partir do AI \ @.
+Entre os filtros na referida pilha é um filtro de Kalman que reduz o ruído vindo
+a partir dos dados atualizador.
+                                                                                                                                                                                                                                         
+As interfaces do sistema de rádio trasmitter embutidos com libusb para controlar
+o hardware do transmissor, o qual está ligado por USB.
 \section{Métricas de avaliação}\label{sec:metricas}
 % vim: tw=80 et ts=2 sw=2 sts=2
