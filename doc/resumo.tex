@@ -2,26 +2,32 @@
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
 \begin{resumo}
 
-  % TODO; Inserir tema, objetivo e contribuição
+  Este trabalho apresenta um sistema de controle de um time da \textit{Small
+  Size League} (SSL) de futebol de robôs para a equipe RoboIME (que representa o
+  IME nessa competição) utilizando um algoritmo Minimax. Os times da SSL
+  normalmente são comandados por heurísticas puras. Isso restringe o movimento
+  dos robôs a um determinado conjunto fixo de comportamentos, restringindo as
+  jogadas possíveis.
 
-  Este trabalho apresenta um sistema de controle de um time da small size league
-  (SSL) utilizando algoritmo minimax. Os times da SSL normalmente são comandados
-  por heurísticas puras. Isso restringe o movimento dos robôs a um determinado
-  conjunto fixo de comportamentos, restringindo as jogadas possíveis.
+  O objetivo deste trabalho é implementar esse sistema de modo que tenha
+  desempenho pelo menos comparável à inteligência que vem sendo usada pela
+  RoboIME (chamada \textit{pyroboime}), que é heurística.
 
-  Para utilizar o algoritmo minimax é necessário abstrair o jogo de modo que se
+  Para utilizar um algoritmo Minimax é necessário abstrair o jogo de modo que se
   possa simular mais situações e permitir que várias sequências de jogadas
   possam ser consideradas em tempo real, por se tratar de um ambiente dinâmico.
   Assim, um jogo contínuo é abstraído em um discreto e sequencial,
-  semelhante a um jogo de xadrez. Partindo-se desta abstração, aplica-se o
-  algoritmo minimax.
+  semelhante a um jogo de xadrez. Partindo-se desta abstração, é construido
+  um algoritmo minimax.
 
-  Com o objetivo de verificar a viabilidade dessa abordagem, foi implementa uma
-  arquitetura de controle baseada em um modelo discreto sequencial para a
-  categoria SSL da Robocup. Como plataforma de testes, será utilizada a pyroboime
-  que resolve o problema de controle físico dos robôs. Como resultados futuros,
-  será desenvolvido um algoritmo de planejamento superior ao utilizado
-  atualmente na pyroboime.
+  Com o propósito de verificar a viabilidade dessa abordagem, foi implementa uma
+  arquitetura de controle baseada em um modelo discreto sequencial do jogo.
+  Como plataforma de testes, é utilizada parte da \textit{pyroboime}, que
+  resolve o problema de controle físico dos robôs. Com resultados futuros, será
+  desenvolvido um algoritmo de planejamento superior ao utilizado atualmente no
+  \textit{pyroboime}.
+
+  Até o momento dessa publicação o objetivo ainda não foi atingido.
 
   \textbf{Palavras-chaves}: inteligência artificial, minimax, robótica.
 \end{resumo}
@@ -30,15 +36,66 @@
 \begin{resumo}[Abstract]
   \begin{otherlanguage*}{english}
 
-    % TODO[jansegre] traduzir depois de fazer o resumo
+    This work presents a control system for robot soccer team of the Small Size
+    League (SSL) for the RoboIME team (which stands for IME on that competition)
+    using a Minimax algorithm. The teams of SSL are usually controlled by plain
+    heuristics. That restricts the movement of the robots to a limited set of
+    behaviours, shortening the range of possible plays.
 
-    The following work is a partial study that aims to implement a control
-    architecture on top of discrete sequential model for the Robocup SSL
-    competition which the authors take part within the RoboIME team, a
-    representative of the IME on that competition.
+    The objective of this work is to implement that system in such a way that
+    its performance is at least comparable to that of the current intelligence
+    being used by RoboIME (namely \textit{pyroboime}), which is heuristic.
+
+    For using a Minimax algorithm it is necessary to abstract the game in such a
+    way that it can reach a whole range of moves in real time using few steps.
+    In that manner a continous game is abstracted into a discrete sequential
+    one, similar to chess. Based off that abstraction the Minimax algorithm is
+    built.
+
+    With the purpose of verifying the feasability of this approach, a control
+    architecture has been implemented on top of a discrete sequential model of
+    the game. As a test platform part of \textit{pyrobime} is used, which solves
+    the issue of controlling the real robots. With future results a planning
+    algorithm will be developed superior to the one currently in use on
+    \textit{pyroboime}.
+
+    As of this publishing the objective has not been met.
 
     \textbf{Key-words}: artificial intelligence, minimax, robotics.
   \end{otherlanguage*}
 \end{resumo}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 % vim: tw=80 et ts=2 sw=2 sts=2
