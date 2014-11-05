@@ -32,6 +32,7 @@
 %\usepackage{lastpage}			% Usado pela Ficha catalográfica
 \usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
 \usepackage{color}			% Controle das cores
+\usepackage[table]{xcolor}			% Controle das cores em uma tabela
 \usepackage{graphicx}			% Inclusão de gráficos
 \usepackage[portuguese]{algorithm2e}		% Para escrever algorítimos
 \usepackage{lscape}			% Para usar landscape
@@ -61,7 +62,9 @@
 % CONFIGURAÇÕES DE PACOTES
 % --- 
 
-% LISTING
+% ----
+% Configuração LISTING
+% ----
 \def\lstlistingname{Arquivo}
 \lstset{                      % general command to set parameter(s)
   basicstyle=\footnotesize,   % print whole listing small. Possible values:
@@ -73,6 +76,30 @@
   stringstyle=\ttfamily,      % typewriter type for strings
   showstringspaces=false      % no special string spaces
 }
+
+% ----
+% Comandos de cores para tabela cronograma
+% ----
+\newcommand{\azl}{\cellcolor[rgb]{0,.5,.8}}  % azul
+\newcommand{\vrd}{\cellcolor[rgb]{.2,.8,.5}} % verde
+\newcommand{\vdu}{\cellcolor[rgb]{0,.8,.3}}  % verdeu
+\newcommand{\vdd}{\cellcolor[rgb]{0,.8,.1}}  % verded
+\newcommand{\mr}{\cellcolor[rgb]{.8,.5,.2}}  % marrom
+\newcommand{\cnz}{\cellcolor[rgb]{.8,.8,.8}} % cinza
+\newcommand{\vrm}{\cellcolor[rgb]{.5,0,.2}}  % vermelho
+\newcommand{\ovd}{\cellcolor[rgb]{.4,.8,.5}} % overde
+
+% ----
+% shortcuts
+% ----
+\def\azck{\azl\checkmark}
+\def\vdck{\vrd\checkmark}
+\def\vduck{\vdu\checkmark}
+\def\vddck{\vdd\checkmark}
+\def\mrck{\mr\checkmark}
+\def\cnzck{\cnz\checkmark}
+\def\vmck{\vrm\checkmark}
+\def\ovdck{\ovd\checkmark}
 
 % ---
 % Configurações do pacote backref
