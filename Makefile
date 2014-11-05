@@ -19,7 +19,7 @@ open: all
 
 .PHONY: todos
 todos:
-	@grep -rn "TODO" *.tex partes
+	@grep -rn "TODO" *.tex doc
 
 
 #
