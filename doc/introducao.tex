@@ -1,5 +1,7 @@
 \chapter{Introdução}
 
+% FIXME: Este parágrafo está mau escrito. Elaboar melhor as idéias. Descrever o
+%        futebol de robôs brevemente.
 Cada vez mais a robótica tem feito parte da sociedade atual. Um dos problemas
 atuas da robótica é o planejamento em ambientes multiagentes dinâmicos, em que
 ao menos um agente não é controlado. Um bom exemplo de um desses ambientes
@@ -9,7 +11,7 @@ uma IA e o outro grupo por outra IA independente.
 Devido a alta complexidade desses ambientes, não é viável o planejamento
 considerando diretamente as leis físicas. Como consequência, limita-se as ações
 possíveis do robô no modelo utilizado no planejamento para que se possa simular
-mais situações em tempo hábil, uma vez que o ambiente esta continuamente sujeito
+mais situações em tempo hábil, uma vez que o ambiente está continuamente sujeito
 a modificações. Entretanto, para que as simulações sejam válidas, o robô real
 deve estar em sintonia com seu modelo. Com efeito, o robô real deve executar os
 comandos conforme o robô simulado, caso o mesmo ambiente simulado seja
@@ -24,6 +26,7 @@ encontrado na prática.
 A ideia de robôs jogando futebol foi mencionada pela primeira vez pelo professor
 Alan Mackworth (University of British Columbia, Canadá) em um artigo intitulado
 "On Seeing Robots", apresentado no Vision Interface 92 e posteriormente
+% FIXME: falta referencia bibiográfica para tal livro:
 publicado em um livro chamado Computer Vision: System, Theory and Applications.
 Independentemente, um grupo de pesquisadores japoneses organizou um Workshop no
 Ground Challenge in Artificial Intelligence, em Outubro de 1992, Tóquio,
@@ -50,23 +53,28 @@ goleiro, que deve ser designado antes do início do jogo. Durante o jogo, nenhum
 interferência humana é permitida com o sistema de controle dos robôs. É
 fornecido aos times um sistema de visão global e esses controlam seus robôs com
 máquinas próprias. O sistema de controle dos robôs geralmente é externo e recebe
-os dados de um conjunto de duas câmeras localizadas acima do campo. Esse sis-
-tema de controle processa os dados, determina qual comando deve ser executado
-por cada robô e envia este comando através de ondas de rádio aos robôs. Embora
-seja permitido que as equipes utilizem sistemas próprios de visão, a maioria das
-equipes utiliza a visão centralizada. Uma arquitetura típica utilizada pelas
-equipes da SSL é apresentada na figura~\ref{fig:arq_ssl}. A
-figura~\ref{fig:robocup2013} mostra uma imagem da SSL Robocup 2013, da qual a
-RoboIME (Equipe de Futebol de Robôs do Laboratório de Robótica do IME)
-participou.
+os dados de um conjunto de duas câmeras localizadas acima do campo. Esse sistema
+de controle processa os dados, determina qual comando deve ser executado por
+cada robô e envia este comando através de ondas de rádio aos robôs.
+% Embora seja permitido que as equipes utilizem sistemas próprios de visão, a
+% maioria das equipes utiliza a visão centralizada.
+Uma arquitetura típica utilizada pelas equipes da SSL é apresentada na
+figura~\ref{fig:arq_ssl}.
+% TODO: Mencionar na página anterior, próximo à Fig 1.
+A figura~\ref{fig:robocup2013} mostra uma imagem da
+SSL Robocup 2013, da qual a RoboIME (Equipe de Futebol de Robôs do Laboratório
+de Robótica do IME) participou.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.8\linewidth]{arquitetura_ssl}
+  \includegraphics[width=1.0\linewidth]{arquitetura_ssl}
   \caption{Arquitetura típica da SSL}\label{fig:arq_ssl}
 \end{figure}
 
 \section{Motivação}
+
+% TODO: ABRIR AQUI UMA SUBSEÇÃO DENOMINADA CONTEXTUALIZAÇÃO INICIAL E COLOCAR AS
+%       SEÇÕES 2.1 E 2.2 CO IP COMO SUBITENS. ?????
 
 O futebol de robôs, problema padrão de investigação internacional, reúne grande
 parte dos desafios presentes em problemas do mundo real a serem resolvidos em
@@ -87,6 +95,7 @@ Devido a alta complexidade de sistemas multiagentes dinâmicos, torna-se
 necessário um modelo simplificado para que sejam executadas o maior número de
 simulações possível.  Caso seja possível uma discretização, ter-se-á um número
 finito de casos para serem avaliados. Com isso, pode-se aplicar algoritmos como
+% FIXME: definir brevemente o minimax.
 o minimax (aplicados a jogos de competitivos de soma zero) para encontrar
 soluções ao problema.
 
@@ -99,9 +108,11 @@ limita a capacidade que o computador tem de testar um grande número de possibil
 
 O objetivo deste trabalho é desenvolver um algoritmo de controle para o futebol
 de robôs que obtenha um desempenho melhor que o utilizado atualmente, de acordo
+% FIXME: muito indefinido:
 com um critério que será definido posteriormente.
 Como objetivos secundários, este trabalho objetiva criar um modelo discreto para
 o problema do futebol de robôs, que é um jogo contínuo de soma zero.
+% XXX: Acho que este deve ser mesmo mo objetivo.  ESTA SEÇÃO ESTÁ CONFUSA
 A partir desta discretização, pretende-se desenvolver uma arquitetura de
 controle com base no algoritmo minimax para se planejar jogadas.
 
@@ -114,10 +125,11 @@ criadas dinamicamente, diferentemente de uma arquitetura estática baseada em um
 heurística. Essa abordagem heurística é legada da maneira como estratégias são
 planejadas nos times de futebol humano.
 
-Com tal mecanismo é possível melhorar a IA em uso pela RoboIME
-para tomar decisões que levem a resultados melhores e, como consequência, ganhar
-mais partidas. Nenhuma equipe atualmente esta seguindo esta abordagem, mas os
-autores acreditam que essa é uma linha de pesquisa promissora.
+% FIXME: RoboIME <- quem é essa?
+Com tal mecanismo é possível melhorar a IA em uso pela RoboIME para tomar
+decisões que levem a resultados melhores e, como consequência, ganhar mais
+partidas. Nenhuma equipe atualmente esta seguindo esta abordagem, mas os autores
+acreditam que essa é uma linha de pesquisa promissora.
 
 \section{Metodologia}
 
@@ -138,13 +150,17 @@ Finalmente são apresentadas as conclusões parciais do projeto.
 
 No capítulo~\ref{cap:minimax}, a teoria dos jogos é revisada e são apresentados
 alguns dados empíricos observados com testes observados anteriormente.
+
 No capítulo~\ref{cap:mapeamento}, um modelo abstrato do futebol de robôs é
 proposto.
+
 No capítulo~\ref{cap:programa}, uma arquitetura de controle é desenvolvida com
 base no modelo proposto anteriormente. Também são criadas métricas para
 comparar os resultados obtidos com a nova arquitetura.
+
 No capítulo~\ref{cap:cronograma}, o planejamento das próximas atividades é
 apresentado.
+
 No capítulo~\ref{cap:conclusao}, são apresentadas as principais conclusões
 atingidas neste trabalho.
 

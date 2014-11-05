@@ -4,34 +4,24 @@ Para facilitar a compreensão do projeto, optou-se por dividir o projeto em mód
 que seguirão o cronograma apresentado na tablela~\ref{tab:crono}.
 
 \begin{table}[ht]
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline
- Ano   & \multicolumn{5}{|c|}{2014} & \multicolumn{5}{|c|}{2015}\\
-\hline
-\rowcolor[gray]{.8} Tarefas & Ago & Set & Out & Nov & Dez & Jan & Fev & Mar & Abr & Mai \\
-\hline
-\hline
-% ----  & Ago   & Set   & Out    & Nov    & Dez   & Jan   & Fev  & Mar  & Abr  & Mai  \\
- MMP    & \azck & \azck & \azck  & \azl   & \azl  & \azl  & \azl & \azl & \azl &  ·   \\
-\hline 
- PVC    &  ·    & ·     & \vdck  & \vdck  & \vrd  & \vrd  & \vrd & \vrd & \vrd &  ·   \\
-\hline 
- IMPARQ & ·     & ·     & \vduck & \vduck & \vdu  & \vdu  & \vdu & \vdu & \vdu &  ·   \\
-\hline
- IMPALG & ·     & ·     & ·      & ·      & \vdd  & \vdd  & \vdd & \vdd & \vdd &  ·   \\
-\hline 
- TST    &  ·    & ·     & ·      & ·      & ·     & ·     & \mr  & \mr  & \mr  &  ·   \\
-\hline 
- RED    & \vmck & \vrm  & \vmck  & \vmck  & \vrm  & \vrm  & \vrm & \vrm & \vrm &  ·   \\
-\hline 
- DEF    &  ·    & ·     & ·      & ·      & ·     & ·     & ·    & ·    & ·    & \ovd \\
-\hline
-\end{tabular}
-}
-\caption{Cronograma --- {\footnotesize MMP: Modelagem do mapeamento; PVC: Prova de conceito;
-IMPARQ: Implementação da arquitetura; IMPALG: Implementação do Algoritmo; RED: Redação do
-texto; TST: Testes; DEF: Defesa}\label{tab:crono}}
+  \resizebox{\textwidth}{!}{%
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+      \hline &    \multicolumn{5}{|c|}{2014}   &             \multicolumn{6}{|c|}{2015}           \\ \hline
+      \rowcolor[gray]{.8}
+      Tarefas& Ago   & Set   & Out    & Nov    & Dez   & Jan   & Fev  & Mar  & Abr  & Mai  & Jun  \\ \hline
+      \hline
+      MMP    & \azck & \azck & \azck  &        &       &       &      &      &      &      &      \\ \hline
+      PVC    &       &       & \vdck  & \vdck  &       &       &      &      &      &      &      \\ \hline
+      IMPARQ &       &       & \vduck & \vduck & \vdu  &       &      &      &      &      &      \\ \hline
+      IMPALG &       &       &        &        & \vdd  & \vdd  & \vdd & \vdd & \vdd &      &      \\ \hline
+      TST    &       &       &        &        &       &       & \mr  & \mr  & \mr  &    & \mr PR \\ \hline
+      RED    & \vmck & \vrm  & \vmck  & \vmck  & \vrm  & \vrm  & \vrm & \vrm & \vrm &      &      \\ \hline
+      DEF    &       &       &        &        &       &       &      &      &      & \ovd &      \\ \hline
+    \end{tabular}
+  }
+  \caption{Cronograma --- {\footnotesize MMP: Modelagem do mapeamento; PVC: Prova de conceito;
+      IMPARQ: Implementação da arquitetura; IMPALG: Implementação do Algoritmo; RED: Redação do
+  texto; TST: Testes; DEF: Defesa; PR: Participação na Robocup}\label{tab:crono}}
 \end{table}
 
 \begin{itemize}
@@ -39,17 +29,20 @@ texto; TST: Testes; DEF: Defesa}\label{tab:crono}}
   \item Legenda:
     \begin{itemize}
       \item Modelagem do mapeamento: discutido no capítulo~\ref{cap:mapeamento};
-      \item Prova de conceito: implementar execução, pelo menos no simulador, do planejamento
-            no formato que o algoritmo deve retornar.
-      \item Implementação da arquitetura: implementar todo o programa incluindo um stub do
-            algoritimo do minimax, isto é, o programa final a menos da corretude do algoritmo.
-      \item Implementação do algoritimo: avançar o algoritmo ao ponto que a solução retornada
-            esteja correta e prática, isto é, pode ser utilizada para uma partida real ou
-            simulada.
-      \item Testes: realização de testes em partidas e coleta de dados obtidos através das
-            métricas estabelecidas na seção~\ref{sec:metricas}.
+      \item Prova de conceito: implementar execução, pelo menos no simulador, do
+        planejamento no formato que o algoritmo deve retornar.
+      \item Implementação da arquitetura: implementar todo o programa incluindo
+        um stub do algoritimo do minimax, isto é, o programa final a menos da
+        corretude do algoritmo.
+      \item Implementação do algoritimo: avançar o algoritmo ao ponto que a
+        solução retornada esteja correta e prática, isto é, pode ser utilizada
+        para uma partida real ou simulada.
+      \item Testes: realização de testes em partidas e coleta de dados obtidos
+        através das métricas estabelecidas na seção~\ref{sec:metricas}. E em
+        Junho será oficialmente testado na Robocup.
       \item Redação: Desenvolvimento da monografia.
       \item Defesa: Apresentação final do projeto em razão da VF de PFC.
-  \end{itemize}
+    \end{itemize}
 \end{itemize}
-% vim: ts=2 sw=2 sts=2
+
+% vim: tw=80 et ts=2 sw=2 sts=2
