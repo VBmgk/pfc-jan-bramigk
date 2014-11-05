@@ -1,33 +1,54 @@
 \chapter{Cronograma}\label{cap:cronograma}
 
-Conforme Tabela~\ref{tab:crono}.
-\begin{table}[Ht!]
-   \begin{center}
-     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
-       \hline
-                         &      &     &     &     &     &     &     &         \\
-           Data          &  Ago & Set & 0ut & Nov & Fev & Mar & Abr & Mai      \\
-                         &      &     &     &     &     &     &     &         \\
-       \hline                                                                 
-       Modelagem do      &   x  &  x  &     &     &     &     &     &         \\
-       mapeamento        &      &     &     &     &     &     &     &         \\
-       \hline                                                                 
-       Prova de          &      &     &  x  &  x  &     &     &     &         \\
-       conceito          &      &     &     &     &     &     &     &         \\
-       \hline                                                                 
-       Implementação     &      &     &  x  &  x  &     &     &     &         \\
-       da arquitetura    &      &     &     &     &     &     &     &         \\
-       \hline                                                                 
-       Implementação     &      &     &     &     &  x  &  x  &  x  &         \\
-       do algoritmo      &      &     &     &     &     &     &     &         \\
-       \hline                                                                 
-       Otimização do     &      &     &     &     &     &     &     &   x     \\
-       algoritmo(opcional)&      &     &     &     &     &     &     &         \\
-       \hline
-     \end{tabular}
-   \caption{Cronograma}
-   \label{tab:crono}
-   \end{center}
- \end{table}
+%Conforme Tabela~\ref{tab:crono}.
+
+\begin{table}[h]
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+      \hline
+                        &      &      &      &      &      &      &      &      \\
+          Data          & Ago  & Set  & 0ut  & Nov  & Fev  & Mar  & Abr  & Mai  \\
+                        &      &      &      &      &      &      &      &      \\
+      \hline
+      Modelagem do      &  ok  &  ok  &      &      &      &      &      &      \\
+      mapeamento        &      &      &      &      &      &      &      &      \\
+      \hline
+      Prova de          &      &      &  ok  &  ok  &      &      &      &      \\
+      conceito          &      &      &      &      &      &      &      &      \\
+      \hline
+      Implementação     &      &      &  ok  &  ok  &      &      &      &      \\
+      da arquitetura    &      &      &      &      &      &      &      &      \\
+      \hline
+      Implementação     &      &      &      &      &  x   &  x   &  x   &      \\
+      do algoritmo      &      &      &      &      &      &      &      &      \\
+      \hline
+      Otimização do     &      &      &      &      &      &      &      &   x  \\
+      algoritmo (opcional)&    &      &      &      &      &      &      &      \\
+      \hline
+    \end{tabular}
+    \caption{Cronograma}
+    \label{tab:crono}
+  \end{center}
+\end{table}
+
+
+Estado atual: implementação do algoritmo em progresso.
+
+Legenda:
+
+\begin{itemize}
+  \item Modelagem do mapeamento: discutido no capítulo~\ref{cap:mapeamento};
+  \item Prova de conceito: implementar execução, pelo menos no simulador,
+    do planejamento no formato que o algoritmo deve retornar.
+  \item Implementação da arquitetura: implementar todo o programa incluindo um
+    \textit{stub} do algoritimo do minimax, isto é, o programa final a menos da
+    corretude do algoritmo.
+  \item Implementação do algoritimo: avançar o algoritmo ao ponto que a solução
+    retornada esteja correta e prática, isto é pode ser utilizada para uma
+    partida, ainda que somente no simulador.
+  \item Otimização do algoritmo (opcional): melhorar a solução para alcançar uma
+    taxa ou profundidade maior, como por exemplo implementando a prunagem
+    $alpha-beta$.
+\end{itemize}
 
 % vim: tw=80 et ts=2 sw=2 sts=2
