@@ -1,0 +1,54 @@
+\section{Arquitetura}
+
+A arquitetura a ser considerada é baseada em \cite{felixnavarro}.
+A \textit{RoboCup Small Size League} (SSL) envolve problemas de diversas áreas
+da engenharia. Logo, com o objetivo de facilitar a compreensão do
+problema, a arquitetura a ser considerada é apresentada na
+figura~\ref{arquitetura_ssl}. Essa arquitetura é composta pelos seguintes
+sistemas:
+
+\begin{itemize}
+  \item Câmeras Visão: conjunto de câmeras \textit{firewire} que captura as imagens do
+        campo e as envia para a SSL-Vision;
+  \item Comunicação: módulo responsável por receber os parâmetros
+        dos motores, drible, chute baixo e chute alto e enviar o comando via
+        ondas de rádio para os robôs;
+  \item Execução: módulo responsável por realizar a tomada de decisões
+        em baixo nível de quais ações os robôs devem realizar a partir
+        da decisão tomada pelo módulo de inteligência;
+  \item Inteligência: módulo responsável por realizar a tomada de
+        decisão em alto nível de quais ações os robôs devem realizar
+        tendo auxílio de um módulo de Simulação;
+  \item Mundo Real: campo de futebol real, onde os times 1 e 2 interagem
+        através de seus respectivos robôs
+  \item Referee-Box: \textit{software} padronizado pela Robocup para que as
+        regras da competição sejam cumpridas sem que haja intervenção
+        humana excessiva durante uma partida;
+  \item Simulação: módulo do \textit{software} do time responsável por simular
+        o ambiente da partida, tendo como entrada os parâmetros do mundo
+        real;
+  \item \textit{Software} Time 1/2: \textit{software} do time 1/2;
+  \item SSL-Vision: \textit{software} padronizado pela Robocup que permite a
+        integração com um conjunto de câmeras \textit{firewire} que capturam
+        imagens do campo e as processa, extraindo informações de posicionamento
+        dos robôs e da bola contidas nessas imagens;
+  \item Time 1/2: time de robôs que executa os comandos recebidos pelo
+        sistema de transmissão do time 1/2;
+  \item Transmissão 1/2: sistema de transmissão do time 1/2;
+  \item World Model: módulo responsável por modelar o mundo
+        provendo consistência aos dados que serão enviados ao módulo de
+        Inteligência e são oriundos do Referee-Box e SSL-Vision.
+\end{itemize}
+
+\begin{landscape}
+  \begin{figure}[thpb]
+    \centering
+    \includegraphics[width=20cm]{img/arquitetura_ssl}
+    \caption{Arquitetura básica da SSL}
+    \label{arquitetura_ssl}
+  \end{figure}
+\end{landscape}
+
+Apesar de modelar a maioria dos sistemas empregados atualmente na
+SSL, existem alguns problemas na arquitetura descrita anteriormente. Assim,
+são necessárias algumas definições apresentadas nas próximas secções para que eles possam ser discutidos.
