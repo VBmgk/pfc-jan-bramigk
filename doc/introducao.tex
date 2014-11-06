@@ -7,6 +7,15 @@ atuas da robótica é o planejamento em ambientes multiagentes dinâmicos, em qu
 ao menos um agente não é controlado. Um bom exemplo de um desses ambientes
 dinâmicos é um jogo de futebol de robôs, onde um grupo de robôs é controlado por
 uma IA e o outro grupo por outra IA independente.
+A figura~\ref{fig:robocup2013} mostra uma imagem da
+SSL Robocup 2013, da qual a RoboIME (equipe de alunos do Laboratório de Robótica
+do IME) participou.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{robocup2013}
+  \caption{Imagem da SSL \textit{RoboCup} 2013 em Eindhoven, na Holanda}\label{fig:robocup2013}
+\end{figure}
 
 Devido a alta complexidade desses ambientes, não é viável o planejamento
 considerando diretamente as leis físicas. Como consequência, limita-se as ações
@@ -17,21 +26,15 @@ deve estar em sintonia com seu modelo. Com efeito, o robô real deve executar os
 comandos conforme o robô simulado, caso o mesmo ambiente simulado seja
 encontrado na prática.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\linewidth]{robocup2013}
-  \caption{Imagem da SSL \textit{RoboCup} 2013 em Eindhoven, na Holanda}\label{fig:robocup2013}
-\end{figure}
-
 A ideia de robôs jogando futebol foi mencionada pela primeira vez pelo professor
 Alan Mackworth (University of British Columbia, Canadá) em um artigo intitulado
 "On Seeing Robots", apresentado no Vision Interface 92 e posteriormente
-% FIXME: falta referencia bibiográfica para tal livro:
-publicado em um livro chamado Computer Vision: System, Theory and Applications.
-Independentemente, um grupo de pesquisadores japoneses organizou um Workshop no
-Ground Challenge in Artificial Intelligence, em Outubro de 1992, Tóquio,
-discutindo e propondo problemas que representavam grandes desafios. Esse
-Workshop os levou a sérias discussões sobre usar um jogo de futebol para
+publicado em um livro chamado Computer Vision: System, Theory and Applications
+\cite{basu1993computer}.  Independentemente, um grupo de pesquisadores japoneses
+organizou um Workshop no Ground Challenge in Artificial Intelligence, em Outubro
+de 1992, Tóquio, discutindo e propondo problemas que representavam grandes
+desafios.
+Esse Workshop os levou a sérias discussões sobre usar um jogo de futebol para
 promover ciência e tecnologia. Estudos foram feitos para analisar a viabilidade
 dessa ideia. Os resultados desses estudos mostram que a ideia era viável,
 desejável e englobava diversas aplicações práticas. Em 1993, um grupo de
@@ -41,6 +44,12 @@ analogia à J-League, nome da Liga Japonesa de Futebol Profissional). Em um mês
 vários pesquisadores já se pronunciavam dizendo que a iniciativa deveria ser
 estendida ao âmbito internacional. Surgia então, a Robot World Cup Initiative
 (RoboCup).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1.0\linewidth]{arquitetura_ssl}
+  \caption{Arquitetura típica da SSL}\label{fig:arq_ssl}
+\end{figure}
 
 RoboCup é uma competição destinada a desenvolver os estudos na área de robótica
 e Inteligência Artificial (IA) por meio de uma competição amigável. Além disso,
@@ -60,16 +69,6 @@ cada robô e envia este comando através de ondas de rádio aos robôs.
 % maioria das equipes utiliza a visão centralizada.
 Uma arquitetura típica utilizada pelas equipes da SSL é apresentada na
 figura~\ref{fig:arq_ssl}.
-% TODO: Mencionar na página anterior, próximo à Fig 1.
-A figura~\ref{fig:robocup2013} mostra uma imagem da
-SSL Robocup 2013, da qual a RoboIME (Equipe de Futebol de Robôs do Laboratório
-de Robótica do IME) participou.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=1.0\linewidth]{arquitetura_ssl}
-  \caption{Arquitetura típica da SSL}\label{fig:arq_ssl}
-\end{figure}
 
 \section{Motivação}
 
@@ -95,8 +94,8 @@ Devido a alta complexidade de sistemas multiagentes dinâmicos, torna-se
 necessário um modelo simplificado para que sejam executadas o maior número de
 simulações possível.  Caso seja possível uma discretização, ter-se-á um número
 finito de casos para serem avaliados. Com isso, pode-se aplicar algoritmos como
-% FIXME: definir brevemente o minimax.
-o minimax (aplicados a jogos de competitivos de soma zero) para encontrar
+% FIXME: definir brevemente o minimax... CHECK
+o Minimax (regra para tomada de decisão em jogos discretos) para encontrar
 soluções ao problema.
 
 Isso é muito mais desejável que um modelo heurístico de IA, onde as soluções são
@@ -125,7 +124,6 @@ criadas dinamicamente, diferentemente de uma arquitetura estática baseada em um
 heurística. Essa abordagem heurística é legada da maneira como estratégias são
 planejadas nos times de futebol humano.
 
-% FIXME: RoboIME <- quem é essa?
 Com tal mecanismo é possível melhorar a IA em uso pela RoboIME para tomar
 decisões que levem a resultados melhores e, como consequência, ganhar mais
 partidas. Nenhuma equipe atualmente esta seguindo esta abordagem, mas os autores
