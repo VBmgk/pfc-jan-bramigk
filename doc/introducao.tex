@@ -93,8 +93,7 @@ Devido a alta complexidade de sistemas multiagentes dinâmicos, torna-se
 necessário um modelo simplificado para que sejam executadas o maior número de
 simulações possível.  Caso seja possível uma discretização, ter-se-á um número
 finito de casos para serem avaliados. Com isso, pode-se aplicar algoritmos como
-% FIXME: definir brevemente o minimax... CHECK
-o Minimax (regra para tomada de decisão em jogos discretos) para encontrar
+o Minimax (discutido no capítulo~\ref{cap:minimax}) para encontrar
 soluções ao problema.
 
 Isso é muito mais desejável que um modelo heurístico de IA, onde as soluções são
@@ -106,12 +105,10 @@ limita a capacidade que o computador tem de testar um grande número de possibil
 
 O objetivo deste trabalho é desenvolver um algoritmo de controle para o futebol
 de robôs que obtenha um desempenho melhor que o utilizado atualmente, de acordo
-% FIXME: muito indefinido:
-com um critério que será definido posteriormente.
-Como objetivos secundários, este trabalho objetiva criar um modelo discreto para
-o problema do futebol de robôs, que é um jogo contínuo de soma zero.
-% XXX: Acho que este deve ser mesmo mo objetivo.  ESTA SEÇÃO ESTÁ CONFUSA
-A partir desta discretização, pretende-se desenvolver uma arquitetura de
+com a performance em um conjunto de partidas.
+Como objetivos intermediário, este trabalho objetiva criar um modelo discreto
+sequencial para o problema do futebol de robôs, que é um jogo contínuo de soma
+zero.  A partir desta discretização, pretende-se desenvolver uma arquitetura de
 controle com base no algoritmo minimax para se planejar jogadas.
 
 \section{Justificativa}
