@@ -14,7 +14,7 @@ neverclean := *.pdf
 #
 
 .PHONY: open
-open: all
+open:
 	$(OPEN) relatorio.pdf
 
 .PHONY: todos

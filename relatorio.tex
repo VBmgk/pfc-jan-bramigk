@@ -23,25 +23,27 @@
 % ---
 
 \usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
-\usepackage{cmap}			% Mapear caracteres especiais no PDF
-\usepackage{lmodern}			% Usa a fonte Latin Modern
-\usepackage{amsmath}			% Para usar blocos como "gather" de escrever matemática
-%\usepackage{amsfonts}			% Para usar fontes ams
-%\usepackage{times}			% Usa a fonte Times
-\usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
-%\usepackage{lastpage}			% Usado pela Ficha catalográfica
-\usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
-\usepackage{color}			% Controle das cores
-\usepackage[table]{xcolor}			% Controle das cores em uma tabela
-\usepackage{graphicx}			% Inclusão de gráficos
-\usepackage[portuguese]{algorithm2e}		% Para escrever algorítimos
-\usepackage{lscape}			% Para usar landscape
-\usepackage{amsthm}			% Para usar Definições e lemas
-\usepackage{amssymb}			% \mathbb{•}
-\usepackage{caption}			% dependencia de subcaption
-%\usepackage{subcaption}			% Para usar \begin{subfigure} e colocar figuras (a) e (b) lado a lado
-\usepackage{listings}			% Para usar \lstinputlisting e incluir código
-\newtheorem{teo}{Teorema}[section]	%Renomear o comando
+\usepackage{float}                    % For improved placement of figures
+\usepackage{placeins}                 % Keeps floats 'in their place' with \FloatBarrier
+\usepackage{cmap}                     % Mapear caracteres especiais no PDF
+\usepackage{lmodern}                  % Usa a fonte Latin Modern
+\usepackage{amsmath}                  % Para usar blocos como "gather" de escrever matemática
+%\usepackage{amsfonts}                 % Para usar fontes ams
+%\usepackage{times}                    % Usa a fonte Times
+\usepackage[T1]{fontenc}              % Selecao de codigos de fonte.
+%\usepackage{lastpage}                 % Usado pela Ficha catalográfica
+\usepackage{indentfirst}              % Indenta o primeiro parágrafo de cada seção.
+\usepackage{color}                    % Controle das cores
+\usepackage[table]{xcolor}            % Controle das cores em uma tabela
+\usepackage{graphicx}                 % Inclusão de gráficos
+\usepackage[portuguese]{algorithm2e}  % Para escrever algorítimos
+\usepackage{lscape}                   % Para usar landscape
+\usepackage{amsthm}                   % Para usar Definições e lemas
+\usepackage{amssymb}                  % \mathbb{•}
+\usepackage{caption}                  % dependencia de subcaption
+%\usepackage{subcaption}               % Para usar \begin{subfigure} e colocar figuras (a) e (b) lado a lado
+\usepackage{listings}                 % Para usar \lstinputlisting e incluir código
+\newtheorem{teo}{Teorema}[section]    % Renomear o comando
 \newtheorem{defi}[teo]{Definição}
 % o seguinte é necessário para corrigir um bug no algorithm2e
 % http://tex.stackexchange.com/questions/113325/problem-with-algorithm2e-and-portuguese-option
@@ -383,6 +385,7 @@ competitivos}
   \item[IA] Inteligência Artificial
   \item[SSL] \textit{Small Size League}
   \item[Robocup] \textit{Robotics World Cup}
+  \item[RoboIME] Equipe de alunos do Laboratório de Robótica do IME
 \end{siglas}
 % ---
 
