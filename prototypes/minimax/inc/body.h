@@ -36,6 +36,7 @@ public:
   Vector getNRandPos() const { return Vector::getNRand(last_planed_pos); }
 
   Vector getURandPos() const { return Vector::getURand(); }
+  Vector getURandPos(float rx, float ry) const { return Vector::getURand(rx, ry); }
 
   Vector getLastPlanedPos() const { return last_planed_pos; }
 
