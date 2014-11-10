@@ -24,11 +24,17 @@ Move::Move(const class Robot &robot) : Action(robot.getId()) {
 
 float Move::getTime() const { return time; }
 
-void Move::apply(Player, Board &b) const {}
+void Move::apply(Player, Board &b) const {
+  // TODO!!!!!!! Just do it!!!!
+}
 
-void Pass::apply(Player, Board &b) const {}
+void Pass::apply(Player, Board &b) const {
+  // TODO!!!!!!! Just do it!!!!
+}
 
-void Kick::apply(Player, Board &b) const {}
+void Kick::apply(Player, Board &b) const {
+  // TODO!!!!!!! Just do it!!!!
+}
 
 roboime::Command convert(TeamAction team_action){
   roboime::Command cmd;
