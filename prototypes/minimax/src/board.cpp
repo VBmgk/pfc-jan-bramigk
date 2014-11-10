@@ -33,14 +33,12 @@ TeamAction Board::genActions(Player player, bool kickAction) const {
   if (player_with_ball == player) {
     // Kick
     if (kickAction) {
-      // FIXME: this is will lead to memory leak
       std::shared_ptr<Action> action(new Kick(*robot_with_ball));
       actions.push_back(std::move(action));
       // Pass
     } else {
       bool any_pass = false;
       for (auto robot : canGetPass(player)) {
-        // FIXME: this is will lead to memory leak
         std::shared_ptr<Action> action(new Pass(*robot_with_ball, *robot));
         actions.push_back(std::move(action));
         any_pass = true;
@@ -51,7 +49,6 @@ TeamAction Board::genActions(Player player, bool kickAction) const {
       // in the rare case there isn't any possible pass
       // for the robot with ball, we'll make it move
       if (!any_pass) {
-        // FIXME: this is will lead to memory leak
         std::shared_ptr<Action> action(new Move(*robot_with_ball));
         actions.push_back(std::move(action));
       }
@@ -60,7 +57,6 @@ TeamAction Board::genActions(Player player, bool kickAction) const {
 
   // push a Move action for every other robot
   for (auto robot : getOtherRobots(player, *robot_with_ball)) {
-    // FIXME: this is will lead to memory leak
     std::shared_ptr<Action> action(new Move(*robot));
     actions.push_back(std::move(action));
   }
