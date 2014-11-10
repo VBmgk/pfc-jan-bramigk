@@ -264,15 +264,24 @@ void draw_teamaction(const TeamAction &t_action, const Board &board) {
       case Action::PASS: {
           auto pass = std::dynamic_pointer_cast<Pass>(action);
           auto rcv = get_robot(pass->getId(), board);
-          glColor3ubv(RED2);
+          glColor3ubv(GREY);
+          //glColor3ubv(RED2);
           glBegin(GL_LINES);
           auto pos_i = robot.pos();
           glVertex3f(pos_i[0], pos_i[1], 0.0f);
           auto pos_b = board.getBall().pos();
           glVertex3f(pos_b[0], pos_b[1], 0.0f);
+          glEnd();
+          glPushAttrib(GL_ENABLE_BIT);
+          //glLineStipple(1, 0xAAAA);
+          glLineStipple(1, 0xF0F0);
+          glEnable(GL_LINE_STIPPLE);
+          glBegin(GL_LINES);
+          glVertex3f(pos_b[0], pos_b[1], 0.0f);
           auto pos_f = rcv.pos();
           glVertex3f(pos_f[0], pos_f[1], 0.0f);
           glEnd();
+          glPopAttrib();
         } break;
       case Action::KICK: {
           auto kick = std::dynamic_pointer_cast<Kick>(action);
