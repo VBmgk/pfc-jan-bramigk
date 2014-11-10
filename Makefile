@@ -1,6 +1,6 @@
-OPEN = $(shell which -s gnome-open && echo gnome-open \
-            || which -s xdg-open && echo xdg-open \
-            || which -s open && echo open)
+OPEN = $(shell which gnome-open > /dev/null && echo gnome-open \
+            || which xdg-open   > /dev/null && echo xdg-open \
+            || which open       > /dev/null && echo open)
 
 
 .PHONY: all
