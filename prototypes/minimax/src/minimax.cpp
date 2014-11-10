@@ -8,7 +8,7 @@ TeamAction Minimax::decision(const Board &board) {
   if (board.getMin().size() == 0 || board.getMax().size() == 0)
     return TeamAction(0);
 
-  return value(board, MAX, nullptr, 1).second;
+  return value(board, MAX, nullptr, 0).second;
 }
 
 std::pair<float, TeamAction> Minimax::value(const Board &board, Player player,
