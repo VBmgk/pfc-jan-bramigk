@@ -149,7 +149,7 @@ public:
 
 class Minimax {
   static constexpr int RAMIFICATION_NUMBER = 10;
-  static constexpr int MAX_DEPTH = 3;
+  static constexpr int MAX_DEPTH = 1;
   std::pair<float, TeamAction> value(const Board &, Player, TeamAction *,
                                      int depth);
 
