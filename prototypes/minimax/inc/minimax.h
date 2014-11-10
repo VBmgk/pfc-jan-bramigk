@@ -168,8 +168,13 @@ struct App {
     int minimax_count;
     int pps;
     int mps;
+    float val;
+    bool has_val;
   } display;
   std::mutex display_mutex;
+  bool play_minimax = false;
+  bool play_minimax_once = false;
+  bool eval_board_once = false;
 
   static void run(std::function<void(App &)>);
 };

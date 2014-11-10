@@ -80,6 +80,7 @@ void App::run(std::function<void(App &)> run) {
           Board local_board(min_t, max_t, ball);
           {
             std::lock_guard<std::mutex> _(app.board_mutex);
+            app.display.has_val = false;
             app.board = local_board;
           }
 
@@ -102,19 +103,29 @@ void App::run(std::function<void(App &)> run) {
   std::thread minimax_thread([&]() {
     // single minimax instance, may make use of cache in the future
     Minimax minimax;
+    TeamAction local_command;
+    Board local_board;
 
     int n_ticks = 0;
     while (should_recv) {
-      Board local_board;
       {
         std::lock_guard<std::mutex> _(app.board_mutex);
         app.command_board = app.board;
         local_board = app.command_board;
       }
 
-      TeamAction local_command = minimax.decision(local_board);
-      // TeamAction local_command;
-      mnmx_count++;
+      if (app.play_minimax || app.play_minimax_once) {
+        app.play_minimax_once = false;
+        local_command = minimax.decision(local_board);
+        mnmx_count++;
+      }
+
+      if (app.eval_board_once) {
+        app.eval_board_once = false;
+        app.display.val = local_board.evaluate();
+        app.display.has_val = true;
+      }
+
       {
         std::lock_guard<std::mutex> _(app.command_mutex);
         app.command = local_command;

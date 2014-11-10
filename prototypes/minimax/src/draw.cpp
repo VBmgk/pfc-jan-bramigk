@@ -299,6 +299,11 @@ void draw_display(App *app, double fps, int width, int height) {
                       "%i minimax/s\n",
            fps, app->display.uptime, app->display.minimax_count,
            app->display.pps, app->display.mps);
+  if (app->display.has_val) {
+    char text2[256];
+    snprintf(text2, 256, "value: %f", app->display.val);
+    strcat(text, text2);
+  }
   draw_text(text, width, height);
 }
 

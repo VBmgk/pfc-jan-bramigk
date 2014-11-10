@@ -28,10 +28,36 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
 
   if (action == GLFW_PRESS) {
     switch (key) {
+
     case GLFW_KEY_R: {
       std::lock_guard<std::mutex> _(app->board_mutex);
       app->board = Board::randomBoard();
+      app->display.has_val = false;
     } break;
+
+    case GLFW_KEY_S: {
+      app->play_minimax_once = true;
+    } break;
+
+    case GLFW_KEY_P: {
+      app->play_minimax = !app->play_minimax;
+    } break;
+
+    case GLFW_KEY_E: {
+      // TODO: print current board's evaluation
+      app->eval_board_once = true;
+    } break;
+
+    // TODO: navigate on the current tree
+    case GLFW_KEY_UP: {
+    } break;
+    case GLFW_KEY_DOWN: {
+    } break;
+    case GLFW_KEY_LEFT: {
+    } break;
+    case GLFW_KEY_RIGHT: {
+    } break;
+
     default:
       break;
     }
