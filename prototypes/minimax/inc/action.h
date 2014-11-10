@@ -30,7 +30,7 @@ class Move : public Action {
   float time;
 
 public:
-  Move(const class Robot &robot);
+  Move(const Robot &robot);
 
   float getTime() const;
 
@@ -56,7 +56,7 @@ class Pass : public Action {
   int rcv_id;
 
 public:
-  Pass(Robot r_b, Robot r_rcv) : Action(r_b.getId()), rcv_id(r_rcv.getId()) {}
+  Pass(const Robot &r_b, const Robot & r_rcv) : Action(r_b.getId()), rcv_id(r_rcv.getId()) {}
 
   void apply(Player, Board &) const;
 
@@ -78,7 +78,7 @@ class Kick : public Action {
   static constexpr float DEFAULT_SPEED = 10; // meters per second
 
 public:
-  Kick(Robot robot) : Action(robot.getId()), speed(DEFAULT_SPEED) {}
+  Kick(const Robot &robot) : Action(robot.getId()), speed(DEFAULT_SPEED) {}
 
   void apply(Player, Board &) const;
 
