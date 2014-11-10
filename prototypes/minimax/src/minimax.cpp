@@ -4,15 +4,23 @@
 #include "minimax.h"
 
 TeamAction Minimax::decision(const Board &board) {
+  // special case for it not to crash when no robots on a team
+  if (board.getMin().size() == 0 || board.getMax().size() == 0)
+    return TeamAction(0);
+
   return value(board, MAX, nullptr, 1).second;
 }
 
 std::pair<float, TeamAction> Minimax::value(const Board &board, Player player,
                                             TeamAction *max_action, int depth) {
+  // XXX: temporary!!!!!!
+  //if (board.isGameOver()) {
+  //  // TODO: implement isGameOver
+  //  return std::make_pair(board.evaluate(), board.genKickTeamAction(player));
+  //}
 
-  if (board.isGameOver() || depth >= MAX_DEPTH) {
-    // TODO: implement isGameOver
-    return std::make_pair(board.evaluate(), board.genKickTeamAction(player));
+  if (depth >= MAX_DEPTH) {
+    return std::make_pair(board.evaluate(), TeamAction(0));
   }
 
   if (player == MAX) {
@@ -25,10 +33,10 @@ std::pair<float, TeamAction> Minimax::value(const Board &board, Player player,
       auto buffer = value(board, MIN, &max_action, depth + 1);
 
       // minimize loss
-      if (v.first < buffer.first)
+      if (v.first < buffer.first) {
         v = buffer;
-
-      buffer.second = max_action;
+        v.second = max_action;
+      }
     }
 
     return v;
@@ -44,10 +52,10 @@ std::pair<float, TeamAction> Minimax::value(const Board &board, Player player,
       auto buffer = value(next_board, MAX, nullptr, depth + 1);
 
       // minimize loss
-      if (v.first > buffer.first)
+      if (v.first > buffer.first) {
         v = buffer;
-
-      buffer.second = min_action;
+        v.second = min_action;
+      }
     }
 
     return v;
