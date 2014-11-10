@@ -64,10 +64,26 @@ void draw_ball(const Ball &ball) {
   glPopMatrix();
 }
 
+void draw_goals(const Board &board) {
+  if (board.isMaxLeft()) glColor3ubv(BLUE);
+  else glColor3ubv(YELLOW);
+
+  glRectf(-board.goalX() -board.goalDepth(), board.goalWidth() / 2,
+          -board.goalX(), -board.goalWidth() / 2);
+
+  if (board.isMaxLeft()) glColor3ubv(YELLOW);
+  else glColor3ubv(BLUE);
+
+  glRectf(board.goalX() +board.goalDepth(), board.goalWidth() / 2,
+          board.goalX(), -board.goalWidth() / 2);
+}
+
 void draw_board(const Board &board) {
   glColor3ubv(FIELD_GREEN);
   glRectf(-board.fieldWidth() / 2, board.fieldHeight() / 2,
           board.fieldWidth() / 2, -board.fieldHeight() / 2);
+
+  draw_goals(board);
 
   for (auto robot : board.getMax().getRobots()) {
     draw_robot(robot, BLUE);

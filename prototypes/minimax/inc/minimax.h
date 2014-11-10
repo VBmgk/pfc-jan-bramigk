@@ -69,6 +69,8 @@ public:
     }
   }
 
+  bool isMaxLeft() const { return maxOnLeft; }
+
   static Board randomBoard() {
     Board b;
 
@@ -121,7 +123,8 @@ public:
   // Double-size field
   static float goalX() { return fieldWidth() / 2; }
   static float goalY() { return fieldHeight() / 2; }
-  static float goalWidth() { return 1; }
+  static float goalWidth() { return 1.000; }
+  static float goalDepth() { return 0.180; }
 
   Vector goalPos(Player p) const {
     float goal_x = goalX();
