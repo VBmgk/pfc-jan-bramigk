@@ -62,6 +62,9 @@ set(COMMON_LIBRARIES
   ${CMAKE_THREAD_LIBS_INIT}
 )
 
+add_executable(minimax_tests tests/main.cpp $<TARGET_OBJECTS:minimax>)
+target_link_libraries(minimax_tests ${COMMON_LIBRARIES})
+
 add_executable(minimax_cli src/main.cpp $<TARGET_OBJECTS:minimax>)
 target_link_libraries(minimax_cli ${COMMON_LIBRARIES})
 
