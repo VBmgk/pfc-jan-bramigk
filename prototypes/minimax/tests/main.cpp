@@ -46,21 +46,25 @@ int main(void){
   Vector null;
   Team min, max;
 
+  // Creating random min
   for(int i=1; i<5 ;i++)
     min.addRobot(
       Robot(i, Vector::getURand(), Vector::getNRand(v))
     );
 
+  // Creating random max
   for(int i=1; i<3 ;i++)
     max.addRobot(
       Robot(i, Vector::getURand(), Vector::getNRand(v))
     );
 
+  // Creating different balls
   Ball ball_1, ball_2;
   ball_1.setV(Vector(arma::vec("2 0")));
   ball_2.setV(Vector(arma::vec("-2 2")));
 
   Board board(min,max);
+  // boards ball position
   print(board.getBall());
 
   print(board, ball_1, ball_2);
@@ -76,7 +80,30 @@ int main(void){
 
   print(board);
 
-  // TODO[bramigk]: testar esta função, se possível com googletest
-  //board.kickLineCrossRobot();
+  // TODO[bramigk]: testar com googletest
+  // kickLineCrossRobot test
+  Robot r_kicker(0, Vector(arma::vec("0 0")), Vector(arma::vec("0 0")));
+  Robot r_blocker(1, Vector(arma::vec("1.5 0")), Vector(arma::vec("0 0")));
+
+  Ball b(Vector(arma::vec("0.5 0")), Vector(arma::vec("0 0")));
+
+  Team min2, max2;
+  min2.addRobot(r_kicker);
+  max2.addRobot(r_kicker);
+  Board board2(min2,max2,b);
+
+  print(*board2.getRobotWithBall().first);
+
+  std::cout << "kicklinecrossRobot: ";
+  if( board2.kickLineCrossRobot(150, r_blocker)) std::cout << "Ok" << std::endl;
+  else std::cout << "nao ok" << std::endl;
+
+  // lineSegmentCrossCircle test
+  if (Vector::lineSegmentCrossCircle(
+          Vector(arma::vec("0 0")), Vector(arma::vec("2 0")),
+          Vector(arma::vec("1 0")), Robot::radius()))
+    std::cout << "basic funcion ok" << std::endl;
+  else
+    std::cout << "basic funcion errada" << std::endl;
   return 0;
 }
