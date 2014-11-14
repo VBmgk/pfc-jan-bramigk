@@ -77,7 +77,7 @@ public:
     Vector w = p2 - center;
 
     // center of circle behind p1
-    if (w * v_u < 0)
+    if (w * v_u > 0)
       return false;
 
     // perpendicular vector from center of the cirle to the line
