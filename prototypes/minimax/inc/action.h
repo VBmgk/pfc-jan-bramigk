@@ -21,7 +21,7 @@ public:
   enum ActionType { MOVE, PASS, KICK };
   virtual ActionType type() const = 0;
 
-  virtual void discreteAction(roboime::Action*) const = 0;
+  virtual void discreteAction(roboime::Action *) const = 0;
 };
 
 class Move : public Action {
@@ -40,8 +40,8 @@ public:
 
   Vector pos() { return next_position; }
 
-  void discreteAction(roboime::Action* a) const {
-    Vector ux(1,0), uy(0,1);
+  void discreteAction(roboime::Action *a) const {
+    Vector ux(1, 0), uy(0, 1);
 
     a->set_robot_id(getId());
     a->set_type(roboime::Action::MOVE);
@@ -56,7 +56,8 @@ class Pass : public Action {
   int rcv_id;
 
 public:
-  Pass(const Robot &r_b, const Robot & r_rcv) : Action(r_b.getId()), rcv_id(r_rcv.getId()) {}
+  Pass(const Robot &r_b, const Robot &r_rcv)
+      : Action(r_b.getId()), rcv_id(r_rcv.getId()) {}
 
   void apply(Player, Board &) const;
 
@@ -64,7 +65,7 @@ public:
 
   int getRcvId() const { return rcv_id; }
 
-  void discreteAction(roboime::Action* a) const {
+  void discreteAction(roboime::Action *a) const {
     a->set_robot_id(Action::getId());
     a->set_type(roboime::Action::PASS);
 
@@ -90,8 +91,8 @@ public:
     return v;
   }
 
-  void discreteAction(roboime::Action* a) const {
-    Vector ux(1,0), uy(0,1);
+  void discreteAction(roboime::Action *a) const {
+    Vector ux(1, 0), uy(0, 1);
 
     a->set_robot_id(getId());
     a->set_type(roboime::Action::KICK);

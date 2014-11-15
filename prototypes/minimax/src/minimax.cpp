@@ -15,7 +15,7 @@ std::pair<float, TeamAction> Minimax::value(const Board &board, Player player,
                                             TeamAction *max_action, int depth) {
   // XXX: temporary!!!!!!
   // FIXME: don't verify this on odd depths
-  //if (board.isGameOver()) {
+  // if (board.isGameOver()) {
   //  // TODO: implement isGameOver
   //  return std::make_pair(board.evaluate(), board.genKickTeamAction(player));
   //}

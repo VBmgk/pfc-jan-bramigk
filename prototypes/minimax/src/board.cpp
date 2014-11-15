@@ -283,8 +283,8 @@ Board Board::applyTeamAction(const TeamAction &max_a,
                              const TeamAction &min_a) const {
   Board new_board(*this);
 
-  // apply all moves first
 #define APPLY_TEAM_ACTION(TA)                                                  \
+  /* apply all moves first */                                                  \
   for (auto action : TA) {                                                     \
     if (action->type() == Action::MOVE) {                                      \
       action->apply(MAX, new_board);                                           \

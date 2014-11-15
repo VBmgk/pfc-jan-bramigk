@@ -11,7 +11,7 @@ Move::Move(const class Robot &robot) : Action(robot.getId()) {
   Vector position = robot.getLastPlanedPos();
   // srand(time(NULL));//XXX: ????
   next_position = robot.getURandPos(Board::fieldWidth(), Board::fieldHeight());
-  //if (rand() % 2 == 1) {
+  // if (rand() % 2 == 1) {
   //  // Move with uniforme distribution
   //  next_position = robot.getURandPos();
   //} else {
@@ -45,7 +45,9 @@ void Pass::apply(Player p, Board &b) const {
       rcv = &robot;
     }
   }
-  ball.setPos(rcv->pos() - Vector::unit(rcv->pos() - ball.pos()) * (Robot::radius() + Ball::radius()));
+  ball.setPos(rcv->pos() -
+              Vector::unit(rcv->pos() - ball.pos()) *
+                  (Robot::radius() + Ball::radius()));
 }
 
 void Kick::apply(Player p, Board &b) const {
@@ -57,10 +59,10 @@ void Kick::apply(Player p, Board &b) const {
   // TODO: position ball
 }
 
-roboime::Command convert(TeamAction team_action){
+roboime::Command convert(TeamAction team_action) {
   roboime::Command cmd;
 
-  for(auto& action: team_action)
+  for (auto &action : team_action)
     action->discreteAction(cmd.add_action());
 
   return cmd;
