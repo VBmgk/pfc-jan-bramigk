@@ -189,6 +189,22 @@ struct App {
   bool eval_board_once = false;
 
   static void run(std::function<void(App &)>);
+
+  void random() {
+      std::lock_guard<std::mutex> _(board_mutex);
+      board = Board::randomBoard();
+      display.has_val = false;
+  }
+
+  void minimax_once() { play_minimax_once = true; }
+  void minimax_toggle() { play_minimax = !play_minimax; }
+  void eval_once() { eval_board_once = true; }
+
+  void apply() {
+      std::lock_guard<std::mutex> _(board_mutex);
+      TeamAction dummy;
+      board = board.applyTeamAction(command, dummy);
+  }
 };
 
 #endif
