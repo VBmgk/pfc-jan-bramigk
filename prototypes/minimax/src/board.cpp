@@ -94,6 +94,7 @@ Board::getRobotWithVirtualBall(const Ball &virt_ball,
   }
   FOR_ROBOT_IN_TEAM(min.robots, MIN)
   FOR_ROBOT_IN_TEAM(max.robots, MAX)
+#undef FOR_ROBOT_IN_TEAM
 
   if (r_rcv != nullptr && timeToVirtualBall(*r_rcv, virt_ball) < min_time) {
     robot_with_ball = r_rcv;
@@ -282,11 +283,21 @@ Board Board::applyTeamAction(const TeamAction &max_a,
                              const TeamAction &min_a) const {
   Board new_board(*this);
 
-  for (auto action : max_a)
-    action->apply(MAX, new_board);
-
-  for (auto action : min_a)
-    action->apply(MIN, new_board);
+  // apply all moves first
+#define APPLY_TEAM_ACTION(TA)                                                  \
+  for (auto action : TA) {                                                     \
+    if (action->type() == Action::MOVE) {                                      \
+      action->apply(MAX, new_board);                                           \
+    }                                                                          \
+  }                                                                            \
+  for (auto action : TA) {                                                     \
+    if (action->type() != Action::MOVE) {                                      \
+      action->apply(MAX, new_board);                                           \
+    }                                                                          \
+  }
+  APPLY_TEAM_ACTION(max_a)
+  APPLY_TEAM_ACTION(min_a)
+#undef APPLY_TEAM_ACTION
 
   return new_board;
 }

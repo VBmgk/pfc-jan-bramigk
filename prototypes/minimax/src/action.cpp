@@ -33,18 +33,19 @@ void Move::apply(Player p, Board &b) const {
 }
 
 void Pass::apply(Player p, Board &b) const {
-  Robot *r;
+  Robot *r, *rcv;
   auto &ball = b.getBall();
-  auto ball_pos = ball.pos();
+  Vector ball_pos = ball.pos();
   for (auto &robot : b.getTeam(p).getRobots()) {
     if (robot.getId() == getId()) {
       robot.setPos(ball_pos);
       r = &robot;
     }
+    if (robot.getId() == getRcvId()) {
+      rcv = &robot;
+    }
   }
-  ball.setV(Vector::unit(r->pos() - ball.pos()) * Robot::kickV());
-  float time = b.timeToBall(*r);
-  ball.setPos(ball.pos() + ball.v() * time);
+  ball.setPos(rcv->pos() - Vector::unit(rcv->pos() - ball.pos()) * (Robot::radius() + Ball::radius()));
 }
 
 void Kick::apply(Player p, Board &b) const {
