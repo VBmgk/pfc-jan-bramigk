@@ -19,6 +19,7 @@ public:
   Team(std::vector<Robot> n_robots) : robots(n_robots) {}
 
   const std::vector<Robot> &getRobots() const { return robots; }
+  std::vector<Robot> &getRobots() { return robots; }
 
   int size() const { return robots.size(); }
 
@@ -48,8 +49,19 @@ public:
       : min(min), max(max), ball(b), actionsMaxTime(FLT_MAX) {}
 
   Board(const Board &b)
-      : max(b.max.getRobots()), min(b.min.getRobots()),
+      : max(b.max.getRobots()), min(b.min.getRobots()), ball(b.ball),
         actionsMaxTime(b.actionsMaxTime) {}
+
+  Team &getTeam(Player p) {
+    switch (p) {
+    case MAX:
+      return max;
+    case MIN:
+      return min;
+    }
+  }
+
+  Ball &getBall() { return ball; }
 
   const Team &getTeam(Player p) const {
     switch (p) {

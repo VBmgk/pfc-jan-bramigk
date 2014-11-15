@@ -62,7 +62,7 @@ public:
 
   ActionType type() const { return PASS; }
 
-  int getId() { return rcv_id; }
+  int getRcvId() const { return rcv_id; }
 
   void discreteAction(roboime::Action* a) const {
     a->set_robot_id(Action::getId());

@@ -263,7 +263,7 @@ void draw_teamaction(const TeamAction &t_action, const Board &board) {
         } break;
       case Action::PASS: {
           auto pass = std::dynamic_pointer_cast<Pass>(action);
-          auto rcv = get_robot(pass->getId(), board);
+          auto rcv = get_robot(pass->getRcvId(), board);
           glColor3ubv(GREY);
           //glColor3ubv(RED2);
           glBegin(GL_LINES);

@@ -24,16 +24,36 @@ Move::Move(const class Robot &robot) : Action(robot.getId()) {
 
 float Move::getTime() const { return time; }
 
-void Move::apply(Player, Board &b) const {
-  // TODO!!!!!!! Just do it!!!!
+void Move::apply(Player p, Board &b) const {
+  for (auto &robot : b.getTeam(p).getRobots()) {
+    if (robot.getId() == getId()) {
+      robot.setPos(next_position);
+    }
+  }
 }
 
-void Pass::apply(Player, Board &b) const {
-  // TODO!!!!!!! Just do it!!!!
+void Pass::apply(Player p, Board &b) const {
+  Robot *r;
+  auto &ball = b.getBall();
+  auto ball_pos = ball.pos();
+  for (auto &robot : b.getTeam(p).getRobots()) {
+    if (robot.getId() == getId()) {
+      robot.setPos(ball_pos);
+      r = &robot;
+    }
+  }
+  ball.setV(Vector::unit(r->pos() - ball.pos()) * Robot::kickV());
+  float time = b.timeToBall(*r);
+  ball.setPos(ball.pos() + ball.v() * time);
 }
 
-void Kick::apply(Player, Board &b) const {
-  // TODO!!!!!!! Just do it!!!!
+void Kick::apply(Player p, Board &b) const {
+  for (auto &robot : b.getTeam(p).getRobots()) {
+    if (robot.getId() == getId()) {
+      robot.setPos(b.getBall().pos());
+    }
+  }
+  // TODO: position ball
 }
 
 roboime::Command convert(TeamAction team_action){
