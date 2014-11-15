@@ -55,6 +55,150 @@ void draw_robot(const Robot &robot, const GLubyte *color) {
   glPopMatrix();
 }
 
+void draw_shadow(const Board& board){
+  auto& ball = board.getBall();
+  auto player_with_ball =
+    board.getRobotWithBall().second;
+
+  auto gx = board.enemyGoalPos(player_with_ball)[0];
+
+  // collect shadows
+
+  std::vector<std::pair<float, float>> shadows;
+  for (auto _robot : board.getRobotsMoving()) {
+    auto& robot = *_robot;
+    auto d = robot.pos() - ball.pos();
+    auto k = d * d - Robot::radius() * Robot::radius();
+
+    if (k <= 0) continue;
+    if (d[0] * gx <= 0) continue;
+
+    // XXX: it's likely there is an issue calculating tangents
+    //      with near zero value, which causes, near horizontal
+    //      lines to be wrong, check it out on the gui.
+
+    float tan_alpha = Robot::radius() / std::sqrt(k);
+    float tan_theta = std::fabs(d[1] / d[0]);
+    printf("%.010g, %.010g\n", tan_alpha, tan_theta);
+    float tan_1 = (tan_theta + tan_alpha) /
+      (1 - tan_theta * tan_alpha);
+
+    float tan_2 = (tan_theta - tan_alpha) /
+      (1 + tan_theta * tan_alpha);
+
+#define Y_SHADOW(var, tan) \
+    float var = std::copysign( \
+        tan * std::fabs (ball.pos()[0] - gx), \
+        d[1]) + ball.pos()[1]
+    Y_SHADOW(y_shadow_1, tan_1);
+    Y_SHADOW(y_shadow_2, tan_2);
+#undef Y_SHADOW
+
+    float u_shadow = std::max(y_shadow_1, y_shadow_2);
+    float d_shadow = std::min(y_shadow_1, y_shadow_2);
+
+    if (u_shadow <= - board.goalWidth() /2 ||
+        d_shadow >= board.goalWidth() /2) continue;
+
+    shadows.push_back(std::make_pair(u_shadow, d_shadow));
+  }
+
+  // sort shadows
+
+  std::sort(shadows.begin(), shadows.end(),
+    [](std::pair<float, float> s1, std::pair<float, float> s2) {
+      return s1 > s2; });
+
+  // merge shadows
+
+  std::vector<std::pair<float, float>> shadows_merged;
+  std::pair<float, float> current_shadow;
+  bool has_first = false;
+  for (auto shadow : shadows) {
+    if (!has_first) {
+      current_shadow = shadow;
+      has_first = true;
+      continue;
+    }
+
+    if (shadow.second >= current_shadow.second) {
+      continue;
+    }
+
+    if (shadow.first >= current_shadow.second) {
+      current_shadow =
+        std::make_pair(current_shadow.first, shadow.second);
+    } else {
+      shadows_merged.push_back(current_shadow);
+      current_shadow = shadow;
+    }
+  }
+  if (has_first) {
+    shadows_merged.push_back(current_shadow);
+  }
+
+  // gather gaps from merged shadows
+
+  std::vector<std::pair<float, float>> gaps;
+  std::pair<float, float> current_gap =
+    std::make_pair(board.goalWidth() / 2, -board.goalWidth() / 2);
+  bool has_last = true;
+  //std::cout << "--" << std::endl;
+  for (auto shadow : shadows_merged) {
+
+    if (shadow.first >= current_gap.first) {
+      if (shadow.second <= current_gap.second) {
+        has_last = false;
+        break;
+      }
+      current_gap.first = shadow.second;
+      continue;
+    }
+
+    gaps.push_back(std::make_pair(current_gap.first, shadow.first));
+    if (shadow.second <= current_gap.second) {
+      has_last = false;
+      break;
+    }
+    current_gap.first = shadow.second;
+  }
+  if (has_last) {
+    gaps.push_back(current_gap);
+  }
+
+  for (auto gap : gaps) {
+    //std::cout << gap.first << ' ' << gap.second << std::endl;
+    glColor3ubv(WHITE);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(ball.pos()[0], ball.pos()[1], 0.0f);
+    glVertex3f(gx, gap.first, 0.0f);
+    glVertex3f(gx, gap.second, 0.0f);
+    glVertex3f(ball.pos()[0], ball.pos()[1], 0.0f);
+    glEnd();
+    glColor3ubv(BLACK);
+    glBegin(GL_LINES);
+    glVertex3f(gx, gap.first, 0.0f);
+    glVertex3f(gx, gap.second, 0.0f);
+    glEnd();
+  }
+  for (auto shadow : shadows) {
+    glColor3ubv(DARK_GREEN);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(ball.pos()[0], ball.pos()[1], 0.0f);
+    glVertex3f(gx, shadow.first, 0.0f);
+    glVertex3f(gx, shadow.second, 0.0f);
+    glVertex3f(ball.pos()[0], ball.pos()[1], 0.0f);
+    glEnd();
+    //glBegin(GL_LINES);
+    //glVertex3f(ball.pos()[0], ball.pos()[1], 0.0f);
+    //glVertex3f(gx, gap.first, 0.0f);
+    //glVertex3f(ball.pos()[0], ball.pos()[1], 0.0f);
+    //glVertex3f(gx, gap.second, 0.0f);
+    //glEnd();
+  }
+}
+
+
 void draw_ball(const Ball &ball) {
   glPushMatrix();
   auto pos = ball.pos();
@@ -76,6 +220,7 @@ void draw_goals(const Board &board) {
 
   glRectf(board.goalX() +board.goalDepth(), board.goalWidth() / 2,
           board.goalX(), -board.goalWidth() / 2);
+  draw_shadow(board);
 }
 
 void draw_board(const Board &board) {
