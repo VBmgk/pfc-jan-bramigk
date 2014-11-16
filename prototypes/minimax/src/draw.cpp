@@ -56,8 +56,8 @@ void draw_robot(const Robot &robot, const GLubyte *color) {
   glPopMatrix();
 }
 
-void draw_shadow(const Board& board){
-  auto& ball = board.getBall();
+void draw_shadow(const Board &board) {
+  auto &ball = board.getBall();
   auto player_with_ball = board.getRobotWithBall().second;
   auto gx = board.enemyGoalPos(player_with_ball)[0];
   for (auto gap : board.getGoalGaps()) {
@@ -75,7 +75,6 @@ void draw_shadow(const Board& board){
     glEnd();
   }
 }
-
 
 void draw_ball(const Ball &ball) {
   glPushMatrix();
