@@ -104,7 +104,7 @@ void App::run(std::function<void(App &)> run) {
   std::thread minimax_thread([&]() {
     // single minimax instance, may make use of cache in the future
     Minimax minimax;
-    TeamAction local_command;
+    TeamAction local_command, local_enemy_command;
     Board local_board;
 
     int n_ticks = 0;
@@ -117,12 +117,18 @@ void App::run(std::function<void(App &)> run) {
 
       if (app.play_minimax || app.play_minimax_once) {
         app.play_minimax_once = false;
-        // local_command = minimax.decision(local_board);
-        auto dv = minimax.decision_value(local_board);
-        app.display.minimax_val = dv.first;
-        local_command = dv.second;
+        float val;
+        if (app.use_experimental) {
+          std::tie(val, local_command, local_enemy_command) =
+              minimax.decision_experimental(local_board);
+        } else {
+          local_enemy_command = TeamAction(0);
+          std::tie(val, local_command) = minimax.decision_value(local_board);
+          // local_command = minimax.decision(local_board);
+        }
         mnmx_count++;
         app.display.minimax_count++;
+        app.display.minimax_val = val;
       }
 
       if (app.eval_board_once) {
@@ -134,6 +140,7 @@ void App::run(std::function<void(App &)> run) {
       {
         std::lock_guard<std::mutex> _(app.command_mutex);
         app.command = local_command;
+        app.enemy_command = local_enemy_command;
       }
 
       n_ticks++;

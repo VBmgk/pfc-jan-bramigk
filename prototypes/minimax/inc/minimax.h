@@ -9,6 +9,7 @@
 #include <vector>
 #include <functional>
 #include <mutex>
+#include <tuple>
 
 class Team {
   friend class Board;
@@ -164,12 +165,14 @@ public:
 class Minimax {
   static constexpr int RAMIFICATION_NUMBER = 10;
   static constexpr int MAX_DEPTH = 1;
-  std::pair<float, TeamAction> value(const Board &, Player, TeamAction *,
-                                     int depth);
+  std::tuple<float, TeamAction> value(const Board &, Player, TeamAction *,
+                                      int depth);
 
 public:
   TeamAction decision(const Board &);
-  std::pair<float, TeamAction> decision_value(const Board &);
+  std::tuple<float, TeamAction> decision_value(const Board &);
+  std::tuple<float, TeamAction, TeamAction>
+  decision_experimental(const Board &);
 };
 
 #endif

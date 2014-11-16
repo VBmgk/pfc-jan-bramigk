@@ -390,20 +390,20 @@ Board Board::applyTeamAction(const TeamAction &max_a,
                              const TeamAction &min_a) const {
   Board new_board(*this);
 
-#define APPLY_TEAM_ACTION(TA)                                                  \
+#define APPLY_TEAM_ACTION(T, TA)                                               \
   /* apply all moves first */                                                  \
   for (auto action : TA) {                                                     \
     if (action->type() == Action::MOVE) {                                      \
-      action->apply(MAX, new_board);                                           \
+      action->apply(T, new_board);                                             \
     }                                                                          \
   }                                                                            \
   for (auto action : TA) {                                                     \
     if (action->type() != Action::MOVE) {                                      \
-      action->apply(MAX, new_board);                                           \
+      action->apply(T, new_board);                                             \
     }                                                                          \
   }
-  APPLY_TEAM_ACTION(max_a)
-  APPLY_TEAM_ACTION(min_a)
+  APPLY_TEAM_ACTION(MAX, max_a)
+  APPLY_TEAM_ACTION(MIN, min_a)
 #undef APPLY_TEAM_ACTION
 
   return new_board;

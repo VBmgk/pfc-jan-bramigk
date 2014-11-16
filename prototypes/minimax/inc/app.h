@@ -6,7 +6,7 @@
 struct App {
   Board board;
   std::mutex board_mutex;
-  TeamAction command;
+  TeamAction command, enemy_command;
   Board command_board;
   std::mutex command_mutex;
   struct {
@@ -22,6 +22,11 @@ struct App {
   bool play_minimax = false;
   bool play_minimax_once = false;
   bool eval_board_once = false;
+  bool use_experimental = false;
+
+  void toggle_experimental() {
+    use_experimental = !use_experimental;
+  }
 
   static void run(std::function<void(App &)>);
 
@@ -37,8 +42,7 @@ struct App {
 
   void apply() {
     std::lock_guard<std::mutex> _(board_mutex);
-    TeamAction dummy;
-    board = board.applyTeamAction(command, dummy);
+    board = board.applyTeamAction(command, enemy_command);
   }
 
   Player select_team = MIN;

@@ -49,6 +49,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
       app->apply();
     } break;
 
+    case GLFW_KEY_Q: {
+      app->toggle_experimental();
+    } break;
+
     // move a robot
     case GLFW_KEY_M: {
       app->switch_select_team();
