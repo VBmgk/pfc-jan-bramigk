@@ -328,13 +328,15 @@ void draw_teamaction(const TeamAction &t_action, const Board &board) {
 
 void draw_display(App *app, double fps, int width, int height) {
   char text[256];
+  auto display = app->display;
   snprintf(text, 256, "%2.0ffps\n"
                       "uptime: %is\n"
                       "minimax: #%i\n"
                       "%i packets/s\n"
-                      "%i minimax/s\n",
-           fps, app->display.uptime, app->display.minimax_count,
-           app->display.pps, app->display.mps);
+                      "%i minimax/s\n"
+                      "minimax: %f\n",
+           fps, display.uptime, display.minimax_count, display.pps, display.mps,
+           display.minimax_val);
   if (app->display.has_val) {
     char text2[256];
     snprintf(text2, 256, "value: %f", app->display.val);

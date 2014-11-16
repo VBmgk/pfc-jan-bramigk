@@ -117,7 +117,10 @@ void App::run(std::function<void(App &)> run) {
 
       if (app.play_minimax || app.play_minimax_once) {
         app.play_minimax_once = false;
-        local_command = minimax.decision(local_board);
+        // local_command = minimax.decision(local_board);
+        auto dv = minimax.decision_value(local_board);
+        app.display.minimax_val = dv.first;
+        local_command = dv.second;
         mnmx_count++;
       }
 

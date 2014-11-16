@@ -169,6 +169,7 @@ class Minimax {
 
 public:
   TeamAction decision(const Board &);
+  std::pair<float, TeamAction> decision_value(const Board &);
 };
 
 #endif
