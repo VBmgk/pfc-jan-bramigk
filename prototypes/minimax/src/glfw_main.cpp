@@ -4,7 +4,7 @@
 #include <thread>
 #include <GLFW/glfw3.h>
 
-#include "minimax.h"
+#include "app.h"
 #include "draw.h"
 
 //
@@ -30,32 +30,43 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
     switch (key) {
 
     case GLFW_KEY_R: {
-      std::lock_guard<std::mutex> _(app->board_mutex);
-      app->board = Board::randomBoard();
-      app->display.has_val = false;
+      app->random();
     } break;
 
     case GLFW_KEY_S: {
-      app->play_minimax_once = true;
+      app->minimax_once();
     } break;
 
     case GLFW_KEY_P: {
-      app->play_minimax = !app->play_minimax;
+      app->minimax_toggle();
     } break;
 
     case GLFW_KEY_E: {
-      // TODO: print current board's evaluation
-      app->eval_board_once = true;
+      app->eval_once();
     } break;
 
-    // TODO: navigate on the current tree
+    case GLFW_KEY_A: {
+      app->apply();
+    } break;
+
+    // move a robot
+    case GLFW_KEY_M: {
+      app->switch_select_team();
+    } break;
+    case GLFW_KEY_N: {
+      app->next_robot();
+    } break;
     case GLFW_KEY_UP: {
+      app->move_up();
     } break;
     case GLFW_KEY_DOWN: {
+      app->move_down();
     } break;
     case GLFW_KEY_LEFT: {
+      app->move_left();
     } break;
     case GLFW_KEY_RIGHT: {
+      app->move_right();
     } break;
 
     default:

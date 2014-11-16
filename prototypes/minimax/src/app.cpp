@@ -6,6 +6,7 @@
 #include <zmq.hpp>
 
 #include "minimax.h"
+#include "app.h"
 #include "discrete.pb.h"
 #include "update.pb.h"
 #include "timer.h"
@@ -116,8 +117,12 @@ void App::run(std::function<void(App &)> run) {
 
       if (app.play_minimax || app.play_minimax_once) {
         app.play_minimax_once = false;
-        local_command = minimax.decision(local_board);
+        // local_command = minimax.decision(local_board);
+        auto dv = minimax.decision_value(local_board);
+        app.display.minimax_val = dv.first;
+        local_command = dv.second;
         mnmx_count++;
+        app.display.minimax_count++;
       }
 
       if (app.eval_board_once) {
@@ -132,7 +137,6 @@ void App::run(std::function<void(App &)> run) {
       }
 
       n_ticks++;
-      app.display.minimax_count = n_ticks;
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
   });

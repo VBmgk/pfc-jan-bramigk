@@ -4,18 +4,27 @@
 #include "minimax.h"
 
 TeamAction Minimax::decision(const Board &board) {
+  return decision_value(board).second;
+  //// special case for it not to crash when no robots on a team
+  // if (board.getMin().size() == 0 || board.getMax().size() == 0)
+  //  return TeamAction(0);
+
+  // return value(board, MAX, nullptr, 0).second;
+}
+
+std::pair<float, TeamAction> Minimax::decision_value(const Board &board) {
   // special case for it not to crash when no robots on a team
   if (board.getMin().size() == 0 || board.getMax().size() == 0)
-    return TeamAction(0);
+    return std::make_pair(0.0, TeamAction(0));
 
-  return value(board, MAX, nullptr, 0).second;
+  return value(board, MAX, nullptr, 0);
 }
 
 std::pair<float, TeamAction> Minimax::value(const Board &board, Player player,
                                             TeamAction *max_action, int depth) {
   // XXX: temporary!!!!!!
   // FIXME: don't verify this on odd depths
-  //if (board.isGameOver()) {
+  // if (board.isGameOver()) {
   //  // TODO: implement isGameOver
   //  return std::make_pair(board.evaluate(), board.genKickTeamAction(player));
   //}

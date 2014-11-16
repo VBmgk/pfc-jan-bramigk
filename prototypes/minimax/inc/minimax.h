@@ -110,8 +110,10 @@ public:
   TeamAction genActions(Player, bool) const;
 
   float openGoalArea() const;
+  std::vector<std::pair<float, float>> getGoalGaps() const;
   bool freeKickLine(int point_index) const;
   std::vector<const Robot *> getRobotsMoving() const;
+
   bool kickLineCrossRobot(const int point_index, const Robot &robot) const;
   float evaluate() const;
 
@@ -167,28 +169,7 @@ class Minimax {
 
 public:
   TeamAction decision(const Board &);
-};
-
-struct App {
-  Board board;
-  std::mutex board_mutex;
-  TeamAction command;
-  Board command_board;
-  std::mutex command_mutex;
-  struct {
-    int uptime;
-    int minimax_count;
-    int pps;
-    int mps;
-    float val;
-    bool has_val;
-  } display;
-  std::mutex display_mutex;
-  bool play_minimax = false;
-  bool play_minimax_once = false;
-  bool eval_board_once = false;
-
-  static void run(std::function<void(App &)>);
+  std::pair<float, TeamAction> decision_value(const Board &);
 };
 
 #endif

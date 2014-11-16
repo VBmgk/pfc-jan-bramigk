@@ -14,7 +14,7 @@ set(SRC
   src/action.cpp
   src/minimax.cpp
   src/board.cpp
-  src/run.cpp
+  src/app.cpp
   src/draw.cpp
 )
 

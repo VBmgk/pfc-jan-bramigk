@@ -1,6 +1,6 @@
 #include <csignal>
 #include <iostream>
-#include "minimax.h"
+#include "app.h"
 
 static bool should_wait = true;
 
