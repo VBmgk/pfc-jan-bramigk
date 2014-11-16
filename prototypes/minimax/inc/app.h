@@ -10,12 +10,12 @@ struct App {
   Board command_board;
   std::mutex command_mutex;
   struct {
-    int uptime;
-    int minimax_count;
-    int pps;
-    int mps;
-    float val;
-    bool has_val;
+    int uptime = 0;
+    int minimax_count = 0;
+    int pps = 0;
+    int mps = 0;
+    float val = 0.0;
+    bool has_val = false;
     float minimax_val = 0.0;
   } display;
   std::mutex display_mutex;

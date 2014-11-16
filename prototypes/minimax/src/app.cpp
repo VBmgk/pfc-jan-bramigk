@@ -122,6 +122,7 @@ void App::run(std::function<void(App &)> run) {
         app.display.minimax_val = dv.first;
         local_command = dv.second;
         mnmx_count++;
+        app.display.minimax_count++;
       }
 
       if (app.eval_board_once) {
@@ -136,7 +137,6 @@ void App::run(std::function<void(App &)> run) {
       }
 
       n_ticks++;
-      app.display.minimax_count = n_ticks;
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
   });
