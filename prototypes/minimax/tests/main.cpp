@@ -94,9 +94,9 @@ int main(void){
 
   print(*board2.getRobotWithBall().first);
 
-  std::cout << "kicklinecrossRobot: ";
-  if( board2.kickLineCrossRobot(150, r_blocker)) std::cout << "Ok" << std::endl;
-  else std::cout << "nao ok" << std::endl;
+  //std::cout << "kicklinecrossRobot: ";
+  //if( board2.kickLineCrossRobot(150, r_blocker)) std::cout << "Ok" << std::endl;
+  //else std::cout << "nao ok" << std::endl;
 
   // lineSegmentCrossCircle test
   if (Vector::lineSegmentCrossCircle(

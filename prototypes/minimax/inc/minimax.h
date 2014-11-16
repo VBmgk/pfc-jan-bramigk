@@ -29,9 +29,9 @@ public:
 
 class Board {
   // TODO> calibrate
-  static constexpr int MIN_AREA_TO_MARK = 30;
-  static constexpr int NUM_SAMPLE_POINTS = 300;
-  static constexpr float WEIGHT_GOAL_OPEN_AREA = 1.0;
+  static constexpr int MIN_GAP_TO_MARK = 30;
+  static constexpr float WEIGHT_TOTAL_GAP = 1.0;
+  static constexpr float WEIGHT_MAX_GAP = 2.0;
   static constexpr float WEIGHT_RECEIVERS_NUM = 1.0;
   static constexpr float WEIGHT_DISTANCE_TO_GOAL = 1.0;
 
@@ -110,12 +110,17 @@ public:
   TeamAction genPassTeamAction(Player) const;
   TeamAction genActions(Player, bool) const;
 
-  float openGoalArea() const;
-  std::vector<std::pair<float, float>> getGoalGaps() const;
-  bool freeKickLine(int point_index) const;
+  float totalGoalGap(Player player) const; // sum of all gaps length
+  float maxGoalGap(Player player) const;   // length of largest gap
+  std::vector<std::pair<float, float>> getGoalGaps(Player player) const;
+  std::vector<std::pair<float, float>> getGoalGaps() const {
+    auto player_with_ball = getRobotWithBall().second;
+    auto player = player_with_ball == MIN ? MAX : MIN;
+    return getGoalGaps(player);
+  }
+  // bool freeKickLine(int point_index) const;
+  // bool kickLineCrossRobot(const int point_index, const Robot &robot) const;
   std::vector<const Robot *> getRobotsMoving() const;
-
-  bool kickLineCrossRobot(const int point_index, const Robot &robot) const;
   float evaluate() const;
 
   Board virtualStep(float time) const;

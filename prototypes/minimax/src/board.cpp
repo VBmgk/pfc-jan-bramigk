@@ -8,8 +8,8 @@
 #include "minimax.h"
 
 bool Board::isGameOver() const {
-  if (openGoalArea() > MIN_AREA_TO_MARK)
-    return true;
+  // if (totalGoalGap(MIN) > MIN_GAP_TO_MARK)
+  //  return true;
 
   return false;
 }
@@ -211,20 +211,26 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
   return robots;
 }
 
-float Board::openGoalArea() const {
-  float area = 0;
-
-  for (int i = 0; i < NUM_SAMPLE_POINTS; i++)
-    if (freeKickLine(i))
-      area++;
-
-  return area;
+float Board::totalGoalGap(Player player) const {
+  float len = 0;
+  for (auto gap : getGoalGaps(player))
+    len += std::fabs(gap.first - gap.second);
+  return len;
 }
 
-std::vector<std::pair<float, float>> Board::getGoalGaps() const {
+float Board::maxGoalGap(Player player) const {
+  float len = 0;
+  for (auto gap : getGoalGaps(player)) {
+    auto this_len = std::fabs(gap.first - gap.second);
+    if (this_len > len)
+      len = this_len;
+  }
+  return len;
+}
+
+std::vector<std::pair<float, float>> Board::getGoalGaps(Player player) const {
   auto &ball = getBall();
-  auto player_with_ball = getRobotWithBall().second;
-  auto gx = enemyGoalPos(player_with_ball)[0];
+  auto gx = goalPos(player)[0];
 
   // collect shadows
 
@@ -328,13 +334,12 @@ std::vector<std::pair<float, float>> Board::getGoalGaps() const {
   return gaps;
 }
 
-bool Board::freeKickLine(int point_index) const {
-  for (auto robot : getRobotsMoving())
-    if (kickLineCrossRobot(point_index, *robot))
-      return false;
-
-  return true;
-}
+// bool Board::freeKickLine(int point_index) const {
+//  for (auto robot : getRobotsMoving())
+//    if (kickLineCrossRobot(point_index, *robot))
+//      return false;
+//  return true;
+//}
 
 std::vector<const Robot *> Board::getRobotsMoving() const {
   auto robot_with_ball = getRobotWithBall().first;
@@ -344,46 +349,61 @@ std::vector<const Robot *> Board::getRobotsMoving() const {
   return robots;
 }
 
-bool Board::kickLineCrossRobot(const int point_index,
-                               const Robot &robot) const {
-  auto robot_player = getRobotWithBall();
-  auto robot_with_ball = robot_player.first;
-  auto player_with_ball = robot_player.second;
-
-  Vector point(0,
-               goalWidth() * (1 / 2 - point_index * 1.0 / NUM_SAMPLE_POINTS));
-
-  point = enemyGoalPos(player_with_ball) + point;
-
-  if (Vector::lineSegmentCrossCircle(point, robot_with_ball->pos(), robot.pos(),
-                                     Robot::radius()))
-    return true;
-
-  return false;
-}
+// bool Board::kickLineCrossRobot(const int point_index,
+//                               const Robot &robot) const {
+//  auto robot_player = getRobotWithBall();
+//  auto robot_with_ball = robot_player.first;
+//  auto player_with_ball = robot_player.second;
+//
+//  Vector point(0,
+//               goalWidth() * (1 / 2 - point_index * 1.0 / NUM_SAMPLE_POINTS));
+//
+//  point = enemyGoalPos(player_with_ball) + point;
+//
+//  if (Vector::lineSegmentCrossCircle(point, robot_with_ball->pos(),
+//  robot.pos(),
+//                                     Robot::radius()))
+//    return true;
+//
+//  return false;
+//}
 
 float Board::evaluate() const {
+
 
   // special case for it not to crash when no robots on a team
   if (min.size() == 0 || max.size() == 0)
     return 0.0;
 
-  float goal_area = openGoalArea();
-  float receivers_num = canGetPass(MAX).size();
-
   auto with_ball = getRobotWithBall();
   auto robot_with_ball = with_ball.first;
   auto player_with_ball = with_ball.second;
+  // use player as a sign to balance unsigned measures
+  int player = player_with_ball == MAX ? 1 : -1;
+  Player enemy = player_with_ball == MAX ? MIN : MAX;
+
+  // for instance this is signed since it's positive for a gap on
+  // the MIN goal which is good for MAX
+  // float total_gap = totalGoalGap(MIN) - totalGoalGap(MAX);
+  // float max_gap = maxGoalGap(MIN) - maxGoalGap(MAX);
+
+  // XXX: the above may be have bugs, using this instead
+  float total_gap = player * totalGoalGap(enemy);
+  float max_gap = player * maxGoalGap(enemy);
+
+  return total_gap;
+
+  // this is unsigned as it's a numeric count, thus multiply by player
+  float receivers_num = player * canGetPass(MAX).size();
+
+  // also unsigned, since it depends who has the ball
   auto enemy_goal = enemyGoalPos(player_with_ball);
+  float distance_to_goal = player * robot_with_ball->getDist(enemy_goal);
 
-  float value = WEIGHT_GOAL_OPEN_AREA * goal_area +
-                WEIGHT_RECEIVERS_NUM * receivers_num +
-                WEIGHT_DISTANCE_TO_GOAL * robot_with_ball->getDist(enemy_goal);
-
-  if (player_with_ball == MAX)
-    return value;
-
-  return -value;
+  // mix it up and push it out
+  return WEIGHT_TOTAL_GAP * total_gap + WEIGHT_MAX_GAP * max_gap +
+         WEIGHT_RECEIVERS_NUM * receivers_num +
+         WEIGHT_DISTANCE_TO_GOAL * distance_to_goal;
 }
 
 Board Board::applyTeamAction(const TeamAction &max_a,
