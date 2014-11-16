@@ -49,14 +49,24 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
       app->apply();
     } break;
 
-    // TODO: navigate on the current tree
+    // move a robot
+    case GLFW_KEY_M: {
+      app->switch_select_team();
+    } break;
+    case GLFW_KEY_N: {
+      app->next_robot();
+    } break;
     case GLFW_KEY_UP: {
+      app->move_up();
     } break;
     case GLFW_KEY_DOWN: {
+      app->move_down();
     } break;
     case GLFW_KEY_LEFT: {
+      app->move_left();
     } break;
     case GLFW_KEY_RIGHT: {
+      app->move_right();
     } break;
 
     default:

@@ -207,6 +207,35 @@ struct App {
     TeamAction dummy;
     board = board.applyTeamAction(command, dummy);
   }
+
+  Player select_team = MIN;
+  void switch_select_team() {
+    if (select_team == MIN) select_team = MAX;
+    else select_team = MIN;
+    select_pos--;
+    next_robot();
+  }
+  Robot * selected_robot = nullptr;
+  int select_pos = 0;
+  void next_robot() {
+    auto &robots = board.getTeam(select_team).getRobots();
+    if (++select_pos >= robots.size())
+      select_pos = 0;
+    selected_robot = &robots[select_pos];
+  }
+
+  static constexpr float move_step = 0.05;
+#define MOVE(D, V) \
+  void move_##D() { \
+    if (selected_robot == nullptr) \
+      return; \
+    selected_robot->setPos(selected_robot->pos() + V); \
+  }
+  MOVE(up, Vector(0, move_step))
+  MOVE(down, Vector(0, -move_step))
+  MOVE(right, Vector(move_step, 0))
+  MOVE(left, Vector(-move_step, 0))
+#undef MOVE
 };
 
 #endif
