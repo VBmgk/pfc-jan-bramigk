@@ -70,18 +70,20 @@ std::pair<const Robot *, Player> Board::getRobotWithBall() const {
 
 std::pair<const Robot *, Player>
 Board::getRobotWithVirtualBall(const Ball &virt_ball) const {
-  return getRobotWithVirtualBall(virt_ball, nullptr);
+  return getRobotWithVirtualBall(virt_ball, std::make_pair(nullptr, MIN)); // second valeu is useless
 }
 
+// Function to check who has the ball considering
+// only the receiver robot and the enemy robots
 std::pair<const Robot *, Player>
 Board::getRobotWithVirtualBall(const Ball &virt_ball,
-                               const Robot *r_rcv) const {
+                               std::pair<const Robot *, Player> r_rcv) const {
   float min_time = FLT_MAX;
-  // Robot robot_with_ball(-1); // Negative Id
-  const Robot *robot_with_ball(&min.robots[0]);
-  Player player_with_ball = MIN;
-
   float time;
+
+  const Robot *robot_with_ball = nullptr;
+  Player player_with_ball = r_rcv.second;
+
 
 #define FOR_ROBOT_IN_TEAM(TEAM, PLAYER)                                        \
   for (const Robot &robot : TEAM) {                                            \
@@ -92,12 +94,19 @@ Board::getRobotWithVirtualBall(const Ball &virt_ball,
       min_time = time;                                                         \
     }                                                                          \
   }
-  FOR_ROBOT_IN_TEAM(min.robots, MIN)
-  FOR_ROBOT_IN_TEAM(max.robots, MAX)
+
+  // normal case, consider both teams
+  if (r_rcv.first == nullptr){
+    FOR_ROBOT_IN_TEAM(min.robots, MIN)
+    FOR_ROBOT_IN_TEAM(max.robots, MAX)
+  } else if (MAX == r_rcv.second)
+    FOR_ROBOT_IN_TEAM(min.robots, MIN)
+  else
+    FOR_ROBOT_IN_TEAM(max.robots, MAX)
 #undef FOR_ROBOT_IN_TEAM
 
-  if (r_rcv != nullptr && timeToVirtualBall(*r_rcv, virt_ball) < min_time) {
-    robot_with_ball = r_rcv;
+  if (r_rcv.first != nullptr && timeToVirtualBall(*r_rcv.first, virt_ball) < min_time) {
+    robot_with_ball = r_rcv.first;
   }
 
   return std::make_pair(robot_with_ball, player_with_ball);
@@ -201,7 +210,7 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
                     Robot::kickV());
 
       // Add robot if the same robot will have the ball after kick
-      auto with_ball = getRobotWithVirtualBall(vrt_ball, &robot);
+      auto with_ball = getRobotWithVirtualBall(vrt_ball, std::make_pair(&robot, player));
       auto robot_with_ball_after_kick = with_ball.first;
       if (&robot == robot_with_ball_after_kick)
         robots.push_back(&robot);
