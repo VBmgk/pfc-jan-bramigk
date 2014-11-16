@@ -6,6 +6,7 @@
 #include <zmq.hpp>
 
 #include "minimax.h"
+#include "app.h"
 #include "discrete.pb.h"
 #include "update.pb.h"
 #include "timer.h"

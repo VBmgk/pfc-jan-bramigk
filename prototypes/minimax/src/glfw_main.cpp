@@ -4,7 +4,7 @@
 #include <thread>
 #include <GLFW/glfw3.h>
 
-#include "minimax.h"
+#include "app.h"
 #include "draw.h"
 
 //
