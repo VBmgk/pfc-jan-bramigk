@@ -122,7 +122,7 @@ public:
   std::pair<const Robot *, Player> getRobotWithBall() const;
   std::pair<const Robot *, Player> getRobotWithVirtualBall(const Ball &) const;
   std::pair<const Robot *, Player>
-  getRobotWithVirtualBall(const Ball &virt_ball, const Robot *r_rcv) const;
+  getRobotWithVirtualBall(const Ball &virt_ball, std::pair<const Robot *, Player> r_rcv) const;
   std::vector<const Robot *> getOtherRobots(Player, const Robot &) const;
 
   float timeToBall(const Robot &robot) const;
