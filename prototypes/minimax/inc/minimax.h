@@ -110,6 +110,7 @@ public:
   TeamAction genActions(Player, bool) const;
 
   float openGoalArea() const;
+  std::vector<std::pair<float, float>> getGoalGaps() const;
   bool freeKickLine(int point_index) const;
   std::vector<const Robot *> getRobotsMoving() const;
 

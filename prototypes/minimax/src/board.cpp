@@ -221,6 +221,111 @@ float Board::openGoalArea() const {
   return area;
 }
 
+std::vector<std::pair<float, float>> Board::getGoalGaps() const {
+  auto& ball = getBall();
+  auto player_with_ball = getRobotWithBall().second;
+  auto gx = enemyGoalPos(player_with_ball)[0];
+
+  // collect shadows
+
+  std::vector<std::pair<float, float>> shadows;
+  for (auto _robot : getRobotsMoving()) {
+    auto& robot = *_robot;
+    auto d = robot.pos() - ball.pos();
+    auto k = d * d - Robot::radius() * Robot::radius();
+
+    if (k <= 0) continue;  // FIXME: should return maximum shadow or no gap
+    if (d[0] * gx <= 0) continue;
+
+    float tan_alpha = Robot::radius() / std::sqrt(k);
+    float tan_theta = d[1] / std::fabs(d[0]);
+    float tan_1 = (tan_theta + tan_alpha) / (1 - tan_theta * tan_alpha);
+    float tan_2 = (tan_theta - tan_alpha) / (1 + tan_theta * tan_alpha);
+    float y_shadow_1 = tan_1 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
+    float y_shadow_2 = tan_2 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
+
+    if ((ball.pos()[0] - robot.pos()[0] + Robot::radius()) *
+        (ball.pos()[0] - robot.pos()[0] - Robot::radius()) < 0) {
+      if (ball.pos()[1] > robot.pos()[1])
+        y_shadow_2 = -std::numeric_limits<float>::infinity();
+      else
+        y_shadow_1 = std::numeric_limits<float>::infinity();
+    }
+
+    float u_shadow = std::max(y_shadow_1, y_shadow_2);
+    float d_shadow = std::min(y_shadow_1, y_shadow_2);
+
+    if (u_shadow <= - goalWidth() /2 ||
+        d_shadow >= goalWidth() /2) continue;
+
+    shadows.push_back(std::make_pair(u_shadow, d_shadow));
+  }
+
+  // sort shadows in descending order by the first parameter
+
+  std::sort(shadows.begin(), shadows.end(),
+    [](std::pair<float, float> s1, std::pair<float, float> s2) {
+      return s1 > s2; });
+
+  // merge shadows so no shadow overlap
+
+  std::vector<std::pair<float, float>> shadows_merged;
+  std::pair<float, float> current_shadow;
+  bool has_first = false;
+  for (auto shadow : shadows) {
+    if (!has_first) {
+      current_shadow = shadow;
+      has_first = true;
+      continue;
+    }
+
+    if (shadow.second >= current_shadow.second) {
+      continue;
+    }
+
+    if (shadow.first >= current_shadow.second) {
+      current_shadow =
+        std::make_pair(current_shadow.first, shadow.second);
+    } else {
+      shadows_merged.push_back(current_shadow);
+      current_shadow = shadow;
+    }
+  }
+  if (has_first) {
+    shadows_merged.push_back(current_shadow);
+  }
+
+  // gather gaps on the goal from merged shadows
+
+  std::vector<std::pair<float, float>> gaps;
+  std::pair<float, float> current_gap =
+    std::make_pair(goalWidth() / 2, -goalWidth() / 2);
+  bool has_last = true;
+  for (auto shadow : shadows_merged) {
+
+    if (shadow.first >= current_gap.first) {
+      if (shadow.second <= current_gap.second) {
+        has_last = false;
+        break;
+      }
+      current_gap.first = shadow.second;
+      continue;
+    }
+
+    gaps.push_back(std::make_pair(current_gap.first, shadow.first));
+    if (shadow.second <= current_gap.second) {
+      has_last = false;
+      break;
+    }
+    current_gap.first = shadow.second;
+  }
+  if (has_last) {
+    gaps.push_back(current_gap);
+  }
+
+  return gaps;
+}
+
 bool Board::freeKickLine(int point_index) const {
   for (auto robot : getRobotsMoving())
     if (kickLineCrossRobot(point_index, *robot))
