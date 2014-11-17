@@ -260,40 +260,44 @@ void draw_test(int width, int height) {
   // draw_text("The Quick Brown Fox\nJumps Over The Lazy Dog.", width, height);
 }
 
-const Robot &get_robot(int id, const Board &board) {
+const Robot *get_robot(int id, const Board &board) {
   for (auto &robot : board.getMax().getRobots()) {
     if (robot.getId() == id) {
-      return robot;
+      return &robot;
     }
   }
-  throw "robot not found!!!";
+  return nullptr;
 }
 
 void draw_teamaction(const TeamAction &t_action, const Board &board) {
   for (auto action : t_action) {
     auto robot = get_robot(action->getId(), board);
+    if (robot == nullptr)
+      continue;
     switch (action->type()) {
     case Action::MOVE: {
       auto move = std::dynamic_pointer_cast<Move>(action);
       glColor3ubv(BLACK);
       glBegin(GL_LINES);
-      auto pos_i = robot.pos();
+      auto pos_i = robot->pos();
       glVertex3f(pos_i[0], pos_i[1], 0.0f);
       auto pos_f = move->pos();
       glVertex3f(pos_f[0], pos_f[1], 0.0f);
       glEnd();
       glPushMatrix();
       glTranslatef(pos_f[0], pos_f[1], 0.f);
-      draw_circle(robot.radius() / 5);
+      draw_circle(robot->radius() / 5);
       glPopMatrix();
     } break;
     case Action::PASS: {
       auto pass = std::dynamic_pointer_cast<Pass>(action);
       auto rcv = get_robot(pass->getRcvId(), board);
+      if (rcv == nullptr)
+        continue;
       glColor3ubv(GREY);
       // glColor3ubv(RED2);
       glBegin(GL_LINES);
-      auto pos_i = robot.pos();
+      auto pos_i = robot->pos();
       glVertex3f(pos_i[0], pos_i[1], 0.0f);
       auto pos_b = board.getBall().pos();
       glVertex3f(pos_b[0], pos_b[1], 0.0f);
@@ -304,7 +308,7 @@ void draw_teamaction(const TeamAction &t_action, const Board &board) {
       glEnable(GL_LINE_STIPPLE);
       glBegin(GL_LINES);
       glVertex3f(pos_b[0], pos_b[1], 0.0f);
-      auto pos_f = rcv.pos();
+      auto pos_f = rcv->pos();
       glVertex3f(pos_f[0], pos_f[1], 0.0f);
       glEnd();
       glPopAttrib();
@@ -313,7 +317,7 @@ void draw_teamaction(const TeamAction &t_action, const Board &board) {
       auto kick = std::dynamic_pointer_cast<Kick>(action);
       glColor3ubv(RED);
       glBegin(GL_LINES);
-      auto pos_i = robot.pos();
+      auto pos_i = robot->pos();
       glVertex3f(pos_i[0], pos_i[1], 0.0f);
       auto pos_b = board.getBall().pos();
       glVertex3f(pos_b[0], pos_b[1], 0.0f);

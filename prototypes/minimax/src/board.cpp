@@ -22,6 +22,22 @@ TeamAction Board::genPassTeamAction(Player p) const {
   return genActions(p, false);
 }
 
+// BEGIN util for random acces on iterator
+// reference: http://stackoverflow.com/a/16421677/947511
+template<typename Iter, typename RandomGenerator>
+Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
+    std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
+    std::advance(start, dis(g));
+    return start;
+}
+template<typename Iter>
+Iter select_randomly(Iter start, Iter end) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    return select_randomly(start, end, gen);
+}
+// END
+
 TeamAction Board::genActions(Player player, bool kickAction) const {
   TeamAction actions;
 
@@ -38,13 +54,12 @@ TeamAction Board::genActions(Player player, bool kickAction) const {
       // Pass
     } else {
       bool any_pass = false;
-      for (auto robot : canGetPass(player)) {
-        std::shared_ptr<Action> action(new Pass(*robot_with_ball, *robot));
+      auto passees = canGetPass(player);
+      if (passees.size() > 0) {
+        auto passee = *select_randomly(passees.begin(), passees.end());
+        std::shared_ptr<Action> action(new Pass(*robot_with_ball, *passee));
         actions.push_back(std::move(action));
         any_pass = true;
-        // FIXME: only a single action per robot!
-        //        there has to be many TeamAction's for this
-        break;
       }
       // in the rare case there isn't any possible pass
       // for the robot with ball, we'll make it move

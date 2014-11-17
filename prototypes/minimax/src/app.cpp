@@ -41,32 +41,52 @@ void App::run(std::function<void(App &)> run) {
     }
   });
 
+  // this is the communication thread
   std::thread zmq_thread([&]() {
+
+    // set up the ZeroMQ context and create a Reply socket
     zmq::context_t context(1);
     zmq::socket_t socket(context, ZMQ_REP);
 
+    // we will listen on any interface at port 5555
     static const char *addr = "tcp://*:5555";
     socket.bind(addr);
+
+    // this is importante to avoid blocking the whole process
+    // when a request is not received
     int timeout = 100; // ms
     socket.setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof timeout);
     socket.setsockopt(ZMQ_SNDTIMEO, &timeout, sizeof timeout);
 
+    // we'll need a buffer to read and write data to
     zmq::message_t buffer(1024);
     std::string data;
 
+    // if we got so far, let's at least make that clear
     std::cout << "listening on " << addr << std::endl;
 
+    // ok, loop until told to stop (by the main thread)
     while (should_recv) {
+      // yeah, let's go for some robustness, aka hide the dirt
       try {
+        // in case of timeout the return won't be true
         if (socket.recv(&buffer)) {
+          // quick save it on a buffer, you never know right
           std::string buffer_str((char *)buffer.data(), buffer.size());
+          // we're stat maniac, count up the number of requests
           req_count++;
-          roboime::Update u;
+
+          // ok, time to parse that data
+          ::roboime::Update u;
           u.ParseFromString(buffer_str);
 
+          // now that we've got the parsed data,
+          // we'll start by populating two teams to build our board
           Team min_t, max_t;
           for (int i = 0; i < u.min_team_size(); i++) {
             const ::roboime::Robot &r = u.min_team(i);
+            // yeah the line breaks there, autoformatter does that
+            // and it's fine, don't cry over it
             min_t.addRobot(
                 Robot(r.i(), Vector(r.x(), r.y()), Vector(r.vx(), r.vy())));
           }
@@ -75,27 +95,48 @@ void App::run(std::function<void(App &)> run) {
             max_t.addRobot(
                 Robot(r.i(), Vector(r.x(), r.y()), Vector(r.vx(), r.vy())));
           }
+          // don't forget the ball
           Ball ball(Vector(u.ball().x(), u.ball().y()),
                     Vector(u.ball().vx(), u.ball().vy()));
 
+          // now we assemble the board
           Board local_board(min_t, max_t, ball);
           {
+            // this is the critical section, where we atomically
+            // switch the app board with our freshly built one
             std::lock_guard<std::mutex> _(app.board_mutex);
             app.display.has_val = false;
             app.board = local_board;
           }
 
+          // update done, time to reply that request, remember?
+          // just like above we'll atomically copy the latest command
+          // staright from the app, we don't want it to change while
+          // iterating over it
           TeamAction local_command;
           {
             std::lock_guard<std::mutex> _(app.command_mutex);
             local_command = app.command;
           }
 
+          // another important part, we'll assemble the protobuf command packet
+          ::roboime::Command command;
+          for (auto robot_action : local_command) {
+            ::roboime::Action * action = command.add_action();
+            // don't worry, each action knows how to generate itself:
+            robot_action->discreteAction(action);
+          }
+
+          // now let's serialize and shove it on our message buffer
+          command.SerializeToString(&data);
           zmq::message_t command_message(data.length());
           memcpy((void *)command_message.data(), data.c_str(), data.length());
+
+          // finally, reply:
           socket.send(command_message);
         }
       } catch (zmq::error_t e) {
+        // what? an error?? what's that???
         std::cerr << "error" << std::endl;
       }
     }
