@@ -144,6 +144,27 @@
     \end{figure}
   \end{block}
 }
+\frame{%
+  \frametitle{Arquitetura}
+  \begin{block}{}
+    \centering
+    \begin{itemize}
+      \item Comunicação via rede para possível processamento dedicado
+      \item \textit{Threads} separatas para melhor desempenho:
+        \begin{itemize}
+          \item Comunicação
+          \item GUI
+          \item Minimax
+        \end{itemize}
+      \item Bibliotecas e APIs:
+        \begin{itemize}
+          \item Armadillo
+          \item Protobuff (Google)
+          \item ZMQ
+        \end{itemize}
+    \end{itemize}
+  \end{block}
+}
 
 \section{Programa}
 % Modelagem
