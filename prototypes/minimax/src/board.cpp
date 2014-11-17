@@ -209,6 +209,14 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
   auto robot_with_ball = with_ball.first;
   auto player_with_ball = with_ball.second;
 
+  // XXX: work around
+  for (auto& robot : getTeam(player_with_ball).getRobots()) {
+    if (&robot == robot_with_ball)
+      continue;
+    robots.push_back(&robot);
+  }
+  return robots;
+
   // it only makes sense if the player has the ball
   if (player_with_ball == player) {
     float step_time = timeToBall(*robot_with_ball);
