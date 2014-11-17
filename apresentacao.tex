@@ -52,8 +52,8 @@
     \centering
     \begin{itemize}
       \item Desenvolver um algoritmo de controle para o futebol de robôs
-        com desempenho melhor que o utilizado atualmente, de acordo
-        a performance em  um conjunto de partidas.
+        com melhor performance em um conjunto de situações que o utilizado
+        atualmente
       \item Criar um modelo discreto sequencial para o problema do futebol
         de robôs
     \end{itemize}
@@ -72,7 +72,7 @@
   \end{block}
 }
 
-\section{Mapeamento para um jogo discreto}
+\section{Mapeamento contínuo-discreto}
 % Modelagem
 % tempo: 3 min
 % - Nesce para entender o programa
@@ -80,26 +80,9 @@
 % - Posse de bola
 % - Move Pass Kick
 \frame{%
-  \frametitle{Mapeamento para um jogo discreto}
-  \begin{block}{}
-    %\centering
-    %Mapear um jogo contínuo em tempo e espaço para um jogo discreto em pelo
-    %menos no tempo, isto é, jogadas bem definidas e sequencias.
-    % http://static.hsw.com.br/gif/xadrez-2.jpg
-    \begin{figure}
-      \includegraphics[width=0.5 \linewidth]{img/xadrez}
-      \caption{Exemplo de discretização}
-    \end{figure}
-    % http://www.historiabrasileira.com/files/2010/03/batalha-guararapes.jpg
-
-  \end{block}
-}
-\frame{%
-  \frametitle{Mapeamento para um jogo discreto}
+  \frametitle{Mapeamento contínuo-discreto}
   \begin{block}{}
     \centering
-    Mapeamento proposto:
-
     \begin{itemize}
       \item Ação de um time com a bola é uma lista de:
         \begin{itemize}
@@ -123,7 +106,7 @@
 }
 
 \frame{%
-  \frametitle{Mapeamento para um jogo discreto}
+  \frametitle{Mapeamento contínuo-discreto}
   \begin{block}{}
     \centering
     \begin{figure}
@@ -223,11 +206,13 @@
     \centering
     \textbf{Atividades realizadas}
     \begin{itemize}
-      \item Estudo da do algoritmo minimax
-      \item Confecção do modelo abstrato do problema do futebol de robôs
-      \item Definição dos protocolos de comunicação entre os módulos do
-        programa
-      \item Confecção da arquitetura do programa
+      \item Estudo do algoritmo minimax
+      \item Implementações
+        \begin{itemize}
+          \item Mapeamento contínuo-discreto do futebol de robôs
+          \item Protocolos de comunicação entre os módulos do programa
+          \item Arquitetura do programa
+        \end{itemize}
       \item Início da implementação dos algoritmos de planejamento
     \end{itemize}
   \end{block}
