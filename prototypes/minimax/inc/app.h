@@ -63,6 +63,19 @@ struct App {
     selected_robot = &robots[select_pos];
   }
 
+  // TODO: maybe persist these
+  static constexpr int save_slots = 10;
+  Board saved_boards[save_slots];
+  int save_slot = 0;
+  void save_board() {
+    saved_boards[save_slot] = board;
+  }
+  void load_saved_slot(int i) {
+    std::lock_guard<std::mutex> _(board_mutex);
+    save_slot = i % save_slots;
+    board = saved_boards[save_slot];
+  }
+
   static constexpr float move_step = 0.05;
 #define MOVE(D, V)                                                             \
   void move_##D() {                                                            \

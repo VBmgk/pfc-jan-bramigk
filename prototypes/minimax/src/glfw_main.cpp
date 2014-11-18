@@ -53,6 +53,25 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
       app->toggle_experimental();
     } break;
 
+#define LOAD_SLOT(I) \
+    case GLFW_KEY_##I: { \
+      app->load_saved_slot(I); \
+    } break;
+    LOAD_SLOT(1)
+    LOAD_SLOT(2)
+    LOAD_SLOT(3)
+    LOAD_SLOT(4)
+    LOAD_SLOT(5)
+    LOAD_SLOT(6)
+    LOAD_SLOT(7)
+    LOAD_SLOT(8)
+    LOAD_SLOT(9)
+    LOAD_SLOT(0)
+#undef LOAD_SLOT
+    case GLFW_KEY_EQUAL: {
+      app->save_board();
+    } break;
+
     // move a robot
     case GLFW_KEY_M: {
       app->switch_select_team();
