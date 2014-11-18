@@ -7,9 +7,10 @@
 #include "action.h"
 #include "minimax.h"
 
-bool Board::isGameOver() const {
-  // if (totalGoalGap(MIN) > MIN_GAP_TO_MARK)
-  //  return true;
+bool Board::isGameOver(Player player) const {
+  float gap = totalGoalGap(player == MAX ? MIN : MAX);
+  if (gap >= MIN_GAP_TO_WIN)
+    return true;
 
   return false;
 }

@@ -18,7 +18,7 @@ std::tuple<float, TeamAction> Minimax::decision_value(const Board &board) {
 std::tuple<float, TeamAction> Minimax::value(const Board &board, Player player,
                                              TeamAction *max_action,
                                              int depth) {
-  if (depth % 2 == 0 && board.isGameOver()) {
+  if (board.isGameOver(player)) {
     return std::make_pair(board.evaluate(), board.genKickTeamAction(player));
   }
 

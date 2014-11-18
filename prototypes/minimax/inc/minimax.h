@@ -29,7 +29,7 @@ public:
 
 class Board {
   // TODO> calibrate
-  static constexpr int MIN_GAP_TO_MARK = 30;
+  static constexpr float MIN_GAP_TO_WIN = 1.0; // goal width is 1.0, so it means open goal
   static constexpr float WEIGHT_TOTAL_GAP = 1.0;
   static constexpr float WEIGHT_MAX_GAP = 2.0;
   static constexpr float WEIGHT_RECEIVERS_NUM = 1.0;
@@ -103,7 +103,7 @@ public:
   const Team &getMax() const { return max; }
   const Team &getMin() const { return min; }
 
-  bool isGameOver() const;
+  bool isGameOver(Player player) const;
   // Player currentPlayer() const;
 
   TeamAction genKickTeamAction(Player) const;
