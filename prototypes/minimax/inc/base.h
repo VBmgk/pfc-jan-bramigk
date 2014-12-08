@@ -31,11 +31,11 @@ public:
     return v;
   }
 
-  static Vector getNRand(const Vector &v) {
+  static Vector getNRand(const Vector &v, float s = 1.0) {
     arma::arma_rng::set_seed_random();
 
     // Center Distribution on last value
-    return Vector(v.a_v + arma::randn<arma::vec>(Vector::VEC_SIZE));
+    return Vector(v.a_v + s * arma::randn<arma::vec>(Vector::VEC_SIZE));
   }
 
   float norm() { return (float)arma::norm(a_v); }
