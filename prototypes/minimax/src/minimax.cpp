@@ -3,6 +3,8 @@
 #include <tuple>
 #include "minimax.h"
 
+static constexpr int MTABLE_COUNT = 3;
+
 TeamAction Minimax::decision(const Board &board) {
   return std::get<1>(decision_value(board));
 }
@@ -12,14 +14,32 @@ std::tuple<float, TeamAction> Minimax::decision_value(const Board &board) {
   if (board.getMin().size() == 0 || board.getMax().size() == 0)
     return std::make_pair(0.0, TeamAction(0));
 
-  return value(board, MAX, nullptr, 0);
+  TeamAction action;
+  auto val_action = value(board, MAX, nullptr, 0);
+  std::tie(std::ignore, action) = val_action;
+
+  // build the move table by collecting all move actions
+  move_table_max.clear();
+  for (auto a : action) {
+    if (a->type() == Action::MOVE) {
+      auto move_action = std::dynamic_pointer_cast<Move>(a);
+      int robot_id = move_action->getId();
+      move_table_max[robot_id] = move_action;
+    }
+  }
+
+  // we're done, go ahead and return
+  return val_action;
 }
 
 std::tuple<float, TeamAction> Minimax::value(const Board &board, Player player,
                                              TeamAction *max_action,
                                              int depth) {
+  auto mtable = move_table(player);
+
   if (board.isGameOver(player)) {
-    return std::make_pair(board.evaluate(), board.genKickTeamAction(player));
+    return std::make_pair(board.evaluate(),
+                          board.genKickTeamAction(player, mtable));
   }
 
   if (depth >= MAX_DEPTH * 2) {
@@ -28,10 +48,11 @@ std::tuple<float, TeamAction> Minimax::value(const Board &board, Player player,
 
   if (player == MAX) {
     auto v = std::make_pair(-std::numeric_limits<float>::infinity(),
-                            board.genPassTeamAction(MAX));
+                            board.genPassTeamAction(MAX, mtable));
 
     for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
-      auto max_action = board.genPassTeamAction(MAX);
+      auto max_action = i < MTABLE_COUNT ? board.genPassTeamAction(MAX, mtable)
+                                         : board.genPassTeamAction(MAX);
 
       // recurse
       float val;
@@ -48,10 +69,11 @@ std::tuple<float, TeamAction> Minimax::value(const Board &board, Player player,
 
   } else {
     auto v = std::make_pair(std::numeric_limits<float>::infinity(),
-                            board.genPassTeamAction(MIN));
+                            board.genPassTeamAction(MIN, mtable));
 
     for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
-      auto min_action = board.genPassTeamAction(MIN);
+      auto min_action = i < MTABLE_COUNT ? board.genPassTeamAction(MIN, mtable)
+                                         : board.genPassTeamAction(MIN);
       auto next_board = board.applyTeamAction(*max_action, min_action);
 
       // recurse

@@ -15,12 +15,20 @@ bool Board::isGameOver(Player player) const {
   return false;
 }
 
+TeamAction Board::genKickTeamAction(Player p, MoveTable t) const {
+  return genActions(p, true, t);
+}
+
+TeamAction Board::genPassTeamAction(Player p, MoveTable t) const {
+  return genActions(p, false, t);
+}
+
 TeamAction Board::genKickTeamAction(Player p) const {
-  return genActions(p, true);
+  return genActions(p, true, MoveTable());
 }
 
 TeamAction Board::genPassTeamAction(Player p) const {
-  return genActions(p, false);
+  return genActions(p, false, MoveTable());
 }
 
 // BEGIN util for random acces on iterator
@@ -39,7 +47,8 @@ Iter select_randomly(Iter start, Iter end) {
 }
 // END
 
-TeamAction Board::genActions(Player player, bool kickAction) const {
+TeamAction Board::genActions(Player player, bool kickAction,
+                             MoveTable move_table) const {
   TeamAction actions;
 
   auto with_ball = getRobotWithBall();
@@ -65,16 +74,26 @@ TeamAction Board::genActions(Player player, bool kickAction) const {
       // in the rare case there isn't any possible pass
       // for the robot with ball, we'll make it move
       if (!any_pass) {
-        std::shared_ptr<Action> action(new Move(*robot_with_ball));
-        actions.push_back(std::move(action));
+        int robot_id = robot_with_ball->getId();
+        if (move_table.count(robot_id) > 0)
+          actions.push_back(move_table[robot_id]);
+        else {
+          std::shared_ptr<Action> action(new Move(*robot_with_ball));
+          actions.push_back(std::move(action));
+        }
       }
     }
   }
 
   // push a Move action for every other robot
   for (auto robot : getOtherRobots(player, *robot_with_ball)) {
-    std::shared_ptr<Action> action(new Move(*robot));
-    actions.push_back(std::move(action));
+    int robot_id = robot->getId();
+    if (move_table.count(robot_id) > 0)
+      actions.push_back(move_table[robot_id]);
+    else {
+      std::shared_ptr<Action> action(new Move(*robot));
+      actions.push_back(std::move(action));
+    }
   }
 
   return actions;

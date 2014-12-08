@@ -105,5 +105,6 @@ public:
 };
 
 typedef std::vector<std::shared_ptr<Action>> TeamAction;
+typedef std::map<int, std::shared_ptr<Move>> MoveTable;
 
 #endif

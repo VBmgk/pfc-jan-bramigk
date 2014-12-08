@@ -107,8 +107,10 @@ public:
   // Player currentPlayer() const;
 
   TeamAction genKickTeamAction(Player) const;
+  TeamAction genKickTeamAction(Player, MoveTable) const;
   TeamAction genPassTeamAction(Player) const;
-  TeamAction genActions(Player, bool) const;
+  TeamAction genPassTeamAction(Player, MoveTable) const;
+  TeamAction genActions(Player, bool, MoveTable) const;
 
   float totalGoalGap(Player player) const; // sum of all gaps length
   float maxGoalGap(Player player) const;   // length of largest gap
@@ -172,6 +174,10 @@ class Minimax {
   static constexpr int MAX_DEPTH = 1;
   std::tuple<float, TeamAction> value(const Board &, Player, TeamAction *,
                                       int depth);
+  MoveTable move_table_min, move_table_max;
+  MoveTable &move_table(Player p) {
+    return p == MAX ? move_table_max : move_table_min;
+  }
 
 public:
   TeamAction decision(const Board &);
