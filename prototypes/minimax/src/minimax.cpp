@@ -32,7 +32,7 @@ std::tuple<float, TeamAction> Minimax::decision_value(const Board &board) {
   return val_action;
 }
 
-std::tuple<float, TeamAction> Minimax::value(const Board &board, Player player,
+std::tuple<float, TeamAction> Minimax::value(const Board board, Player player,
                                              TeamAction *max_action,
                                              int depth) {
   auto mtable = move_table(player);

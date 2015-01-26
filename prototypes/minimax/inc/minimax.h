@@ -171,8 +171,8 @@ public:
 
 class Minimax {
   static constexpr int RAMIFICATION_NUMBER = 10;
-  static constexpr int MAX_DEPTH = 1;
-  std::tuple<float, TeamAction> value(const Board &, Player, TeamAction *,
+  static constexpr int MAX_DEPTH = 2;
+  std::tuple<float, TeamAction> value(const Board, Player, TeamAction *,
                                       int depth);
   MoveTable move_table_min, move_table_max;
   MoveTable &move_table(Player p) {

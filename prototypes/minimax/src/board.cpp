@@ -443,14 +443,14 @@ float Board::evaluate() const {
   float total_gap = player * totalGoalGap(enemy);
   float max_gap = player * maxGoalGap(enemy);
 
-  return total_gap;
-
-  // this is unsigned as it's a numeric count, thus multiply by player
-  float receivers_num = player * canGetPass(MAX).size();
-
   // also unsigned, since it depends who has the ball
   auto enemy_goal = enemyGoalPos(player_with_ball);
   float distance_to_goal = player * robot_with_ball->getDist(enemy_goal);
+
+  return total_gap / distance_to_goal;
+
+  // this is unsigned as it's a numeric count, thus multiply by player
+  float receivers_num = player * canGetPass(MAX).size();
 
   // mix it up and push it out
   return WEIGHT_TOTAL_GAP * total_gap + WEIGHT_MAX_GAP * max_gap +
