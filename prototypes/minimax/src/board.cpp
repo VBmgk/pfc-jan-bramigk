@@ -15,6 +15,14 @@ bool Board::isGameOver(Player player) const {
   return false;
 }
 
+TeamAction Board::genKickTeamAction(Player p, MoveTable t, int move_id) const {
+  return genActions(p, true, t, move_id);
+}
+
+TeamAction Board::genPassTeamAction(Player p, MoveTable t, int move_id) const {
+  return genActions(p, false, t, move_id);
+}
+
 TeamAction Board::genKickTeamAction(Player p, MoveTable t) const {
   return genActions(p, true, t);
 }
@@ -34,10 +42,10 @@ TeamAction Board::genPassTeamAction(Player p) const {
 // BEGIN util for random acces on iterator
 // reference: http://stackoverflow.com/a/16421677/947511
 template<typename Iter, typename RandomGenerator>
-Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
-    std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
-    std::advance(start, dis(g));
-    return start;
+Iter select_randomly(Iter begin, Iter end, RandomGenerator& g) {
+    std::uniform_int_distribution<> dis(0, std::distance(begin, end) - 1);
+    std::advance(begin, dis(g));
+    return begin;
 }
 template<typename Iter>
 Iter select_randomly(Iter start, Iter end) {
@@ -48,7 +56,7 @@ Iter select_randomly(Iter start, Iter end) {
 // END
 
 TeamAction Board::genActions(Player player, bool kickAction,
-                             MoveTable move_table) const {
+                             MoveTable move_table, int move_id) const {
   TeamAction actions;
 
   auto with_ball = getRobotWithBall();
@@ -88,8 +96,14 @@ TeamAction Board::genActions(Player player, bool kickAction,
   // push a Move action for every other robot
   for (auto robot : getOtherRobots(player, *robot_with_ball)) {
     int robot_id = robot->getId();
-    if (move_table.count(robot_id) > 0)
+
+    if (move_id == robot_id) {
+      std::shared_ptr<Action> action(new Move(*robot));
+      actions.push_back(std::move(action));
+    }
+    else if (move_table.count(robot_id) > 0) {
       actions.push_back(move_table[robot_id]);
+    }
     else {
       std::shared_ptr<Action> action(new Move(*robot));
       actions.push_back(std::move(action));
