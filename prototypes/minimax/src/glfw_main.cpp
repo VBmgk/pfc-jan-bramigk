@@ -193,7 +193,8 @@ void render(GLFWwindow *window, int width, int height) {
   {
     std::lock_guard<std::mutex> _(app->display_mutex);
     draw_board(app->command_board);
-    draw_teamaction(app->command, app->command_board);
+    draw_teamaction(app->command, app->command_board, MAX);
+    draw_teamaction(app->enemy_command, app->command_board, MIN);
     draw_display(app, fps, width, height);
   }
 

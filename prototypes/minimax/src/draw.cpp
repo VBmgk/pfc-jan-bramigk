@@ -260,8 +260,8 @@ void draw_test(int width, int height) {
   // draw_text("The Quick Brown Fox\nJumps Over The Lazy Dog.", width, height);
 }
 
-const Robot *get_robot(int id, const Board &board) {
-  for (auto &robot : board.getMax().getRobots()) {
+const Robot *get_robot(int id, const Board &board, Player player) {
+  for (auto &robot : board.getTeam(player).getRobots()) {
     if (robot.getId() == id) {
       return &robot;
     }
@@ -269,9 +269,9 @@ const Robot *get_robot(int id, const Board &board) {
   return nullptr;
 }
 
-void draw_teamaction(const TeamAction &t_action, const Board &board) {
+void draw_teamaction(const TeamAction &t_action, const Board &board, Player player) {
   for (auto action : t_action) {
-    auto robot = get_robot(action->getId(), board);
+    auto robot = get_robot(action->getId(), board, player);
     if (robot == nullptr)
       continue;
     switch (action->type()) {
@@ -291,7 +291,7 @@ void draw_teamaction(const TeamAction &t_action, const Board &board) {
     } break;
     case Action::PASS: {
       auto pass = std::dynamic_pointer_cast<Pass>(action);
-      auto rcv = get_robot(pass->getRcvId(), board);
+      auto rcv = get_robot(pass->getRcvId(), board, player);
       if (rcv == nullptr)
         continue;
       glColor3ubv(GREY);
@@ -350,6 +350,7 @@ void draw_display(App *app, double fps, int width, int height) {
 
 void draw_app(App *app, double fps, int width, int height) {
   draw_board(app->command_board);
-  draw_teamaction(app->command, app->command_board);
+  draw_teamaction(app->command, app->command_board, MAX);
+  draw_teamaction(app->enemy_command, app->command_board, MIN);
   draw_display(app, fps, width, height);
 }
