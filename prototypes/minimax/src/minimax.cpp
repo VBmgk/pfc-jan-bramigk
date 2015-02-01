@@ -16,6 +16,21 @@ std::tuple<float, TeamAction> Minimax::decision_value(const Board &board) {
   auto val_action = value(board, MAX, nullptr, 0);
   std::tie(std::ignore, action) = val_action;
 
+  // TODO: optimize this
+  TeamAction action_min;
+  auto val_action_min = value(board, MIN, &action, 0);
+  std::tie(std::ignore, action_min) = val_action_min;
+
+  // build the move table by collecting all move actions
+  move_table_min.clear();
+  for (auto a : action_min) {
+    if (a->type() == Action::MOVE) {
+      auto move_action = std::dynamic_pointer_cast<Move>(a);
+      int robot_id = move_action->getId();
+      move_table_min[robot_id] = move_action;
+    }
+  }
+
   // build the move table by collecting all move actions
   move_table_max.clear();
   for (auto a : action) {
