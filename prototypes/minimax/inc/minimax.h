@@ -108,9 +108,11 @@ public:
 
   TeamAction genKickTeamAction(Player) const;
   TeamAction genKickTeamAction(Player, MoveTable) const;
+  TeamAction genKickTeamAction(Player, MoveTable, int move_id) const;
   TeamAction genPassTeamAction(Player) const;
   TeamAction genPassTeamAction(Player, MoveTable) const;
-  TeamAction genActions(Player, bool, MoveTable) const;
+  TeamAction genPassTeamAction(Player, MoveTable, int move_id) const;
+  TeamAction genActions(Player, bool, MoveTable, int move_id=-1) const;
 
   float totalGoalGap(Player player, const Body&) const; // sum of all gaps length
   float maxGoalGap(Player player, const Body&) const;   // length of largest gap
@@ -178,6 +180,7 @@ class Minimax {
   MoveTable &move_table(Player p) {
     return p == MAX ? move_table_max : move_table_min;
   }
+  int move_count = 0;
 
 public:
   TeamAction decision(const Board &);
