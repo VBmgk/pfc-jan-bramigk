@@ -29,7 +29,7 @@ public:
 
 class Board {
   // TODO> calibrate
-  static constexpr float MIN_GAP_TO_WIN = 1.0; // goal width is 1.0, so it means open goal
+  static constexpr float MIN_GAP_TO_WIN = 0.1;
   static constexpr float WEIGHT_TOTAL_GAP = 100.0;
   static constexpr float WEIGHT_MAX_GAP = 2.0;
   static constexpr float WEIGHT_RECEIVERS_NUM = 1.0;

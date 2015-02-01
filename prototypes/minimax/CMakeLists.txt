@@ -30,8 +30,8 @@ protobuf_generate_cpp(PROTO_SRC PROTO_HDR
 )
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-find_package(Armadillo REQUIRED)
-include_directories(${ARMADILLO_INCLUDE_DIRS})
+#find_package(Armadillo REQUIRED)
+#include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 find_package(ZMQ REQUIRED)
 include_directories(${ZMQ_INCLUDE_DIRS})

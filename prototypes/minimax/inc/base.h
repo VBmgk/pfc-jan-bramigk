@@ -1,78 +1,59 @@
 #ifndef MINIMAX_BASE_H
 #define MINIMAX_BASE_H
-#include <armadillo>
 #include <iostream>
+#include <cmath>
+#include <random>
 
 class Vector {
-  arma::vec a_v;
-  static const unsigned int VEC_SIZE = 2;
+  float v[2];
+  static std::default_random_engine generator;
 
 public:
-  Vector(const arma::vec &v) : a_v(v) {}
+  Vector(const float v[2]) : v{v[0], v[1]} {}
 
-  Vector() : a_v(arma::zeros<arma::vec>(Vector::VEC_SIZE)) {}
+  Vector() : v{0, 0} {}
 
-  Vector(float x, float y) : a_v({x, y}) {}
+  Vector(float x, float y) : v{x, y} {}
 
   // Copy constructor
-  Vector(const Vector &vec) : a_v(vec.a_v) {}
+  Vector(const Vector &o) : v{o.v[0], o.v[1]} {}
 
   static Vector getURand() {
-    arma::arma_rng::set_seed_random();
-
-    return Vector(arma::randu<arma::vec>(Vector::VEC_SIZE));
+    static std::uniform_real_distribution<float> distribution(0.0, 1.0);
+    return Vector(distribution(generator), distribution(generator));
   }
 
   static Vector getURand(float rx, float ry) {
-    arma::arma_rng::set_seed_random();
-    Vector v(arma::randu<arma::vec>(Vector::VEC_SIZE));
-    v.a_v[0] = v.a_v[0] * rx - rx / 2;
-    v.a_v[1] = v.a_v[1] * ry - ry / 2;
-    return v;
+    std::uniform_real_distribution<float> xdistribution(-rx / 2, rx / 2);
+    std::uniform_real_distribution<float> ydistribution(-ry / 2, ry / 2);
+    return Vector(xdistribution(generator), ydistribution(generator));
   }
 
   static Vector getNRand(const Vector &v, float s = 1.0) {
-    arma::arma_rng::set_seed_random();
-
-    // Center Distribution on last value
-    return Vector(v.a_v + s * arma::randn<arma::vec>(Vector::VEC_SIZE));
+    std::normal_distribution<float> distribution(0.0, s);
+    return v + Vector(distribution(generator), distribution(generator));
   }
 
-  float norm() { return (float)arma::norm(a_v); }
+  float x() const { return v[0]; }
+  float y() const { return v[1]; }
 
-  Vector operator+(const Vector &v2) const {
-    Vector vr(a_v + v2.a_v);
-    return vr;
-  }
+  float norm2() const { return v[0] * v[0] + v[1] * v[1]; }
+  float norm()  const { return std::sqrt(norm2()); }
+  Vector unit() const { return (*this) / norm(); }
 
-  Vector operator-(const Vector &v2) const {
-    Vector vr(a_v - v2.a_v);
-    return vr;
-  }
+  Vector operator+(const Vector &o) const { return Vector{v[0] + o.v[0], v[1] + o.v[1]}; }
+  Vector operator-(const Vector &o) const { return Vector{v[0] - o.v[0], v[1] - o.v[1]}; }
+  Vector operator*(float k) const { return Vector{v[0] * k, v[1] * k}; }
+  Vector operator/(float k) const { return Vector{v[0] / k, v[1] / k}; }
+  float  operator*(const Vector &o) const { return v[0] * o.v[0] + v[1] * o.v[1]; }
 
-  float operator*(const Vector &v2) const {
-    // Using trace to avoid conversion operator
-    return arma::trace((a_v.t() * v2.a_v));
-  }
-
-  Vector operator*(float k) const { return Vector(a_v * k); }
-
-  float operator[](int i) const {
-    // return (float) a_v[i];// this is a fast but unsafe alternative
-    return (float)a_v(i);
-  }
-
-  static Vector unit(Vector v) {
-    Vector vec(arma::normalise(v.a_v));
-
-    return vec;
-  }
+  float operator[](int i) const { return v[i]; }
 
   static bool lineSegmentCrossCircle(const Vector &p1, const Vector &p2,
                                      const Vector &center, const float radius) {
     // Note: this only works because the robot
     // is not a point
-    Vector v_u = unit(p1 - p2);
+    Vector v_u = (p1 - p2).unit();
     Vector u = p1 - center;
     Vector w = p2 - center;
 
