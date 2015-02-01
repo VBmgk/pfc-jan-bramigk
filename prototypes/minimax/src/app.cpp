@@ -163,9 +163,8 @@ void App::run(std::function<void(App &)> run) {
           std::tie(val, local_command, local_enemy_command) =
               minimax.decision_experimental(local_board);
         } else {
-          local_enemy_command = TeamAction(0);
-          std::tie(val, local_command) = minimax.decision_value(local_board);
-          // local_command = minimax.decision(local_board);
+          std::tie(val, local_command, local_enemy_command) =
+              minimax.decision_value(local_board);
         }
         mnmx_count++;
         app.display.minimax_count++;
