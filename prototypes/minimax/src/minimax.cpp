@@ -47,12 +47,12 @@ std::tuple<float, TeamAction> Minimax::value(const Board board, Player player,
     return std::make_pair(board.evaluate(), TeamAction(0));
   }
 
+  auto robots = board.getTeam(player).getRobots();
+  int move_id = robots[move_count % robots.size()].getId();
+
   if (player == MAX) {
     auto v = std::make_pair(-std::numeric_limits<float>::infinity(),
                             board.genPassTeamAction(MAX, mtable));
-
-    auto robots = board.getTeam(player).getRobots();
-    int move_id = robots[move_count % robots.size()].getId();
 
     for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
       auto max_action = i == 0 ? board.genPassTeamAction(MAX, mtable) :
@@ -77,8 +77,9 @@ std::tuple<float, TeamAction> Minimax::value(const Board board, Player player,
                             board.genPassTeamAction(MIN, mtable));
 
     for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
-      auto min_action = i < MTABLE_COUNT ? board.genPassTeamAction(MIN, mtable)
-                                         : board.genPassTeamAction(MIN);
+      auto min_action = i == 0 ? board.genPassTeamAction(MIN, mtable) :
+                        i < MTABLE_COUNT ? board.genPassTeamAction(MIN, mtable, move_id) :
+                        board.genPassTeamAction(MIN);
       auto next_board = board.applyTeamAction(*max_action, min_action);
 
       // recurse
