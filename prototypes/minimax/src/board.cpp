@@ -8,7 +8,7 @@
 #include "minimax.h"
 
 bool Board::isGameOver(Player player) const {
-  float gap = totalGoalGap(player == MAX ? MIN : MAX);
+  float gap = totalGoalGap(player == MAX ? MIN : MAX, getBall());
   if (gap >= MIN_GAP_TO_WIN)
     return true;
 
@@ -263,16 +263,16 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
   return robots;
 }
 
-float Board::totalGoalGap(Player player) const {
+float Board::totalGoalGap(Player player, const Body& body) const {
   float len = 0;
-  for (auto gap : getGoalGaps(player))
+  for (auto gap : getGoalGaps(player, body))
     len += std::fabs(gap.first - gap.second);
   return len;
 }
 
-float Board::maxGoalGap(Player player) const {
+float Board::maxGoalGap(Player player, const Body& body) const {
   float len = 0;
-  for (auto gap : getGoalGaps(player)) {
+  for (auto gap : getGoalGaps(player, body)) {
     auto this_len = std::fabs(gap.first - gap.second);
     if (this_len > len)
       len = this_len;
@@ -280,8 +280,7 @@ float Board::maxGoalGap(Player player) const {
   return len;
 }
 
-std::vector<std::pair<float, float>> Board::getGoalGaps(Player player) const {
-  auto &ball = getBall();
+std::vector<std::pair<float, float>> Board::getGoalGaps(Player player, const Body& body) const {
   auto gx = goalPos(player)[0];
 
   // collect shadows
@@ -289,7 +288,7 @@ std::vector<std::pair<float, float>> Board::getGoalGaps(Player player) const {
   std::vector<std::pair<float, float>> shadows;
   for (auto _robot : getRobotsMoving()) {
     auto &robot = *_robot;
-    auto d = robot.pos() - ball.pos();
+    auto d = robot.pos() - body.pos();
     auto k = d * d - Robot::radius() * Robot::radius();
 
     if (k <= 0)
@@ -301,13 +300,13 @@ std::vector<std::pair<float, float>> Board::getGoalGaps(Player player) const {
     float tan_theta = d[1] / std::fabs(d[0]);
     float tan_1 = (tan_theta + tan_alpha) / (1 - tan_theta * tan_alpha);
     float tan_2 = (tan_theta - tan_alpha) / (1 + tan_theta * tan_alpha);
-    float y_shadow_1 = tan_1 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
-    float y_shadow_2 = tan_2 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
+    float y_shadow_1 = tan_1 * std::fabs(body.pos()[0] - gx) + body.pos()[1];
+    float y_shadow_2 = tan_2 * std::fabs(body.pos()[0] - gx) + body.pos()[1];
 
-    if ((ball.pos()[0] - robot.pos()[0] + Robot::radius()) *
-            (ball.pos()[0] - robot.pos()[0] - Robot::radius()) <
+    if ((body.pos()[0] - robot.pos()[0] + Robot::radius()) *
+            (body.pos()[0] - robot.pos()[0] - Robot::radius()) <
         0) {
-      if (ball.pos()[1] > robot.pos()[1])
+      if (body.pos()[1] > robot.pos()[1])
         y_shadow_2 = -std::numeric_limits<float>::infinity();
       else
         y_shadow_1 = std::numeric_limits<float>::infinity();
@@ -440,14 +439,24 @@ float Board::evaluate() const {
   // float max_gap = maxGoalGap(MIN) - maxGoalGap(MAX);
 
   // XXX: the above may be have bugs, using this instead
-  float total_gap = player * totalGoalGap(enemy);
-  float max_gap = player * maxGoalGap(enemy);
+  float total_gap = totalGoalGap(enemy, getBall());
+  float max_gap = player * maxGoalGap(enemy, getBall());
 
   // also unsigned, since it depends who has the ball
   auto enemy_goal = enemyGoalPos(player_with_ball);
-  float distance_to_goal = player * robot_with_ball->getDist(enemy_goal);
+  float distance_to_goal = getBall().getDist(enemy_goal);
 
-  return total_gap / distance_to_goal;
+  float value = WEIGHT_TOTAL_GAP * 2 * player * atan2f(total_gap/2, distance_to_goal);
+
+  for(auto& robot: getTeam(player_with_ball).getRobots()){
+    if(robot_with_ball == &robot) continue;
+ 
+    total_gap = totalGoalGap(enemy, robot);
+    distance_to_goal += robot.getDist(enemy_goal);
+    value += 2 * player * atan2f(total_gap/2, distance_to_goal); 
+  }
+
+  return value;
 
   // this is unsigned as it's a numeric count, thus multiply by player
   float receivers_num = player * canGetPass(MAX).size();

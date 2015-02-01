@@ -30,7 +30,7 @@ public:
 class Board {
   // TODO> calibrate
   static constexpr float MIN_GAP_TO_WIN = 1.0; // goal width is 1.0, so it means open goal
-  static constexpr float WEIGHT_TOTAL_GAP = 1.0;
+  static constexpr float WEIGHT_TOTAL_GAP = 100.0;
   static constexpr float WEIGHT_MAX_GAP = 2.0;
   static constexpr float WEIGHT_RECEIVERS_NUM = 1.0;
   static constexpr float WEIGHT_DISTANCE_TO_GOAL = 1.0;
@@ -112,13 +112,13 @@ public:
   TeamAction genPassTeamAction(Player, MoveTable) const;
   TeamAction genActions(Player, bool, MoveTable) const;
 
-  float totalGoalGap(Player player) const; // sum of all gaps length
-  float maxGoalGap(Player player) const;   // length of largest gap
-  std::vector<std::pair<float, float>> getGoalGaps(Player player) const;
+  float totalGoalGap(Player player, const Body&) const; // sum of all gaps length
+  float maxGoalGap(Player player, const Body&) const;   // length of largest gap
+  std::vector<std::pair<float, float>> getGoalGaps(Player player, const Body&) const;
   std::vector<std::pair<float, float>> getGoalGaps() const {
     auto player_with_ball = getRobotWithBall().second;
     auto player = player_with_ball == MIN ? MAX : MIN;
-    return getGoalGaps(player);
+    return getGoalGaps(player, getBall());
   }
   // bool freeKickLine(int point_index) const;
   // bool kickLineCrossRobot(const int point_index, const Robot &robot) const;
