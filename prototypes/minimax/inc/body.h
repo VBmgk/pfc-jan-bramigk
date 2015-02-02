@@ -47,6 +47,23 @@ public:
     } while (std::abs(p[0]) > rx / 2 || std::abs(p[1]) > ry / 2);
     return p;
   }
+  
+  Vector getLocalRadRandPos(float r, float rx, float ry) const {
+    Vector p, ux(1,0), uy(0,1);
+    do {
+      int decimal = 10000;
+      float theta = rand() % ((int) (2 * M_PI * decimal));
+      float rand_r = rand() % ((int) (r * decimal));
+      theta  /= decimal;
+      rand_r /= decimal;
+
+      p = ux * (rand_r * cos(theta)) +
+          uy * (rand_r * sin(theta)) +
+          pos();
+    } while (std::abs(p[0]) > rx / 2 || std::abs(p[1]) > ry / 2);
+     
+    return p;
+  }
 
   Vector getLastPlanedPos() const { return last_planed_pos; }
 

@@ -9,16 +9,11 @@
 
 Move::Move(const class Robot &robot) : Action(robot.getId()) {
   Vector position = robot.getLastPlanedPos();
-  // srand(time(NULL));//XXX: ????
-  //next_position = robot.getURandPos(Board::fieldWidth(), Board::fieldHeight());
-  next_position = robot.getLocalRandPos(Board::fieldWidth(), Board::fieldHeight());
-  // if (rand() % 2 == 1) {
-  //  // Move with uniforme distribution
-  //  next_position = robot.getURandPos();
-  //} else {
-  //  // Move with normal distribution
-  //  next_position = robot.getNRandPos();
-  //}
+
+  // next_position = robot.getLocalRandPos(Board::fieldWidth(), Board::fieldHeight());
+  int rand_n = rand() % 3;
+  next_position = robot.getLocalRadRandPos(1 + rand_n, Board::fieldWidth(), Board::fieldHeight());
+
   // Compute minimum time
   time = robot.getDist(next_position) / MAX_SPEED;
 }
