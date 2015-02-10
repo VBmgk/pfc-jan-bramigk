@@ -13,19 +13,26 @@ Minimax::decision_value(const Board &board) {
   if (board.getMin().size() == 0 || board.getMax().size() == 0)
     return std::make_tuple(0.0, TeamAction(0), TeamAction(0));
 
+  float value;
   TeamAction action_max, action_min;
-  auto decision = value_max(board, 0);
-  std::tie(std::ignore, action_max, action_min) = decision;
 
-  // build the move tables by collecting all move actions
-  move_table_min.clear();
-  for (auto a : action_min) {
-    if (a->type() == Action::MOVE) {
-      auto move_action = std::dynamic_pointer_cast<Move>(a);
-      int robot_id = move_action->getId();
-      move_table_min[robot_id] = move_action;
+  if (MAX_DEPTH > 0) {
+    std::tie(value, action_max, action_min) = value_max(board, 0);;
+
+    // build min move table
+    move_table_min.clear();
+    for (auto a : action_min) {
+      if (a->type() == Action::MOVE) {
+        auto move_action = std::dynamic_pointer_cast<Move>(a);
+        int robot_id = move_action->getId();
+        move_table_min[robot_id] = move_action;
+      }
     }
+  } else {
+    std::tie(value, action_max) = value_max_only(board);;
   }
+
+  // build max move table
   move_table_max.clear();
   for (auto a : action_max) {
     if (a->type() == Action::MOVE) {
@@ -38,11 +45,15 @@ Minimax::decision_value(const Board &board) {
   move_count++;
 
   // we're done, go ahead and return
-  return decision;
+  return std::make_tuple(value, action_max, action_min);
 }
 
 std::tuple<float, TeamAction, TeamAction>
 Minimax::value_max(const Board board, int depth) {
+  if (depth >= MAX_DEPTH) {
+    return std::make_tuple(board.evaluate(), TeamAction(0), TeamAction(0));
+  }
+
   auto mtable = move_table_max;
   int MTABLE_COUNT = RAMIFICATION_NUMBER - 2;
 
@@ -89,12 +100,9 @@ Minimax::value_min(const Board board, TeamAction max_action, int depth) {
   int move_id = robots[move_count % robots.size()].getId();
 
   if (board.isGameOver(MIN)) {
-    return std::make_tuple(board.evaluate(),
-                           board.genKickTeamAction(MIN, mtable));
-  }
-
-  if (depth >= MAX_DEPTH) {
-    return std::make_tuple(board.evaluate(), TeamAction(0));
+    auto min_action = board.genKickTeamAction(MIN, mtable);
+    auto next_board = board.applyTeamAction(max_action, min_action);
+    return std::make_tuple(board.evaluate(), min_action);
   }
 
   auto v = std::make_pair(std::numeric_limits<float>::infinity(),
@@ -120,6 +128,42 @@ Minimax::value_min(const Board board, TeamAction max_action, int depth) {
   return v;
 }
 
+
+std::tuple<float, TeamAction>
+Minimax::value_max_only(const Board board) {
+  auto mtable = move_table_max;
+  int MTABLE_COUNT = RAMIFICATION_NUMBER - 2;
+
+  auto robots = board.getTeam(MAX).getRobots();
+  int move_id = robots[move_count % robots.size()].getId();
+
+  if (board.isGameOver(MAX)) {
+    auto max_action = board.genKickTeamAction(MAX, mtable);
+    auto next_board = board.applyTeamAction(max_action, TeamAction(0));
+    return std::make_tuple(next_board.evaluate(), max_action);
+  }
+
+  auto v = std::make_tuple(-std::numeric_limits<float>::infinity(),
+                           board.genPassTeamAction(MAX, mtable));
+
+  for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
+    auto max_action = i == 0 ? board.genPassTeamAction(MAX, mtable) :
+                      i < MTABLE_COUNT ? board.genPassTeamAction(MAX, mtable, move_id) :
+                      board.genPassTeamAction(MAX);
+
+    auto next_board = board.applyTeamAction(max_action, TeamAction(0));
+    float val = next_board.evaluate();
+
+    // minimize loss for max
+    if (std::get<0>(v) < val) {
+      std::get<0>(v) = val;
+      std::get<1>(v) = max_action;
+    }
+  }
+
+  return v;
+}
+
 std::tuple<float, TeamAction, TeamAction>
 Minimax::decision_experimental(const Board &board) {
   // special case for it not to crash when no robots on a team
@@ -130,17 +174,18 @@ Minimax::decision_experimental(const Board &board) {
 //  return std::make_pair(board.evaluate(), board.genKickTeamAction(player));
 //}
 
-#define N RAMIFICATION_NUMBER
+#define N 1000
+  int n = std::min(RAMIFICATION_NUMBER, N);
 
   float payoff_matrix[N][N];
   TeamAction max_choices[N], min_choices[N];
 
   // generate payoff matrix
   // std::cout << "--" << std::endl;
-  for (int i = 0; i < N; i++) {
+  for (int i = 0; i < n; i++) {
     max_choices[i] = board.genPassTeamAction(MAX);
 
-    for (int j = 0; j < N; j++) {
+    for (int j = 0; j < n; j++) {
       min_choices[j] = board.genPassTeamAction(MIN);
 
       auto next_board = board.applyTeamAction(max_choices[i], min_choices[j]);
@@ -158,9 +203,9 @@ Minimax::decision_experimental(const Board &board) {
   // TODO: consider mixed strategy maybe
 
   // chose max with minimax decision
-  for (int i = 0; i < N; i++) {
+  for (int i = 0; i < n; i++) {
     float min_value = std::numeric_limits<float>::infinity();
-    for (int j = 0; j < N; j++)
+    for (int j = 0; j < n; j++)
       min_value = std::min(min_value, payoff_matrix[i][j]);
     if (min_value > best_max_value) {
       best_max_value = min_value;
@@ -169,9 +214,9 @@ Minimax::decision_experimental(const Board &board) {
   }
 
   // chose min with minimax decision
-  for (int j = 0; j < N; j++) {
+  for (int j = 0; j < n; j++) {
     float max_value = -std::numeric_limits<float>::infinity();
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < n; i++)
       max_value = std::max(max_value, payoff_matrix[i][j]);
     if (max_value < best_min_value) {
       best_min_value = max_value;

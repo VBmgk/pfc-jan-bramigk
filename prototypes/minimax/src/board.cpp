@@ -458,16 +458,25 @@ float Board::evaluate() const {
 
   // also unsigned, since it depends who has the ball
   auto enemy_goal = enemyGoalPos(player_with_ball);
+  auto player_goal = goalPos(player_with_ball);
   float distance_to_goal = getBall().getDist(enemy_goal);
 
-  float value = WEIGHT_TOTAL_GAP * 2 * player * atan2f(total_gap/2, distance_to_goal);
+  float value = WEIGHT_TOTAL_GAP * 2 * player * atan2f(total_gap / 2, distance_to_goal);
 
-  for(auto& robot: getTeam(player_with_ball).getRobots()){
-    if(robot_with_ball == &robot) continue;
- 
-    total_gap = totalGoalGap(enemy, robot);
-    distance_to_goal += robot.getDist(enemy_goal);
-    value += 2 * player * atan2f(total_gap/2, distance_to_goal); 
+  //for (auto& robot : getTeam(player_with_ball).getRobots()) {
+  //  if (robot_with_ball == &robot) continue;
+
+  //  total_gap = totalGoalGap(enemy, robot);
+  //  distance_to_goal += robot.getDist(enemy_goal);
+  //  value += 2 * player * atan2f(total_gap / 2, distance_to_goal);
+  //}
+
+  for (auto& robot : getTeam(enemy).getRobots()) {
+    if (robot_with_ball == &robot) continue;
+
+    total_gap = totalGoalGap(player_with_ball, robot);
+    distance_to_goal += robot.getDist(player_goal);
+    value += 3 * 2 * player * atan2f(total_gap / 2, distance_to_goal);
   }
 
   return value;

@@ -11,8 +11,9 @@ Move::Move(const class Robot &robot) : Action(robot.getId()) {
   Vector position = robot.getLastPlanedPos();
 
   // next_position = robot.getLocalRandPos(Board::fieldWidth(), Board::fieldHeight());
-  int rand_n = rand() % 3;
-  next_position = robot.getLocalRadRandPos(1 + rand_n, Board::fieldWidth(), Board::fieldHeight());
+  int rand_r = 1 + (rand() % 3);
+  if (rand_r == 3) rand_r = 6;
+  next_position = robot.getLocalRadRandPos(rand_r, Board::fieldWidth(), Board::fieldHeight());
 
   // Compute minimum time
   time = robot.getDist(next_position) / MAX_SPEED;
