@@ -2,6 +2,7 @@
 #include <vector>
 #include <cfloat>
 #include <random>
+#include <algorithm>
 #include "base.h"
 #include "body.h"
 #include "action.h"
