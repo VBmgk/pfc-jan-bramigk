@@ -1,16 +1,30 @@
 #include <memory>
 #include <vector>
-#include <armadillo>
 #include <cfloat>
+#include <random>
 #include "base.h"
 #include "body.h"
 #include "action.h"
 #include "minimax.h"
 
+std::default_random_engine Vector::generator{};
+
 bool Board::isGameOver(Player player) const {
-  float gap = totalGoalGap(player == MAX ? MIN : MAX, getBall());
-  if (gap >= MIN_GAP_TO_WIN)
+  auto with_ball = getRobotWithBall();
+  auto robot_with_ball = with_ball.first;
+  auto player_with_ball = with_ball.second;
+
+  if (player != player_with_ball)
+    return false;
+
+  float total_gap = totalGoalGap(player == MAX ? MIN : MAX, getBall());
+  auto enemy_goal = enemyGoalPos(player);
+  float distance_to_goal = getBall().getDist(enemy_goal);
+  float value = atan2f(total_gap / 2, distance_to_goal);
+
+  if (value >= MIN_GAP_TO_WIN) {
     return true;
+  }
 
   return false;
 }
@@ -263,8 +277,7 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
 
       // create a virtual ball with future position
       Ball vrt_ball = vrt_board.ball;
-      vrt_ball.setV(Vector::unit(robot.pos() - vrt_ball.pos()) *
-                    Robot::kickV());
+      vrt_ball.setV((robot.pos() - vrt_ball.pos()).unit() * Robot::kickV());
 
       // Add robot if the same robot will have the ball after kick
       auto with_ball = getRobotWithVirtualBall(vrt_ball, std::make_pair(&robot, player));
@@ -540,7 +553,7 @@ Board::getOtherRobots(Player player, const Robot &robot_with_ball) const {
 
 // print operator for Vector
 std::ostream &operator<<(std::ostream &os, const Vector &v) {
-  os << "\t" << v.a_v[0] << "\n\t" << v.a_v[1] << "\n";
+  os << "\t" << v.x() << "\n\t" << v.y() << "\n";
 
   return os;
 }

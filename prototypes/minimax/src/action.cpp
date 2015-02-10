@@ -1,5 +1,4 @@
 #include <vector>
-#include <armadillo>
 #include <cfloat>
 #include "base.h"
 #include "body.h"
@@ -42,9 +41,7 @@ void Pass::apply(Player p, Board &b) const {
       rcv = &robot;
     }
   }
-  ball.setPos(rcv->pos() -
-              Vector::unit(rcv->pos() - ball.pos()) *
-                  (Robot::radius() + Ball::radius()));
+  ball.setPos(rcv->pos() - (rcv->pos() - ball.pos()).unit() * (Robot::radius() + Ball::radius()));
 }
 
 void Kick::apply(Player p, Board &b) const {

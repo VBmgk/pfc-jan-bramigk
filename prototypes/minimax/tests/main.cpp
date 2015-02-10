@@ -1,4 +1,3 @@
-#include <armadillo>
 #include <iostream>
 #include "base.h"
 #include "body.h"
@@ -60,8 +59,8 @@ int main(void){
 
   // Creating different balls
   Ball ball_1, ball_2;
-  ball_1.setV(Vector(arma::vec("2 0")));
-  ball_2.setV(Vector(arma::vec("-2 2")));
+  ball_1.setV(Vector(2, 0));
+  ball_2.setV(Vector(-2, 2));
 
   Board board(min,max);
   // boards ball position
@@ -82,10 +81,10 @@ int main(void){
 
   // TODO[bramigk]: testar com googletest
   // kickLineCrossRobot test
-  Robot r_kicker(0, Vector(arma::vec("0 0")), Vector(arma::vec("0 0")));
-  Robot r_blocker(1, Vector(arma::vec("1.5 0")), Vector(arma::vec("0 0")));
+  Robot r_kicker(0, Vector(0, 0), Vector(0, 0));
+  Robot r_blocker(1, Vector(1.5, 0), Vector(0, 0));
 
-  Ball b(Vector(arma::vec("0.5 0")), Vector(arma::vec("0 0")));
+  Ball b(Vector(0.5, 0), Vector(0, 0));
 
   Team min2, max2;
   min2.addRobot(r_kicker);
@@ -100,8 +99,8 @@ int main(void){
 
   // lineSegmentCrossCircle test
   if (Vector::lineSegmentCrossCircle(
-          Vector(arma::vec("0 0")), Vector(arma::vec("2 0")),
-          Vector(arma::vec("1 0")), Robot::radius()))
+          Vector(0, 0), Vector(2, 0),
+          Vector(1, 0), Robot::radius()))
     std::cout << "basic funcion ok" << std::endl;
   else
     std::cout << "basic funcion errada" << std::endl;

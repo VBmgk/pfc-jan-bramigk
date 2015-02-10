@@ -12,9 +12,11 @@ void signal_handler(int signal) {
 int main(int argc, char **argv) {
   std::signal(SIGINT, signal_handler);
 
-  App::run([&](App &app_) {
-    while (should_wait)
-      ;
+  App::run([&](App &app) {
+    app.play_minimax = true;
+    while (should_wait) {
+      app.random();
+    }
   });
 
   exit(EXIT_SUCCESS);
