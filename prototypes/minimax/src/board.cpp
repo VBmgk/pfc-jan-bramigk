@@ -490,7 +490,7 @@ float Board::evaluate() const {
 
     total_gap = totalGoalGap(player_with_ball, robot);
     distance_to_goal += robot.getDist(player_goal);
-    value += 3 * 2 * player * atan2f(total_gap / 2, distance_to_goal);
+    value += WEIGHT_TOTAL_GAP_TEAM * 2 * player * atan2f(total_gap / 2, distance_to_goal);
   }
 
   return value;
