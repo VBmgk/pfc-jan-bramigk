@@ -31,6 +31,7 @@ class Board {
   // TODO> calibrate
   static constexpr float MIN_GAP_TO_WIN = 0.1;
   static constexpr float WEIGHT_TOTAL_GAP = 100.0;
+  static constexpr float WEIGHT_TOTAL_GAP_TEAM = 3.0;
   static constexpr float WEIGHT_MAX_GAP = 2.0;
   static constexpr float WEIGHT_RECEIVERS_NUM = 1.0;
   static constexpr float WEIGHT_DISTANCE_TO_GOAL = 1.0;
@@ -41,6 +42,8 @@ class Board {
   bool maxOnLeft = true;
 
 public:
+  static constexpr float WEIGHT_MOVE = -1.0;
+
   Board() : min(), max(), ball(), actionsMaxTime(FLT_MAX) {}
 
   Board(Team &min, Team &max)
