@@ -42,6 +42,8 @@ class Board {
   bool maxOnLeft = true;
 
 public:
+  static constexpr float WEIGHT_MOVE = -1.0;
+
   Board() : min(), max(), ball(), actionsMaxTime(FLT_MAX) {}
 
   Board(Team &min, Team &max)

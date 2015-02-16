@@ -22,6 +22,8 @@ public:
   virtual ActionType type() const = 0;
 
   virtual void discreteAction(roboime::Action *) const = 0;
+
+  Vector pos() { return Vector(); }
 };
 
 class Move : public Action {
