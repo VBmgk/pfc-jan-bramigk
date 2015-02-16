@@ -107,7 +107,7 @@ Minimax::value_min(const Board board, TeamAction max_action, int depth) {
   auto mtable = move_table_min;
   int MTABLE_COUNT = RAMIFICATION_NUMBER - 2;
 
-  auto robots = board.getTeam(MAX).getRobots();
+  auto robots = board.getTeam(MIN).getRobots();
   int move_id = robots[move_count % robots.size()].getId();
 
   if (board.isGameOver(MIN)) {
