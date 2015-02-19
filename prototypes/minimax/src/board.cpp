@@ -56,17 +56,16 @@ TeamAction Board::genPassTeamAction(Player p) const {
 
 // BEGIN util for random acces on iterator
 // reference: http://stackoverflow.com/a/16421677/947511
-template<typename Iter, typename RandomGenerator>
-Iter select_randomly(Iter begin, Iter end, RandomGenerator& g) {
-    std::uniform_int_distribution<> dis(0, std::distance(begin, end) - 1);
-    std::advance(begin, dis(g));
-    return begin;
+template <typename Iter, typename RandomGenerator>
+Iter select_randomly(Iter begin, Iter end, RandomGenerator &g) {
+  std::uniform_int_distribution<> dis(0, std::distance(begin, end) - 1);
+  std::advance(begin, dis(g));
+  return begin;
 }
-template<typename Iter>
-Iter select_randomly(Iter start, Iter end) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    return select_randomly(start, end, gen);
+template <typename Iter> Iter select_randomly(Iter start, Iter end) {
+  static std::random_device rd;
+  static std::mt19937 gen(rd());
+  return select_randomly(start, end, gen);
 }
 // END
 
@@ -115,11 +114,9 @@ TeamAction Board::genActions(Player player, bool kickAction,
     if (move_id == robot_id) {
       std::shared_ptr<Action> action(new Move(*robot));
       actions.push_back(std::move(action));
-    }
-    else if (move_table.count(robot_id) > 0) {
+    } else if (move_table.count(robot_id) > 0) {
       actions.push_back(move_table[robot_id]);
-    }
-    else {
+    } else {
       std::shared_ptr<Action> action(new Move(*robot));
       actions.push_back(std::move(action));
     }
@@ -134,7 +131,8 @@ std::pair<const Robot *, Player> Board::getRobotWithBall() const {
 
 std::pair<const Robot *, Player>
 Board::getRobotWithVirtualBall(const Ball &virt_ball) const {
-  return getRobotWithVirtualBall(virt_ball, std::make_pair(nullptr, MIN)); // second valeu is useless
+  return getRobotWithVirtualBall(
+      virt_ball, std::make_pair(nullptr, MIN)); // second valeu is useless
 }
 
 // Function to check who has the ball considering
@@ -148,7 +146,6 @@ Board::getRobotWithVirtualBall(const Ball &virt_ball,
   const Robot *robot_with_ball = nullptr;
   Player player_with_ball = r_rcv.second;
 
-
 #define FOR_ROBOT_IN_TEAM(TEAM, PLAYER)                                        \
   for (const Robot &robot : TEAM) {                                            \
     time = timeToVirtualBall(robot, virt_ball);                                \
@@ -160,7 +157,7 @@ Board::getRobotWithVirtualBall(const Ball &virt_ball,
   }
 
   // normal case, consider both teams
-  if (r_rcv.first == nullptr){
+  if (r_rcv.first == nullptr) {
     FOR_ROBOT_IN_TEAM(min.robots, MIN)
     FOR_ROBOT_IN_TEAM(max.robots, MAX)
   } else if (MAX == r_rcv.second)
@@ -169,7 +166,8 @@ Board::getRobotWithVirtualBall(const Ball &virt_ball,
     FOR_ROBOT_IN_TEAM(max.robots, MAX)
 #undef FOR_ROBOT_IN_TEAM
 
-  if (r_rcv.first != nullptr && timeToVirtualBall(*r_rcv.first, virt_ball) < min_time) {
+  if (r_rcv.first != nullptr &&
+      timeToVirtualBall(*r_rcv.first, virt_ball) < min_time) {
     robot_with_ball = r_rcv.first;
   }
 
@@ -259,7 +257,7 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
   auto player_with_ball = with_ball.second;
 
   // XXX: work around
-  for (auto& robot : getTeam(player_with_ball).getRobots()) {
+  for (auto &robot : getTeam(player_with_ball).getRobots()) {
     if (&robot == robot_with_ball)
       continue;
     robots.push_back(&robot);
@@ -281,7 +279,8 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
       vrt_ball.setV((robot.pos() - vrt_ball.pos()).unit() * Robot::kickV());
 
       // Add robot if the same robot will have the ball after kick
-      auto with_ball = getRobotWithVirtualBall(vrt_ball, std::make_pair(&robot, player));
+      auto with_ball =
+          getRobotWithVirtualBall(vrt_ball, std::make_pair(&robot, player));
       auto robot_with_ball_after_kick = with_ball.first;
       if (&robot == robot_with_ball_after_kick)
         robots.push_back(&robot);
@@ -291,14 +290,14 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
   return robots;
 }
 
-float Board::totalGoalGap(Player player, const Body& body) const {
+float Board::totalGoalGap(Player player, const Body &body) const {
   float len = 0;
   for (auto gap : getGoalGaps(player, body))
     len += std::fabs(gap.first - gap.second);
   return len;
 }
 
-float Board::maxGoalGap(Player player, const Body& body) const {
+float Board::maxGoalGap(Player player, const Body &body) const {
   float len = 0;
   for (auto gap : getGoalGaps(player, body)) {
     auto this_len = std::fabs(gap.first - gap.second);
@@ -308,7 +307,8 @@ float Board::maxGoalGap(Player player, const Body& body) const {
   return len;
 }
 
-std::vector<std::pair<float, float>> Board::getGoalGaps(Player player, const Body& body) const {
+std::vector<std::pair<float, float>>
+Board::getGoalGaps(Player player, const Body &body) const {
   auto gx = goalPos(player)[0];
 
   // collect shadows
@@ -449,7 +449,6 @@ std::vector<const Robot *> Board::getRobotsMoving() const {
 
 float Board::evaluate() const {
 
-
   // special case for it not to crash when no robots on a team
   if (min.size() == 0 || max.size() == 0)
     return 0.0;
@@ -475,9 +474,10 @@ float Board::evaluate() const {
   auto player_goal = goalPos(player_with_ball);
   float distance_to_goal = getBall().getDist(enemy_goal);
 
-  float value = WEIGHT_TOTAL_GAP * 2 * player * atan2f(total_gap / 2, distance_to_goal);
+  float value =
+      WEIGHT_TOTAL_GAP * 2 * player * atan2f(total_gap / 2, distance_to_goal);
 
-  //for (auto& robot : getTeam(player_with_ball).getRobots()) {
+  // for (auto& robot : getTeam(player_with_ball).getRobots()) {
   //  if (robot_with_ball == &robot) continue;
 
   //  total_gap = totalGoalGap(enemy, robot);
@@ -485,14 +485,16 @@ float Board::evaluate() const {
   //  value += 2 * player * atan2f(total_gap / 2, distance_to_goal);
   //}
 
-  for (auto& robot : getTeam(enemy).getRobots()) {
+  for (auto &robot : getTeam(enemy).getRobots()) {
     int mult = 3;
-    if (robot_with_ball == &robot) mult = 10;
+    if (robot_with_ball == &robot)
+      mult = 10;
 
     total_gap = totalGoalGap(player_with_ball, robot);
     distance_to_goal += robot.getDist(player_goal);
-    //value -= mult * 2 * player * atan2f(total_gap / 2, distance_to_goal);
-    value -= WEIGHT_TOTAL_GAP_TEAM * mult * 2 * player * atan2f(total_gap / 2, distance_to_goal);
+    // value -= mult * 2 * player * atan2f(total_gap / 2, distance_to_goal);
+    value -= WEIGHT_TOTAL_GAP_TEAM * mult * 2 * player *
+             atan2f(total_gap / 2, distance_to_goal);
   }
 
   return value;

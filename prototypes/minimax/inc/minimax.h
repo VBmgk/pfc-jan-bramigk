@@ -115,11 +115,13 @@ public:
   TeamAction genPassTeamAction(Player) const;
   TeamAction genPassTeamAction(Player, MoveTable) const;
   TeamAction genPassTeamAction(Player, MoveTable, int move_id) const;
-  TeamAction genActions(Player, bool, MoveTable, int move_id=-1) const;
+  TeamAction genActions(Player, bool, MoveTable, int move_id = -1) const;
 
-  float totalGoalGap(Player player, const Body&) const; // sum of all gaps length
-  float maxGoalGap(Player player, const Body&) const;   // length of largest gap
-  std::vector<std::pair<float, float>> getGoalGaps(Player player, const Body&) const;
+  float totalGoalGap(Player player,
+                     const Body &) const;              // sum of all gaps length
+  float maxGoalGap(Player player, const Body &) const; // length of largest gap
+  std::vector<std::pair<float, float>> getGoalGaps(Player player,
+                                                   const Body &) const;
   std::vector<std::pair<float, float>> getGoalGaps() const {
     auto player_with_ball = getRobotWithBall().second;
     auto player = player_with_ball == MIN ? MAX : MIN;
@@ -137,7 +139,8 @@ public:
   std::pair<const Robot *, Player> getRobotWithBall() const;
   std::pair<const Robot *, Player> getRobotWithVirtualBall(const Ball &) const;
   std::pair<const Robot *, Player>
-  getRobotWithVirtualBall(const Ball &virt_ball, std::pair<const Robot *, Player> r_rcv) const;
+  getRobotWithVirtualBall(const Ball &virt_ball,
+                          std::pair<const Robot *, Player> r_rcv) const;
   std::vector<const Robot *> getOtherRobots(Player, const Robot &) const;
 
   float timeToBall(const Robot &robot) const;
@@ -182,14 +185,14 @@ class Minimax {
   int move_count = 0;
 
   std::tuple<float, TeamAction, TeamAction> value_max(const Board, int depth);
-  std::tuple<float, TeamAction> value_min(const Board, TeamAction max_action, int depth);
+  std::tuple<float, TeamAction> value_min(const Board, TeamAction max_action,
+                                          int depth);
   std::tuple<float, TeamAction> value_max_only(const Board);
 
 public:
   TeamAction decision(const Board &);
 
-  std::tuple<float, TeamAction, TeamAction>
-  decision_value(const Board &);
+  std::tuple<float, TeamAction, TeamAction> decision_value(const Board &);
 
   std::tuple<float, TeamAction, TeamAction>
   decision_experimental(const Board &);

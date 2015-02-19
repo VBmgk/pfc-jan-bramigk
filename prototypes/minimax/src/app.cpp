@@ -122,7 +122,7 @@ void App::run(std::function<void(App &)> run) {
           // another important part, we'll assemble the protobuf command packet
           ::roboime::Command command;
           for (auto robot_action : local_command) {
-            ::roboime::Action * action = command.add_action();
+            ::roboime::Action *action = command.add_action();
             // don't worry, each action knows how to generate itself:
             robot_action->discreteAction(action);
           }

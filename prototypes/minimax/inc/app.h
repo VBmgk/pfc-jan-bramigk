@@ -24,9 +24,7 @@ struct App {
   bool eval_board_once = false;
   bool use_experimental = false;
 
-  void toggle_experimental() {
-    use_experimental = !use_experimental;
-  }
+  void toggle_experimental() { use_experimental = !use_experimental; }
 
   static void run(std::function<void(App &)>);
 
@@ -67,9 +65,7 @@ struct App {
   static constexpr int save_slots = 10;
   Board saved_boards[save_slots];
   int save_slot = 0;
-  void save_board() {
-    saved_boards[save_slot] = board;
-  }
+  void save_board() { saved_boards[save_slot] = board; }
   void load_saved_slot(int i) {
     std::lock_guard<std::mutex> _(board_mutex);
     save_slot = i % save_slots;

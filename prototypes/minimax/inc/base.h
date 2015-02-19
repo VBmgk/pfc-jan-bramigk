@@ -38,14 +38,20 @@ public:
   float y() const { return v[1]; }
 
   float norm2() const { return v[0] * v[0] + v[1] * v[1]; }
-  float norm()  const { return std::sqrt(norm2()); }
+  float norm() const { return std::sqrt(norm2()); }
   Vector unit() const { return (*this) / norm(); }
 
-  Vector operator+(const Vector &o) const { return Vector{v[0] + o.v[0], v[1] + o.v[1]}; }
-  Vector operator-(const Vector &o) const { return Vector{v[0] - o.v[0], v[1] - o.v[1]}; }
+  Vector operator+(const Vector &o) const {
+    return Vector{v[0] + o.v[0], v[1] + o.v[1]};
+  }
+  Vector operator-(const Vector &o) const {
+    return Vector{v[0] - o.v[0], v[1] - o.v[1]};
+  }
   Vector operator*(float k) const { return Vector{v[0] * k, v[1] * k}; }
   Vector operator/(float k) const { return Vector{v[0] / k, v[1] / k}; }
-  float  operator*(const Vector &o) const { return v[0] * o.v[0] + v[1] * o.v[1]; }
+  float operator*(const Vector &o) const {
+    return v[0] * o.v[0] + v[1] * o.v[1];
+  }
 
   float operator[](int i) const { return v[i]; }
 

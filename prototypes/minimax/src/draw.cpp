@@ -269,7 +269,8 @@ const Robot *get_robot(int id, const Board &board, Player player) {
   return nullptr;
 }
 
-void draw_teamaction(const TeamAction &t_action, const Board &board, Player player) {
+void draw_teamaction(const TeamAction &t_action, const Board &board,
+                     Player player) {
   for (auto action : t_action) {
     auto robot = get_robot(action->getId(), board, player);
     if (robot == nullptr)
