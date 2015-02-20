@@ -82,14 +82,14 @@ std::tuple<float, TeamAction, TeamAction> Minimax::value_max(const Board board,
     std::tie(val, min_action) = value_min(board, max_action, depth);
 
     // cost of moves
-    for (auto robot : robots)
-      for (auto move : max_action) {
-        if (move->type() != Action::ActionType::MOVE)
-          continue;
+    for (auto move : max_action) {
+      if (move->type() != Action::ActionType::MOVE)
+        continue;
 
+      for (auto robot : robots)
         if (robot.getId() == move->getId())
           val += Board::WEIGHT_MOVE * (move->pos() - robot.pos()).norm();
-      }
+    }
 
     // minimize loss for max
     if (std::get<0>(v) < val) {
@@ -132,14 +132,14 @@ Minimax::value_min(const Board board, TeamAction max_action, int depth) {
     std::tie(val, std::ignore, std::ignore) = value_max(next_board, depth + 1);
 
     // cost of moves
-    for (auto robot : robots)
-      for (auto move : max_action) {
-        if (move->type() != Action::ActionType::MOVE)
-          continue;
+    for (auto move : max_action) {
+      if (move->type() != Action::ActionType::MOVE)
+        continue;
 
+      for (auto robot : robots)
         if (robot.getId() == move->getId())
           val -= Board::WEIGHT_MOVE * (move->pos() - robot.pos()).norm();
-      }
+    }
 
     // minimize loss for min
     if (std::get<0>(v) > val) {
