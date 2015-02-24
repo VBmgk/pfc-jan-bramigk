@@ -90,7 +90,7 @@ public:
   static Board randomBoard() {
     Board b;
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
       Robot r(i);
       r.setPos(Vector::getURand(fieldWidth(), fieldHeight()));
       b.min.addRobot(r);
