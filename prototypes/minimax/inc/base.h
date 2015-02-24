@@ -6,7 +6,7 @@
 
 class Vector {
   float v[2];
-  static std::default_random_engine generator;
+  static std::mt19937 generator;
 
 public:
   Vector(const float v[2]) : v{v[0], v[1]} {}

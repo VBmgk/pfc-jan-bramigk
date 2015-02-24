@@ -32,21 +32,24 @@ void Move::apply(Player p, Board &b) const {
 }
 
 void Pass::apply(Player p, Board &b) const {
-  Robot *r, *rcv;
+  Robot *rcv = nullptr;
   auto &ball = b.getBall();
   Vector ball_pos = ball.pos();
   for (auto &robot : b.getTeam(p).getRobots()) {
     if (robot.getId() == getId()) {
       robot.setPos(ball_pos);
-      r = &robot;
     }
     if (robot.getId() == getRcvId()) {
       rcv = &robot;
     }
   }
-  ball.setPos(rcv->pos() -
-              (rcv->pos() - ball.pos()).unit() *
-                  (Robot::radius() + Ball::radius()));
+  if (rcv != nullptr) {
+    ball.setPos(rcv->pos() -
+                (rcv->pos() - ball.pos()).unit() *
+                    (Robot::radius() + Ball::radius()));
+  } else {
+    std::cerr << "XXX rcv_id " << rcv_id << " not found... (robot_id = " << getId() << ")" << std::endl;
+  }
 }
 
 void Kick::apply(Player p, Board &b) const {

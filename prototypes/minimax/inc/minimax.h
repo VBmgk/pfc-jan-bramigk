@@ -145,6 +145,7 @@ public:
 
   float timeToBall(const Robot &robot) const;
   float timeToVirtualBall(const Robot &robot, const Ball &ball) const;
+  float timeToVirtualBall(const Vector &pos, float maxV2, const Ball &virt_ball) const;
   Board applyTeamAction(const TeamAction &max_a, const TeamAction &min_a) const;
 
   static float fieldWidth() { return 8.090; }
