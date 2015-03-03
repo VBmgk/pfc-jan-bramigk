@@ -229,6 +229,7 @@ void draw_teamaction(const TeamAction &t_action, const Board &board,
       draw_circle(robot->radius() / 5);
       glPopMatrix();
     } break;
+    default: {}
     }
   }
 }
