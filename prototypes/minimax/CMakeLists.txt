@@ -9,6 +9,7 @@ if("${CMAKE_GENERATOR}" STREQUAL "Ninja" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL
 endif()
 
 include_directories(inc)
+include_directories(imgui)
 include_directories(vendor/cppzmq)
 set(SRC
   src/action.cpp
@@ -16,6 +17,8 @@ set(SRC
   src/board.cpp
   src/app.cpp
   src/draw.cpp
+  src/consts.cpp
+  imgui/imgui.cpp
 )
 
 #
@@ -39,9 +42,6 @@ include_directories(${ZMQ_INCLUDE_DIRS})
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 
-find_package(GLUT REQUIRED)
-include_directories(${GLUT_INCLUDE_DIRS})
-
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)
 include_directories(${GLFW_INCLUDE_DIRS})
@@ -56,9 +56,7 @@ add_library(minimax OBJECT ${PROTO_SRC} ${SRC})
 set(COMMON_LIBRARIES
   ${PROTOBUF_LIBRARIES}
   ${ZMQ_LIBRARIES}
-  ${ARMADILLO_LIBRARIES}
   ${OPENGL_LIBRARIES}
-  ${GLUT_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
 )
 

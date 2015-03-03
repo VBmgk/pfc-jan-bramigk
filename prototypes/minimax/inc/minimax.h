@@ -27,22 +27,21 @@ public:
   void addRobot(const Robot &robot) { robots.push_back(robot); }
 };
 
-class Board {
+struct Board {
   // TODO> calibrate
-  static constexpr float MIN_GAP_TO_WIN = 0.1;
-  static constexpr float WEIGHT_TOTAL_GAP = 100.0;
-  static constexpr float WEIGHT_TOTAL_GAP_TEAM = 3.0;
-  static constexpr float WEIGHT_MAX_GAP = 2.0;
-  static constexpr float WEIGHT_RECEIVERS_NUM = 1.0;
-  static constexpr float WEIGHT_DISTANCE_TO_GOAL = 1.0;
+  static float MIN_GAP_TO_WIN;
+  static float WEIGHT_TOTAL_GAP;
+  static float WEIGHT_TOTAL_GAP_TEAM;
+  static float WEIGHT_MAX_GAP;
+  static float WEIGHT_RECEIVERS_NUM;
+  static float WEIGHT_DISTANCE_TO_GOAL;
+  static float WEIGHT_MOVE;
 
   Ball ball;
   Team max, min;
   float actionsMaxTime;
   bool maxOnLeft = true;
 
-public:
-  static constexpr float WEIGHT_MOVE = -1.0;
 
   Board() : min(), max(), ball(), actionsMaxTime(FLT_MAX) {}
 
@@ -179,9 +178,9 @@ public:
   }
 };
 
-class Minimax {
-  int RAMIFICATION_NUMBER = 1000;
-  int MAX_DEPTH = 0;
+struct Minimax {
+  static int RAMIFICATION_NUMBER;
+  static int MAX_DEPTH;
 
   MoveTable move_table_min, move_table_max;
   int move_count = 0;
@@ -191,7 +190,6 @@ class Minimax {
                                           int depth);
   std::tuple<float, TeamAction> value_max_only(const Board);
 
-public:
   TeamAction decision(const Board &);
 
   std::tuple<float, TeamAction, TeamAction> decision_value(const Board &);

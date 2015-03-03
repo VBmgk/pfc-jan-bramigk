@@ -12,12 +12,9 @@ void display(int width, int height, float zoom);
 void draw_circle(float radius);
 void draw_robot(const Robot &robot, const GLubyte *color);
 void draw_ball(const Ball &ball);
-void draw_test(int width, int height);
-void draw_text(const char *text, int width, int height);
 void draw_board(const Board &board);
 void draw_teamaction(const TeamAction &t_action, const Board &board,
                      Player player);
-void draw_display(App *, double fps, int width, int height);
 void draw_app(App *, double fps, int width, int height);
 
 #endif
