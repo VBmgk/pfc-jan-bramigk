@@ -82,27 +82,27 @@ TeamAction Board::genActions(Player player, bool kickAction,
   if (player_with_ball == player) {
     // Kick
     if (kickAction) {
-      std::shared_ptr<Action> action(new Kick(*robot_with_ball));
-      actions.push_back(std::move(action));
+      actions.push_back(Action::genKick(*robot_with_ball, player, *this));
       // Pass
     } else {
       bool any_pass = false;
       auto passees = canGetPass(player);
       if (passees.size() > 0) {
         auto passee = *select_randomly(passees.begin(), passees.end());
-        std::shared_ptr<Action> action(new Pass(*robot_with_ball, *passee));
-        actions.push_back(std::move(action));
+        actions.push_back(
+            Action::makePass(robot_with_ball->getId(), passee->getId()));
         any_pass = true;
       }
       // in the rare case there isn't any possible pass
       // for the robot with ball, we'll make it move
+      // XXX: or should we make it kick?
       if (!any_pass) {
         int robot_id = robot_with_ball->getId();
         if (move_table.count(robot_id) > 0)
           actions.push_back(move_table[robot_id]);
         else {
-          std::shared_ptr<Action> action(new Move(*robot_with_ball));
-          actions.push_back(std::move(action));
+          auto action = Action::genMove(*robot_with_ball, player, *this, move_table);
+          actions.push_back(action);
         }
       }
     }
@@ -112,14 +112,13 @@ TeamAction Board::genActions(Player player, bool kickAction,
   for (auto robot : getOtherRobots(player, *robot_with_ball)) {
     int robot_id = robot->getId();
 
+    auto action = Action::genMove(*robot, player, *this, move_table);
     if (move_id == robot_id) {
-      std::shared_ptr<Action> action(new Move(*robot));
-      actions.push_back(std::move(action));
+      actions.push_back(action);
     } else if (move_table.count(robot_id) > 0) {
       actions.push_back(move_table[robot_id]);
     } else {
-      std::shared_ptr<Action> action(new Move(*robot));
-      actions.push_back(std::move(action));
+      actions.push_back(action);
     }
   }
 
@@ -201,8 +200,7 @@ float Board::timeToVirtualBall(const Vector &pos, float maxV2,
 
   // vb.(pb - pr)
   float a = (maxV2 - virt_ball.v() * virt_ball.v());
-  float c =
-      -((pos - virt_ball.pos()) * (pos - virt_ball.pos()));
+  float c = -((pos - virt_ball.pos()) * (pos - virt_ball.pos()));
   float b_div_2 = virt_ball.v() * (ball.pos() - pos);
   float delta_div_4 = b_div_2 * b_div_2 - a * c;
 
@@ -263,12 +261,12 @@ std::vector<const Robot *> Board::canGetPass(Player player) const {
   auto player_with_ball = with_ball.second;
 
   // XXX: work around
-  //for (auto &robot : getTeam(player_with_ball).getRobots()) {
+  // for (auto &robot : getTeam(player_with_ball).getRobots()) {
   //  if (&robot == robot_with_ball)
   //    continue;
   //  robots.push_back(&robot);
   //}
-  //return robots;
+  // return robots;
 
   // it only makes sense if the player has the ball
   if (player_with_ball == player) {
@@ -521,13 +519,13 @@ Board Board::applyTeamAction(const TeamAction &max_a,
 #define APPLY_TEAM_ACTION(T, TA)                                               \
   /* apply all moves first */                                                  \
   for (auto action : TA) {                                                     \
-    if (action->type() == Action::MOVE) {                                      \
-      action->apply(T, new_board);                                             \
+    if (action.type == MOVE) {                                                 \
+      applyAction(action, T, new_board);                                       \
     }                                                                          \
   }                                                                            \
   for (auto action : TA) {                                                     \
-    if (action->type() != Action::MOVE) {                                      \
-      action->apply(T, new_board);                                             \
+    if (action.type != MOVE) {                                                 \
+      applyAction(action, T, new_board);                                       \
     }                                                                          \
   }
   APPLY_TEAM_ACTION(MAX, max_a)
@@ -538,10 +536,13 @@ Board Board::applyTeamAction(const TeamAction &max_a,
 }
 
 float Board::teamActionTime(const TeamAction &actions) const {
+  return 1.0;
+  // XXX: TODO: action times
   float time = FLT_MIN;
 
   for (auto &action : actions) {
-    float a_time = action->getTime();
+    //float a_time = action->getTime();
+    float a_time = 0;
     if (a_time > time)
       time = a_time;
   }

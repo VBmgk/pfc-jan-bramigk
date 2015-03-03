@@ -124,7 +124,7 @@ void App::run(std::function<void(App &)> run) {
           for (auto robot_action : local_command) {
             ::roboime::Action *action = command.add_action();
             // don't worry, each action knows how to generate itself:
-            robot_action->discreteAction(action);
+            robot_action.discreteAction(action);
           }
 
           // now let's serialize and shove it on our message buffer

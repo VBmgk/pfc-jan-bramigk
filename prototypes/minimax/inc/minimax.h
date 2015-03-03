@@ -145,7 +145,8 @@ public:
 
   float timeToBall(const Robot &robot) const;
   float timeToVirtualBall(const Robot &robot, const Ball &ball) const;
-  float timeToVirtualBall(const Vector &pos, float maxV2, const Ball &virt_ball) const;
+  float timeToVirtualBall(const Vector &pos, float maxV2,
+                          const Ball &virt_ball) const;
   Board applyTeamAction(const TeamAction &max_a, const TeamAction &min_a) const;
 
   static float fieldWidth() { return 8.090; }
@@ -179,7 +180,7 @@ public:
 };
 
 class Minimax {
-  int RAMIFICATION_NUMBER = 500;
+  int RAMIFICATION_NUMBER = 1000;
   int MAX_DEPTH = 0;
 
   MoveTable move_table_min, move_table_max;

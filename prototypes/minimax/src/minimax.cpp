@@ -21,13 +21,9 @@ Minimax::decision_value(const Board &board) {
 
     // build min move table
     move_table_min.clear();
-    for (auto a : action_min) {
-      if (a->type() == Action::MOVE) {
-        auto move_action = std::dynamic_pointer_cast<Move>(a);
-        int robot_id = move_action->getId();
-        move_table_min[robot_id] = move_action;
-      }
-    }
+    for (auto a : action_min)
+      if (a.type == MOVE)
+        move_table_min[a.robot_id] = a;
   } else {
     std::tie(value, action_max) = value_max_only(board);
     ;
@@ -35,13 +31,9 @@ Minimax::decision_value(const Board &board) {
 
   // build max move table
   move_table_max.clear();
-  for (auto a : action_max) {
-    if (a->type() == Action::MOVE) {
-      auto move_action = std::dynamic_pointer_cast<Move>(a);
-      int robot_id = move_action->getId();
-      move_table_max[robot_id] = move_action;
-    }
-  }
+  for (auto a : action_max)
+    if (a.type == MOVE)
+      move_table_max[a.robot_id] = a;
 
   move_count++;
 
@@ -83,12 +75,12 @@ std::tuple<float, TeamAction, TeamAction> Minimax::value_max(const Board board,
 
     // cost of moves
     for (auto move : max_action) {
-      if (move->type() != Action::ActionType::MOVE)
+      if (move.type != MOVE)
         continue;
 
       for (auto robot : robots)
-        if (robot.getId() == move->getId())
-          val += Board::WEIGHT_MOVE * (move->pos() - robot.pos()).norm();
+        if (robot.getId() == move.robot_id)
+          val += Board::WEIGHT_MOVE * (move.move_point - robot.pos()).norm();
     }
 
     // minimize loss for max
@@ -133,12 +125,12 @@ Minimax::value_min(const Board board, TeamAction max_action, int depth) {
 
     // cost of moves
     for (auto move : max_action) {
-      if (move->type() != Action::ActionType::MOVE)
+      if (move.type != MOVE)
         continue;
 
       for (auto robot : robots)
-        if (robot.getId() == move->getId())
-          val -= Board::WEIGHT_MOVE * (move->pos() - robot.pos()).norm();
+        if (robot.getId() == move.robot_id)
+          val -= Board::WEIGHT_MOVE * (move.move_point - robot.pos()).norm();
     }
 
     // minimize loss for min

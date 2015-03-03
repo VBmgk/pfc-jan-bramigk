@@ -32,11 +32,11 @@ static const GLubyte RED[3] = {177, 84, 84};
 static const GLubyte RED2[3] = {142, 67, 67};
 static const int NSIDES = 64;
 
-void raw_circle(float radius) {
+void raw_circle(float radius, int sides = NSIDES) {
   glVertex2f(0.0, 0.0);
-  for (int i = 0; i <= NSIDES; i++) {
-    auto s = sin((2.0 * M_PI * i) / NSIDES) * radius;
-    auto c = cos((2.0 * M_PI * i) / NSIDES) * radius;
+  for (int i = 0; i <= sides; i++) {
+    auto s = sin((2.0 * M_PI * i) / sides) * radius;
+    auto c = cos((2.0 * M_PI * i) / sides) * radius;
     glVertex2f(s, c);
   }
 }
@@ -110,6 +110,33 @@ void draw_board(const Board &board) {
 
   draw_goals(board);
   draw_shadow(board);
+
+  // XXX: TEST
+  auto with_ball = board.getRobotWithBall();
+  auto robot_with_ball = with_ball.first;
+  if (robot_with_ball != nullptr && false) {
+    float step_time = board.timeToBall(*robot_with_ball);
+    Board vrt_board = board.virtualStep(step_time);
+    Ball vrt_ball = vrt_board.getBall();
+    // vrt_ball.setV(Vector{5, 0});
+    vrt_ball.setV((vrt_ball.pos() - Vector{0, 0}).unit() * Robot::kickV());
+
+    float maxV2 = 4 * 4;
+    float inc = 0.05;
+    for (float x = -board.fieldWidth() / 2; x < inc + board.fieldWidth() / 2;
+         x += inc) {
+      for (float y = -board.fieldHeight() / 2;
+           y < inc + board.fieldHeight() / 2; y += inc) {
+        float t = board.timeToVirtualBall(Vector{x, y}, maxV2, vrt_ball);
+        glColor3f(1 - t, 0, 0);
+        // glTranslatef(x, y, 0.f);
+        // glBegin(GL_TRIANGLE_FAN);
+        glRectf(x - inc / 3, y - inc / 3, x + inc / 3, y + inc / 3);
+        // raw_circle(0.1, 6);
+        // glEnd();
+      }
+    }
+  }
 
   for (auto robot : board.getMax().getRobots()) {
     draw_robot(robot, BLUE);
@@ -272,17 +299,16 @@ const Robot *get_robot(int id, const Board &board, Player player) {
 void draw_teamaction(const TeamAction &t_action, const Board &board,
                      Player player) {
   for (auto action : t_action) {
-    auto robot = get_robot(action->getId(), board, player);
+    auto robot = get_robot(action.robot_id, board, player);
     if (robot == nullptr)
       continue;
-    switch (action->type()) {
-    case Action::MOVE: {
-      auto move = std::dynamic_pointer_cast<Move>(action);
+    switch (action.type) {
+    case MOVE: {
       glColor3ubv(BLACK);
       glBegin(GL_LINES);
       auto pos_i = robot->pos();
       glVertex3f(pos_i[0], pos_i[1], 0.0f);
-      auto pos_f = move->pos();
+      auto pos_f = action.move_point;
       glVertex3f(pos_f[0], pos_f[1], 0.0f);
       glEnd();
       glPushMatrix();
@@ -290,9 +316,8 @@ void draw_teamaction(const TeamAction &t_action, const Board &board,
       draw_circle(robot->radius() / 5);
       glPopMatrix();
     } break;
-    case Action::PASS: {
-      auto pass = std::dynamic_pointer_cast<Pass>(action);
-      auto rcv = get_robot(pass->getRcvId(), board, player);
+    case PASS: {
+      auto rcv = get_robot(action.pass_id, board, player);
       if (rcv == nullptr)
         continue;
       glColor3ubv(GREY);
@@ -314,17 +339,20 @@ void draw_teamaction(const TeamAction &t_action, const Board &board,
       glEnd();
       glPopAttrib();
     } break;
-    case Action::KICK: {
-      auto kick = std::dynamic_pointer_cast<Kick>(action);
+    case KICK: {
       glColor3ubv(RED);
       glBegin(GL_LINES);
       auto pos_i = robot->pos();
       glVertex3f(pos_i[0], pos_i[1], 0.0f);
       auto pos_b = board.getBall().pos();
       glVertex3f(pos_b[0], pos_b[1], 0.0f);
-      // auto pos_f = rcv.pos();
-      // glVertex3f(pos_f[0], pos_f[1], 0.0f);
+      auto pos_f = action.kick_point;
+      glVertex3f(pos_f[0], pos_f[1], 0.0f);
       glEnd();
+      glPushMatrix();
+      glTranslatef(pos_f[0], pos_f[1], 0.f);
+      draw_circle(robot->radius() / 5);
+      glPopMatrix();
     } break;
     }
   }
