@@ -7,6 +7,7 @@
 
 #include "app.h"
 #include "draw.h"
+#include "minimax.h"
 
 
 //
@@ -102,12 +103,12 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
   }
 }
 
-static void render(GLFWwindow *window, int width, int height);
+static void render(GLFWwindow *window, int width, int height, bool text=true);
 
 static void UpdateImGui();
 static void resize_callback(GLFWwindow *window, int width, int height) {
   UpdateImGui();
-  render(window, width, height);
+  render(window, width, height, false);
   glfwSwapBuffers(window);
 }
 
@@ -153,7 +154,7 @@ void mousebutton_callback(GLFWwindow *window, int button, int action,
 void refresh_callback(GLFWwindow *window) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
-  render(window, width, height);
+  //render(window, width, height);
   glfwSwapBuffers(window);
 }
 
@@ -184,39 +185,38 @@ void init_callbacks(GLFWwindow *window) {
 // MAIN LOGIC
 //
 
-static int n_frames = 0;
 static double last_time = 0.0;
-static double fps = 0;
 
-void render(GLFWwindow *window, int width, int height) {
+void render(GLFWwindow *window, int width, int height, bool text) {
   display(width, height, zoom);
 
-  // calculate current FPS
-  double current_time = glfwGetTime();
-  n_frames++;
-  if (current_time - last_time >= 1.0) { // If last cout was more than 1 sec ago
-    fps = (double)n_frames;
-    // glfwSetWindowTitle(window, title);
-    n_frames = 0;
-    last_time += 1.0;
-  }
+  ImGui::GetStyle().Alpha = 0.6;
+  if (text) {
+    // draw the copied board, lock area could be reduced maybe
+    {
+      std::lock_guard<std::mutex> _(app->display_mutex);
+      draw_board(app->command_board);
+      draw_teamaction(app->command, app->command_board, MAX);
+      draw_teamaction(app->enemy_command, app->command_board, MIN);
+      ImGui::Text("uptime: %is", app->display.uptime);
+      ImGui::Text("minimax: #%i", app->display.minimax_count);
+      ImGui::Text("%i packets/s", app->display.pps);
+      ImGui::Text("%i minimax/s", app->display.mps);
+      ImGui::Text("minimax: %f", app->display.minimax_val);
+      if (app->display.has_val)
+        ImGui::Text("value: %f", app->display.val);
+    }
 
-  // draw the copied board, lock area could be reduced maybe
+    ImGui::SliderInt("RAMIFICATION_NUMBER", &Minimax::RAMIFICATION_NUMBER, 1, 5000);
+    ImGui::SliderInt("MAX_DEPTH", &Minimax::MAX_DEPTH, 0, 3);
 
-  // draw the text buffer
-  {
-    std::lock_guard<std::mutex> _(app->display_mutex);
-    draw_board(app->command_board);
-    draw_teamaction(app->command, app->command_board, MAX);
-    draw_teamaction(app->enemy_command, app->command_board, MIN);
-    //draw_display(app, fps, width, height);
-    ImGui::Text("uptime: %is", app->display.uptime);
-    ImGui::Text("minimax: #%i", app->display.minimax_count);
-    ImGui::Text("%i packets/s", app->display.pps);
-    ImGui::Text("%i minimax/s", app->display.mps);
-    ImGui::Text("minimax: %f", app->display.minimax_val);
-    if (app->display.has_val)
-      ImGui::Text("value: %f", app->display.val);
+    ImGui::SliderFloat("MIN_GAP_TO_WIN", &Board::MIN_GAP_TO_WIN, 0, 1);
+    //ImGui::SliderFloat("WEIGHT_TOTAL_GAP", &Board::WEIGHT_TOTAL_GAP, 0, 100);
+    ImGui::SliderFloat("WEIGHT_TOTAL_GAP_TEAM", &Board::WEIGHT_TOTAL_GAP_TEAM, 0, 100);
+    ImGui::SliderFloat("WEIGHT_MAX_GAP", &Board::WEIGHT_MAX_GAP, 0, 100);
+    //ImGui::SliderFloat("WEIGHT_RECEIVERS_NUM", &Board::WEIGHT_RECEIVERS_NUM, 0, 100);
+    //ImGui::SliderFloat("WEIGHT_DISTANCE_TO_GOAL", &Board::WEIGHT_DISTANCE_TO_GOAL, 0, 100);
+    ImGui::SliderFloat("WEIGHT_MOVE", &Board::WEIGHT_MOVE, 0, 100);
   }
 
   ImGui::Render();

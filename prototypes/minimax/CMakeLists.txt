@@ -17,6 +17,7 @@ set(SRC
   src/board.cpp
   src/app.cpp
   src/draw.cpp
+  src/consts.cpp
   imgui/imgui.cpp
 )
 
