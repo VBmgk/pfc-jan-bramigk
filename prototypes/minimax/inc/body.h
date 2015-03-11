@@ -51,6 +51,7 @@ public:
   Vector getLocalRadRandPos(float r, float rx, float ry) const {
     Vector p, ux(1, 0), uy(0, 1);
     do {
+      // TODO: may be improved
       int decimal = 10000;
       float theta = rand() % ((int)(2 * M_PI * decimal));
       float rand_r = rand() % ((int)(r * decimal));

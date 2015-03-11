@@ -11,11 +11,9 @@
 #include <mutex>
 #include <tuple>
 
-class Team {
-  friend class Board;
+struct Team {
   std::vector<Robot> robots;
 
-public:
   Team() {}
   Team(std::vector<Robot> n_robots) : robots(n_robots) {}
 
@@ -29,19 +27,24 @@ public:
 
 struct Board {
   // TODO> calibrate
-  static float MIN_GAP_TO_WIN;
-  static float WEIGHT_TOTAL_GAP;
-  static float WEIGHT_TOTAL_GAP_TEAM;
-  static float WEIGHT_MAX_GAP;
+  static float MIN_GAP_TO_KICK;
+  static float WEIGHT_MOVE_DIST_TOTAL;
+  static float WEIGHT_MOVE_DIST_MAX;
+  static float WEIGHT_MOVE_CHANGE;
+  static float TOTAL_MAX_GAP_RATIO;
+  static float WEIGHT_ATTACK;
+  static float WEIGHT_SEE_ENEMY_GOAL;
+  static float WEIGHT_BLOCK_GOAL;
+  static float WEIGHT_BLOCK_ATTACKER;
   static float WEIGHT_RECEIVERS_NUM;
-  static float WEIGHT_DISTANCE_TO_GOAL;
-  static float WEIGHT_MOVE;
+  static float DIST_GOAL_PENAL;
+  static float DIST_GOAL_TO_PENAL;
+  static bool KICK_IF_NO_PASS;
 
   Ball ball;
   Team max, min;
   float actionsMaxTime;
   bool maxOnLeft = true;
-
 
   Board() : min(), max(), ball(), actionsMaxTime(FLT_MAX) {}
 
@@ -129,6 +132,8 @@ struct Board {
   // bool freeKickLine(int point_index) const;
   // bool kickLineCrossRobot(const int point_index, const Robot &robot) const;
   std::vector<const Robot *> getRobotsMoving() const;
+  float gap_value(Body object, Player goal_player) const;
+  float evaluate_for(Player player) const;
   float evaluate() const;
 
   Board virtualStep(float time) const;
@@ -156,6 +161,7 @@ struct Board {
   static float goalY() { return 0; }
   static float goalWidth() { return 1.000; }
   static float goalDepth() { return 0.180; }
+  static float goalDefense() { return 1.000; }
 
   Vector goalPos(Player p) const {
     float goal_x = goalX();

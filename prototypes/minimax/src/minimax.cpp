@@ -26,7 +26,6 @@ Minimax::decision_value(const Board &board) {
         move_table_min[a.robot_id] = a;
   } else {
     std::tie(value, action_max) = value_max_only(board);
-    ;
   }
 
   // build max move table
@@ -53,17 +52,21 @@ std::tuple<float, TeamAction, TeamAction> Minimax::value_max(const Board board,
   auto robots = board.getTeam(MAX).getRobots();
   int move_id = robots[move_count % robots.size()].getId();
 
-  if (board.isGameOver(MAX)) {
-    return std::make_tuple(board.evaluate(),
-                           board.genKickTeamAction(MAX, mtable), TeamAction(0));
-  }
+  bool kick = board.isGameOver(MAX);
+  // if (board.isGameOver(MAX)) {
+  //  return std::make_tuple(board.evaluate(),
+  //                         board.genKickTeamAction(MAX, mtable),
+  //                         TeamAction(0));
+  //}
 
   auto v = std::make_tuple(-std::numeric_limits<float>::infinity(),
                            board.genPassTeamAction(MAX, mtable), TeamAction(0));
 
   for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
     auto max_action = i == 0
-                          ? board.genPassTeamAction(MAX, mtable)
+                              //? board.genPassTeamAction(MAX, mtable)
+                          ? (kick ? board.genKickTeamAction(MAX, mtable)
+                                  : board.genPassTeamAction(MAX, mtable))
                           : i < MTABLE_COUNT
                                 ? board.genPassTeamAction(MAX, mtable, move_id)
                                 : board.genPassTeamAction(MAX);
@@ -74,14 +77,24 @@ std::tuple<float, TeamAction, TeamAction> Minimax::value_max(const Board board,
     std::tie(val, min_action) = value_min(board, max_action, depth);
 
     // cost of moves
+    float move_dist_total = 0, move_dist_max = 0, move_change = 0;
     for (auto move : max_action) {
       if (move.type != MOVE)
         continue;
 
-      for (auto robot : robots)
-        if (robot.getId() == move.robot_id)
-          val -= Board::WEIGHT_MOVE * (move.move_point - robot.pos()).norm();
+      for (auto robot : robots) {
+        if (robot.getId() == move.robot_id) {
+          float move_dist = (move.move_point - robot.pos()).norm();
+          move_dist_max = fmax(move_dist_max, move_dist);
+          move_dist_total += move_dist;
+          move_change +=
+              (move.move_point - mtable[robot.getId()].move_point).norm();
+        }
+      }
     }
+    val -= Board::WEIGHT_MOVE_DIST_TOTAL * move_dist_total;
+    val -= Board::WEIGHT_MOVE_DIST_MAX * move_dist_max;
+    val -= Board::WEIGHT_MOVE_CHANGE * move_change;
 
     // minimize loss for max
     if (std::get<0>(v) < val) {
@@ -102,18 +115,21 @@ Minimax::value_min(const Board board, TeamAction max_action, int depth) {
   auto robots = board.getTeam(MIN).getRobots();
   int move_id = robots[move_count % robots.size()].getId();
 
-  if (board.isGameOver(MIN)) {
-    auto min_action = board.genKickTeamAction(MIN, mtable);
-    auto next_board = board.applyTeamAction(max_action, min_action);
-    return std::make_tuple(board.evaluate(), min_action);
-  }
+  bool kick = board.isGameOver(MAX);
+  // if (board.isGameOver(MIN)) {
+  //  auto min_action = board.genKickTeamAction(MIN, mtable);
+  //  auto next_board = board.applyTeamAction(max_action, min_action);
+  //  return std::make_tuple(board.evaluate(), min_action);
+  //}
 
   auto v = std::make_pair(std::numeric_limits<float>::infinity(),
                           board.genPassTeamAction(MIN, mtable));
 
   for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
     auto min_action = i == 0
-                          ? board.genPassTeamAction(MIN, mtable)
+                              //? board.genPassTeamAction(MIN, mtable)
+                          ? (kick ? board.genKickTeamAction(MIN, mtable)
+                                  : board.genPassTeamAction(MIN, mtable))
                           : i < MTABLE_COUNT
                                 ? board.genPassTeamAction(MIN, mtable, move_id)
                                 : board.genPassTeamAction(MIN);
@@ -124,14 +140,24 @@ Minimax::value_min(const Board board, TeamAction max_action, int depth) {
     std::tie(val, std::ignore, std::ignore) = value_max(next_board, depth + 1);
 
     // cost of moves
-    for (auto move : max_action) {
+    float move_dist_total = 0, move_dist_max = 0, move_change = 0;
+    for (auto move : min_action) {
       if (move.type != MOVE)
         continue;
 
-      for (auto robot : robots)
-        if (robot.getId() == move.robot_id)
-          val += Board::WEIGHT_MOVE * (move.move_point - robot.pos()).norm();
+      for (auto robot : robots) {
+        if (robot.getId() == move.robot_id) {
+          float move_dist = (move.move_point - robot.pos()).norm();
+          move_dist_max = fmax(move_dist_max, move_dist);
+          move_dist_total += move_dist;
+          move_change +=
+              (move.move_point - mtable[robot.getId()].move_point).norm();
+        }
+      }
     }
+    val += Board::WEIGHT_MOVE_DIST_TOTAL * move_dist_total;
+    val += Board::WEIGHT_MOVE_DIST_MAX * move_dist_max;
+    val += Board::WEIGHT_MOVE_CHANGE * move_change;
 
     // minimize loss for min
     if (std::get<0>(v) > val) {
@@ -150,24 +176,48 @@ std::tuple<float, TeamAction> Minimax::value_max_only(const Board board) {
   auto robots = board.getTeam(MAX).getRobots();
   int move_id = robots[move_count % robots.size()].getId();
 
-  if (board.isGameOver(MAX)) {
-    auto max_action = board.genKickTeamAction(MAX, mtable);
-    auto next_board = board.applyTeamAction(max_action, TeamAction(0));
-    return std::make_tuple(next_board.evaluate(), max_action);
-  }
+  bool kick = board.isGameOver(MAX);
+  // if (board.isGameOver(MAX)) {
+  //  auto max_action = board.genKickTeamAction(MAX, mtable);
+  //  auto next_board = board.applyTeamAction(max_action, TeamAction(0));
+  //  return std::make_tuple(next_board.evaluate(), max_action);
+  //}
 
   auto v = std::make_tuple(-std::numeric_limits<float>::infinity(),
                            board.genPassTeamAction(MAX, mtable));
 
   for (int i = 0; i < RAMIFICATION_NUMBER; i++) {
     auto max_action = i == 0
-                          ? board.genPassTeamAction(MAX, mtable)
+                              //? board.genPassTeamAction(MAX, mtable)
+                          ? (kick ? board.genKickTeamAction(MAX, mtable)
+                                  : board.genPassTeamAction(MAX, mtable))
                           : i < MTABLE_COUNT
                                 ? board.genPassTeamAction(MAX, mtable, move_id)
                                 : board.genPassTeamAction(MAX);
 
+    // recurse
     auto next_board = board.applyTeamAction(max_action, TeamAction(0));
     float val = next_board.evaluate();
+
+    // cost of moves
+    float move_dist_total = 0, move_dist_max = 0, move_change = 0;
+    for (auto move : max_action) {
+      if (move.type != MOVE)
+        continue;
+
+      for (auto robot : robots) {
+        if (robot.getId() == move.robot_id) {
+          float move_dist = (move.move_point - robot.pos()).norm();
+          move_dist_max = fmax(move_dist_max, move_dist);
+          move_dist_total += move_dist;
+          move_change +=
+              (move.move_point - mtable[robot.getId()].move_point).norm();
+        }
+      }
+    }
+    val -= Board::WEIGHT_MOVE_DIST_TOTAL * move_dist_total;
+    val -= Board::WEIGHT_MOVE_DIST_MAX * move_dist_max;
+    val -= Board::WEIGHT_MOVE_CHANGE * move_change;
 
     // minimize loss for max
     if (std::get<0>(v) < val) {

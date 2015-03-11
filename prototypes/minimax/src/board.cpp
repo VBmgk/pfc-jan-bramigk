@@ -24,7 +24,7 @@ bool Board::isGameOver(Player player) const {
   float distance_to_goal = getBall().getDist(enemy_goal);
   float value = atan2f(total_gap / 2, distance_to_goal);
 
-  if (value >= MIN_GAP_TO_WIN) {
+  if (value >= M_PI * MIN_GAP_TO_KICK / 180) {
     return true;
   }
 
@@ -94,16 +94,20 @@ TeamAction Board::genActions(Player player, bool kickAction,
         any_pass = true;
       }
       // in the rare case there isn't any possible pass
-      // for the robot with ball, we'll make it move
-      // XXX: or should we make it kick?
+      // for the robot with ball, we'll make it move or kick
       if (!any_pass) {
-        int robot_id = robot_with_ball->getId();
-        if (move_table.count(robot_id) > 0)
-          actions.push_back(move_table[robot_id]);
-        else {
-          auto action = Action::genMove(*robot_with_ball, player, *this, move_table);
-          actions.push_back(action);
+        Action action;
+        if (KICK_IF_NO_PASS) {
+          action = Action::genKick(*robot_with_ball, player, *this);
+        } else {
+          int robot_id = robot_with_ball->getId();
+          if (move_table.count(robot_id) > 0)
+            action = move_table[robot_id];
+          else
+            action =
+                Action::genMove(*robot_with_ball, player, *this, move_table);
         }
+        actions.push_back(action);
       }
     }
   }
@@ -452,64 +456,75 @@ std::vector<const Robot *> Board::getRobotsMoving() const {
 //}
 
 float Board::evaluate() const {
-
   // special case for it not to crash when no robots on a team
   if (min.size() == 0 || max.size() == 0)
     return 0.0;
 
-  auto with_ball = getRobotWithBall();
-  auto robot_with_ball = with_ball.first;
-  auto player_with_ball = with_ball.second;
-  // use player as a sign to balance unsigned measures
-  int player = player_with_ball == MAX ? 1 : -1;
-  Player enemy = player_with_ball == MAX ? MIN : MAX;
+  // return evaluate_for(MAX) - evaluate_for(MIN);
+  return evaluate_for(MAX);
+}
 
-  // for instance this is signed since it's positive for a gap on
-  // the MIN goal which is good for MAX
-  // float total_gap = totalGoalGap(MIN) - totalGoalGap(MAX);
-  // float max_gap = maxGoalGap(MIN) - maxGoalGap(MAX);
+float Board::gap_value(Body object, Player player) const {
+  auto goal = goalPos(player);
+  float distance_to_goal = getBall().getDist(goal);
+  float total_gap =
+      2 * atan2f(totalGoalGap(player, object) / 2, distance_to_goal);
+  if (total_gap < 0)
+    total_gap = 0;
+  if (total_gap > M_PI)
+    total_gap = M_PI;
+  float max_gap = 2 * atan2f(maxGoalGap(player, object) / 2, distance_to_goal);
+  if (max_gap < 0)
+    max_gap = 0;
+  if (max_gap > M_PI)
+    max_gap = M_PI;
+  return TOTAL_MAX_GAP_RATIO * total_gap + (1 - TOTAL_MAX_GAP_RATIO) * max_gap;
+}
 
-  // XXX: the above may be have bugs, using this instead
-  float total_gap = totalGoalGap(enemy, getBall());
-  float max_gap = player * maxGoalGap(enemy, getBall());
+float Board::evaluate_for(Player player) const {
+  Player enemy = player == MAX ? MIN : MAX;
+  auto enemy_goal = goalPos(enemy);
 
-  // also unsigned, since it depends who has the ball
-  auto enemy_goal = enemyGoalPos(player_with_ball);
-  auto player_goal = goalPos(player_with_ball);
-  float distance_to_goal = getBall().getDist(enemy_goal);
+  float value = 0.0;
 
-  float value =
-      WEIGHT_TOTAL_GAP * 2 * player * atan2f(total_gap / 2, distance_to_goal);
+  // check who has the ball
+  bool has_ball;
+  {
+    auto _with_ball = getRobotWithBall();
+    auto robot_with_ball = _with_ball.first;
+    auto player_with_ball = _with_ball.second;
+    has_ball = player_with_ball == player;
+  }
 
-  // for (auto& robot : getTeam(player_with_ball).getRobots()) {
-  //  if (robot_with_ball == &robot) continue;
+  // bonus for having the ball
+  if (has_ball)
+    value += WEIGHT_ATTACK * gap_value(getBall(), enemy);
+  // or penalty for not having it
+  else
+    value -= WEIGHT_BLOCK_ATTACKER * gap_value(getBall(), player);
 
-  //  total_gap = totalGoalGap(enemy, robot);
-  //  distance_to_goal += robot.getDist(enemy_goal);
-  //  value += 2 * player * atan2f(total_gap / 2, distance_to_goal);
-  //}
+  // bonus for seeing enemy goal
+  for (auto &robot : getTeam(player).getRobots()) {
+    value += WEIGHT_SEE_ENEMY_GOAL * gap_value(robot, enemy);
 
+    // penalty for being too close to enemy goal
+    if (robot.getDist(enemy_goal) < DIST_GOAL_TO_PENAL) {
+      value -= DIST_GOAL_PENAL;
+    }
+  }
+
+  // penalty for exposing own goal
   for (auto &robot : getTeam(enemy).getRobots()) {
-    int mult = 3;
-    if (robot_with_ball == &robot)
-      mult = 10;
+    value -= WEIGHT_BLOCK_GOAL * gap_value(robot, player);
+  }
 
-    total_gap = totalGoalGap(player_with_ball, robot);
-    distance_to_goal += robot.getDist(player_goal);
-    // value -= mult * 2 * player * atan2f(total_gap / 2, distance_to_goal);
-    value -= WEIGHT_TOTAL_GAP_TEAM * mult * 2 * player *
-             atan2f(total_gap / 2, distance_to_goal);
+  // bonus for having more robots able to receive a pass
+  if (has_ball) {
+    float receivers_num = canGetPass(player).size();
+    value += WEIGHT_RECEIVERS_NUM * receivers_num;
   }
 
   return value;
-
-  // this is unsigned as it's a numeric count, thus multiply by player
-  float receivers_num = player * canGetPass(MAX).size();
-
-  // mix it up and push it out
-  return WEIGHT_TOTAL_GAP * total_gap + WEIGHT_MAX_GAP * max_gap +
-         WEIGHT_RECEIVERS_NUM * receivers_num +
-         WEIGHT_DISTANCE_TO_GOAL * distance_to_goal;
 }
 
 Board Board::applyTeamAction(const TeamAction &max_a,
@@ -541,7 +556,7 @@ float Board::teamActionTime(const TeamAction &actions) const {
   float time = FLT_MIN;
 
   for (auto &action : actions) {
-    //float a_time = action->getTime();
+    // float a_time = action->getTime();
     float a_time = 0;
     if (a_time > time)
       time = a_time;

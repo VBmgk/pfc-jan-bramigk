@@ -9,7 +9,6 @@
 #include "draw.h"
 #include "minimax.h"
 
-
 //
 // STATIC DATA
 //
@@ -103,7 +102,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action,
   }
 }
 
-static void render(GLFWwindow *window, int width, int height, bool text=true);
+static void render(GLFWwindow *window, int width, int height, bool text = true);
 
 static void UpdateImGui();
 static void resize_callback(GLFWwindow *window, int width, int height) {
@@ -154,7 +153,7 @@ void mousebutton_callback(GLFWwindow *window, int button, int action,
 void refresh_callback(GLFWwindow *window) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
-  //render(window, width, height);
+  // render(window, width, height);
   glfwSwapBuffers(window);
 }
 
@@ -163,7 +162,8 @@ void focus_callback(GLFWwindow *window, int focus) {
   is_active = focus == GL_TRUE;
 }
 
-static void chars_mod_callback(GLFWwindow *window, unsigned int codepoint, int mods) {
+static void chars_mod_callback(GLFWwindow *window, unsigned int codepoint,
+                               int mods) {
   if (codepoint > 0 && codepoint < 0x10000)
     ImGui::GetIO().AddInputCharacter((unsigned short)codepoint);
 }
@@ -207,16 +207,25 @@ void render(GLFWwindow *window, int width, int height, bool text) {
         ImGui::Text("value: %f", app->display.val);
     }
 
-    ImGui::SliderInt("RAMIFICATION_NUMBER", &Minimax::RAMIFICATION_NUMBER, 1, 5000);
+    ImGui::Checkbox("KICK_IF_NO_PASS", &Board::KICK_IF_NO_PASS);
+    ImGui::SliderInt("RAMIFICATION_NUMBER", &Minimax::RAMIFICATION_NUMBER, 1,
+                     5000);
     ImGui::SliderInt("MAX_DEPTH", &Minimax::MAX_DEPTH, 0, 3);
 
-    ImGui::SliderFloat("MIN_GAP_TO_WIN", &Board::MIN_GAP_TO_WIN, 0, 1);
-    //ImGui::SliderFloat("WEIGHT_TOTAL_GAP", &Board::WEIGHT_TOTAL_GAP, 0, 100);
-    ImGui::SliderFloat("WEIGHT_TOTAL_GAP_TEAM", &Board::WEIGHT_TOTAL_GAP_TEAM, 0, 100);
-    ImGui::SliderFloat("WEIGHT_MAX_GAP", &Board::WEIGHT_MAX_GAP, 0, 100);
-    //ImGui::SliderFloat("WEIGHT_RECEIVERS_NUM", &Board::WEIGHT_RECEIVERS_NUM, 0, 100);
-    //ImGui::SliderFloat("WEIGHT_DISTANCE_TO_GOAL", &Board::WEIGHT_DISTANCE_TO_GOAL, 0, 100);
-    ImGui::SliderFloat("WEIGHT_MOVE", &Board::WEIGHT_MOVE, 0, 100);
+#define SLIDER(V, A, B) ImGui::SliderFloat(#V, &Board::V, A, B);
+    SLIDER(MIN_GAP_TO_KICK, 0, 180)
+    SLIDER(WEIGHT_MOVE_DIST_TOTAL, 0, 5000);
+    SLIDER(WEIGHT_MOVE_DIST_MAX, 0, 5000);
+    SLIDER(WEIGHT_MOVE_CHANGE, 0, 5000);
+    SLIDER(TOTAL_MAX_GAP_RATIO, 0, 1)
+    SLIDER(WEIGHT_ATTACK, 0, 5000)
+    SLIDER(WEIGHT_SEE_ENEMY_GOAL, 0, 5000)
+    SLIDER(WEIGHT_BLOCK_GOAL, 0, 5000)
+    SLIDER(WEIGHT_BLOCK_ATTACKER, 0, 5000)
+    SLIDER(WEIGHT_RECEIVERS_NUM, 0, 5000)
+    SLIDER(DIST_GOAL_PENAL, 0, 5000);
+    SLIDER(DIST_GOAL_TO_PENAL, 0, 6)
+#undef SLIDER
   }
 
   ImGui::Render();
@@ -450,7 +459,7 @@ int main(int argc, char **argv) {
                       // empirical parameter
         std::this_thread::sleep_for(std::chrono::milliseconds(96));
 
-      //ImGui::ShowTestWindow();
+      // ImGui::ShowTestWindow();
       ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
                   1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
