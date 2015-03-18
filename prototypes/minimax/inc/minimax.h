@@ -123,6 +123,8 @@ struct Board {
   float totalGoalGap(Player player,
                      const Body &) const;              // sum of all gaps length
   float maxGoalGap(Player player, const Body &) const; // length of largest gap
+  std::vector<std::pair<float, float>> getGoalGapsDraw(Player player,
+                                                   const Body &) const;
   std::vector<std::pair<float, float>> getGoalGaps(Player player,
                                                    const Body &) const;
   std::vector<std::pair<float, float>> getGoalGaps() const {

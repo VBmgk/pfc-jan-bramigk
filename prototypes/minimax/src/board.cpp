@@ -392,11 +392,12 @@ Board::getGoalGaps(Player player, const Body &body) const {
   auto gx = goalPos(player)[0];
 
   // collect shadows
-
   std::vector<std::pair<double, double>> shadows;
   for (auto _robot : getRobotsMoving()) {
+    if (_robot == &body)
+      continue;
     auto &robot = *_robot;
-    auto d = robot.pos() - body.pos();
+    auto d = robot.pos() - ball.pos();
     auto k = d * d - Robot::radius() * Robot::radius();
 
     if (k <= 0)
@@ -410,32 +411,32 @@ Board::getGoalGaps(Player player, const Body &body) const {
     //float tan_theta = d[1] / std::fabs(d[0]);
     //float tan_1 = (tan_theta + tan_alpha) / (1 - tan_theta * tan_alpha);
     //float tan_2 = (tan_theta - tan_alpha) / (1 + tan_theta * tan_alpha);
-    float y_shadow_1; // = tan_1 * std::fabs(body.pos()[0] - gx) + body.pos()[1];
-    float y_shadow_2; // = tan_2 * std::fabs(body.pos()[0] - gx) + body.pos()[1];
+    float y_shadow_1; // = tan_1 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
+    float y_shadow_2; // = tan_2 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
     // New
     // n: vector normal to the line that join
-    //    body and the robot
+    //    ball and the robot
     // n = [ 0 1 ] 
     //     [-1 0 ].(b.pos() - r.pos())/|| b.pos() - r.pos() ||
-    auto n = Vector(body.pos().y() - robot.pos().y(),
-                  - (body.pos().x() - robot.pos().x()));
+    auto n = Vector(-(ball.pos().y() - robot.pos().y()),
+                     (ball.pos().x() - robot.pos().x()));
     // normalization, to use radius later
     n = n * (1.0 / d.norm()) ;
 
     // nu -- upper line that toches the imaginary radius
-    //       of the body and the radius of the robot
+    //       of the ball and the radius of the robot
     //       nu = Ru - Bu = radius_robot * n + robot.pos() -
-    //                     (radius_body  * n + body.pos())
+    //                     (radius_body  * n + ball.pos())
     // nd -- lower line that toches the imaginary radius
-    //       of the body and the radius of the robot
+    //       of the ball and the radius of the robot
     //       nd = Rd - Bd = -radius_robot * n + robot.pos() -
-    //                     (-radius_body  * n + body.pos())
-    auto rd = n *   Robot::radius()                 + robot.pos();
-    auto ru = n * - Robot::radius()                 + robot.pos();
-    auto nu = rd - (n *   KICK_POS_VARIATION + body.pos()); 
-    //auto nu = rd - (n *   .5 + body.pos()); 
-    auto nd = ru - (n * - KICK_POS_VARIATION + body.pos()); 
-    //auto nd = ru - (n * - .5 + body.pos()); 
+    //                     (-radius_body  * n + ball.pos())
+    auto rd = n * -Robot::radius()    + robot.pos();
+    auto ru = n *  Robot::radius()    + robot.pos();
+    auto bu = n *  KICK_POS_VARIATION + ball.pos();
+    auto bd = n * -KICK_POS_VARIATION + ball.pos();
+    auto nu = ru - bu;
+    auto nd = rd - bd;
 
     // solving sistem: [ nu_x  nd_x ] [ auxu ]
     //                 [ nu_y  nd_y ] [ auxd ] = Rd - Ru
@@ -451,11 +452,16 @@ Board::getGoalGaps(Player player, const Body &body) const {
 
       // intersection lies between goal and robot
       // so there is no shadow
-      if (p.x() * gx > 0 && p.x() * gx <= gx * gx)
-        continue;
+      //if (p.x() * gx > 0 && p.x() * gx <= gx * gx)
+      //  valid_solution = false;//continue;
+      if (aux.first > 0) {
+        if (gx < 0 && p.x() > gx)
+          continue;
+        if (gx > 0 && p.x() < gx)
+          continue;
+      }
     }
 
-    // Finding y coordinate of interseptions with goal line...
     // if there is no interseption is parallel to this line.
     // [ gx   ]
     // [ yu/d ] = ku/d'. nu/d + ru/d
@@ -468,26 +474,25 @@ Board::getGoalGaps(Player player, const Body &body) const {
       // system has solution: aux --> ku', yu
       y_shadow_1 = aux.second;
     } else {
-        y_shadow_1 = (nu.y() > 0 ? std::numeric_limits<float>::infinity():
-                                  -std::numeric_limits<float>::infinity());
+      y_shadow_1 = (nu.y() > 0 ? std::numeric_limits<float>::infinity():
+                                -std::numeric_limits<float>::infinity());
     }
 
-    if (y_shadow_2 =
-        solve_Ax_b(nd.x(),  0,
+    if (solve_Ax_b(nd.x(),  0,
                    nd.y(), -1, aux,
                    gx - rd.x(), - rd.y())) {
       // system has solution: aux --> kd', yd
       y_shadow_2 = aux.second;
     } else {
-        y_shadow_2 = (nd.y() > 0 ? std::numeric_limits<float>::infinity():
-                                  -std::numeric_limits<float>::infinity());
+      y_shadow_2 = (nd.y() > 0 ? std::numeric_limits<float>::infinity():
+                                -std::numeric_limits<float>::infinity());
     }
 
     // Old way code
-    //if ((body.pos()[0] - robot.pos()[0] + Robot::radius()) *
-    //        (body.pos()[0] - robot.pos()[0] - Robot::radius()) <
+    //if ((ball.pos()[0] - robot.pos()[0] + Robot::radius()) *
+    //        (ball.pos()[0] - robot.pos()[0] - Robot::radius()) <
     //    0) {
-    //  if (body.pos()[1] > robot.pos()[1])
+    //  if (ball.pos()[1] > robot.pos()[1])
     //    y_shadow_2 = -std::numeric_limits<float>::infinity();
     //  else
     //    y_shadow_1 = std::numeric_limits<float>::infinity();
