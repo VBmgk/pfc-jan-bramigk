@@ -27,6 +27,7 @@ struct Team {
 
 struct Board {
   // TODO> calibrate
+  static float KICK_POS_VARIATION;
   static float MIN_GAP_TO_KICK;
   static float WEIGHT_MOVE_DIST_TOTAL;
   static float WEIGHT_MOVE_DIST_MAX;

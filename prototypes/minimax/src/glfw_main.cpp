@@ -213,6 +213,7 @@ void render(GLFWwindow *window, int width, int height, bool text) {
     ImGui::SliderInt("MAX_DEPTH", &Minimax::MAX_DEPTH, 0, 3);
 
 #define SLIDER(V, A, B) ImGui::SliderFloat(#V, &Board::V, A, B);
+    SLIDER(KICK_POS_VARIATION, 0, 1);
     SLIDER(MIN_GAP_TO_KICK, 0, 180)
     SLIDER(WEIGHT_MOVE_DIST_TOTAL, 0, 5000);
     SLIDER(WEIGHT_MOVE_DIST_MAX, 0, 5000);
