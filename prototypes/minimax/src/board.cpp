@@ -315,13 +315,85 @@ float Board::maxGoalGap(Player player, const Body &body) const {
   return len;
 }
 
+bool solve_lineq(float a, float b,
+  std::pair<float, float>& x, float c) {
+  if (a == 0 && b == 0) {
+    if (c == 0) { x.first = x.second = 0; return true; }
+    else return false;
+  } if (a == 0) { x.second = c / b; x.first  = 0; return true; }
+  else          { x.first  = c / a; x.second = 0; return true; }
+}
+
+bool linear_dependency(float a1, float a2,
+  float &x, float b1, float b2) {
+  float norm_a  = sqrt(a1*a1 + a2*a2),
+        norm_b  = sqrt(b1*b1 + b2*b2),
+        norm_ab = sqrt((a1+b1)*(a1+b1) +
+                       (a2+b2)*(a2+b2)); 
+
+  if (norm_ab == norm_a + norm_b) {
+    if (norm_ab == 0) { x = 0; return true;  }
+    if (norm_a == 0)  {        return false; }
+    x = norm_b / norm_a;       return true;
+  } else if (norm_ab == fabs(norm_a - norm_b)) {
+    x = - norm_b / norm_a;     return true;
+  } else return false;
+}
+
+bool solve_Ax_b(float a11, float a12,
+                       float a21, float a22, std::pair<float, float>& x,
+                       float b1, float b2) {
+/*
+ * x1 = (b1 . a22 - a12 . b2) / det
+ * x2 = (b2 . a11 - a21 . b1) / det 
+ * */
+  float det = a11 * a22 - a12 * a21;
+  if (det == 0) {
+    // parallel lines case
+    if ( a11 * a22 != 0) {
+      if (b1 == b2) {
+        // lines are identical any result for x is valid, but
+        // usin zero just in case...
+        x.first = x.second = 0; return true;
+      } else return false;
+    }
+    // a11 or a22 == 0 (0,x,x,x), (x,x,x,0)
+    // a12 or a21 == 0 (x,0,x,x), (x,x,0,x)
+    // (0,0,x,x), (0,x,0,x)
+    // (x,0,x,0), (x,x,0,0)
+    if (a11 == 0 && a12 == 0) {
+      if (b1 != 0) return false;
+      return solve_lineq(a21,a22,x,b2);
+    }
+    if (a21 == 0 && a22 == 0) {
+      if (b2 != 0) return false;
+      return solve_lineq(a11,a12,x,b1);
+    }
+    if (a11 == 0 && a21 == 0) {
+      x.first = 0;
+      return linear_dependency(a12, a22, x.second, b1, b2);
+    }
+    if (a12 == 0 && a22 == 0) {
+      x.second = 0;
+      return linear_dependency(a12, a22,  x.first, b1, b2);
+    }
+    
+    return false;
+  }
+  
+  x.first  = (b1 * a22 - a12 * b2) / det;
+  x.second = (b2 * a11 - a21 * b1) / det;
+    
+  return true;
+}
+
 std::vector<std::pair<float, float>>
 Board::getGoalGaps(Player player, const Body &body) const {
   auto gx = goalPos(player)[0];
 
   // collect shadows
 
-  std::vector<std::pair<float, float>> shadows;
+  std::vector<std::pair<double, double>> shadows;
   for (auto _robot : getRobotsMoving()) {
     auto &robot = *_robot;
     auto d = robot.pos() - body.pos();
@@ -332,22 +404,96 @@ Board::getGoalGaps(Player player, const Body &body) const {
     if (d[0] * gx <= 0)
       continue;
 
-    float tan_alpha = Robot::radius() / std::sqrt(k);
-    float tan_theta = d[1] / std::fabs(d[0]);
-    float tan_1 = (tan_theta + tan_alpha) / (1 - tan_theta * tan_alpha);
-    float tan_2 = (tan_theta - tan_alpha) / (1 + tan_theta * tan_alpha);
-    float y_shadow_1 = tan_1 * std::fabs(body.pos()[0] - gx) + body.pos()[1];
-    float y_shadow_2 = tan_2 * std::fabs(body.pos()[0] - gx) + body.pos()[1];
+    // --------------------------------------------------------------------------
+    // Old way to compute the gap, consider the ball as a point light source
+    //float tan_alpha = Robot::radius() / std::sqrt(k);
+    //float tan_theta = d[1] / std::fabs(d[0]);
+    //float tan_1 = (tan_theta + tan_alpha) / (1 - tan_theta * tan_alpha);
+    //float tan_2 = (tan_theta - tan_alpha) / (1 + tan_theta * tan_alpha);
+    float y_shadow_1; // = tan_1 * std::fabs(body.pos()[0] - gx) + body.pos()[1];
+    float y_shadow_2; // = tan_2 * std::fabs(body.pos()[0] - gx) + body.pos()[1];
+    // New
+    // n: vector normal to the line that join
+    //    body and the robot
+    // n = [ 0 1 ] 
+    //     [-1 0 ].(b.pos() - r.pos())/|| b.pos() - r.pos() ||
+    auto n = Vector(body.pos().y() - robot.pos().y(),
+                  - (body.pos().x() - robot.pos().x()));
+    // normalization, to use radius later
+    n = n * (1.0 / d.norm()) ;
 
-    if ((body.pos()[0] - robot.pos()[0] + Robot::radius()) *
-            (body.pos()[0] - robot.pos()[0] - Robot::radius()) <
-        0) {
-      if (body.pos()[1] > robot.pos()[1])
-        y_shadow_2 = -std::numeric_limits<float>::infinity();
-      else
-        y_shadow_1 = std::numeric_limits<float>::infinity();
+    // nu -- upper line that toches the imaginary radius
+    //       of the body and the radius of the robot
+    //       nu = Ru - Bu = radius_robot * n + robot.pos() -
+    //                     (radius_body  * n + body.pos())
+    // nd -- lower line that toches the imaginary radius
+    //       of the body and the radius of the robot
+    //       nd = Rd - Bd = -radius_robot * n + robot.pos() -
+    //                     (-radius_body  * n + body.pos())
+    auto rd = n *   Robot::radius()                 + robot.pos();
+    auto ru = n * - Robot::radius()                 + robot.pos();
+    auto nu = rd - (n *   KICK_POS_VARIATION + body.pos()); 
+    //auto nu = rd - (n *   .5 + body.pos()); 
+    auto nd = ru - (n * - KICK_POS_VARIATION + body.pos()); 
+    //auto nd = ru - (n * - .5 + body.pos()); 
+
+    // solving sistem: [ nu_x  nd_x ] [ auxu ]
+    //                 [ nu_y  nd_y ] [ auxd ] = Rd - Ru
+    // to eliminate robots with no shadow
+    std::pair<float, float> aux = std::make_pair(0, 0);
+    if (solve_Ax_b(nu.x(), nd.x(),
+                   nu.y(), nd.y(), aux,
+                  (rd - ru).x(), (rd - ru).y())) {
+      // system has solution
+      // p = intersection of lu = { aux . nu + ru} and
+      //                     ld = { aux . nd + rd}
+      auto p = nu * aux.first + ru;
+
+      // intersection lies between goal and robot
+      // so there is no shadow
+      if (p.x() * gx > 0 && p.x() * gx <= gx * gx)
+        continue;
     }
 
+    // Finding y coordinate of interseptions with goal line...
+    // if there is no interseption is parallel to this line.
+    // [ gx   ]
+    // [ yu/d ] = ku/d'. nu/d + ru/d
+    //  
+    //     [ nu/d_x   0 ] [ ku/d'] = [ gx - ru/d_x ]
+    // --> [ nu/d_y  -1 ] [ yu/d ] = [    - ru/d_y ]
+    if (solve_Ax_b(nu.x(),  0,
+                   nu.y(), -1, aux,
+                   gx - ru.x(), - ru.y())) {
+      // system has solution: aux --> ku', yu
+      y_shadow_1 = aux.second;
+    } else {
+        y_shadow_1 = (nu.y() > 0 ? std::numeric_limits<float>::infinity():
+                                  -std::numeric_limits<float>::infinity());
+    }
+
+    if (y_shadow_2 =
+        solve_Ax_b(nd.x(),  0,
+                   nd.y(), -1, aux,
+                   gx - rd.x(), - rd.y())) {
+      // system has solution: aux --> kd', yd
+      y_shadow_2 = aux.second;
+    } else {
+        y_shadow_2 = (nd.y() > 0 ? std::numeric_limits<float>::infinity():
+                                  -std::numeric_limits<float>::infinity());
+    }
+
+    // Old way code
+    //if ((body.pos()[0] - robot.pos()[0] + Robot::radius()) *
+    //        (body.pos()[0] - robot.pos()[0] - Robot::radius()) <
+    //    0) {
+    //  if (body.pos()[1] > robot.pos()[1])
+    //    y_shadow_2 = -std::numeric_limits<float>::infinity();
+    //  else
+    //    y_shadow_1 = std::numeric_limits<float>::infinity();
+    //}
+
+    // --------------------------------------------------------------------------
     float u_shadow = std::max(y_shadow_1, y_shadow_2);
     float d_shadow = std::min(y_shadow_1, y_shadow_2);
 

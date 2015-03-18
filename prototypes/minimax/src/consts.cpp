@@ -15,5 +15,6 @@ float Board::WEIGHT_BLOCK_ATTACKER = 2000;
 float Board::WEIGHT_RECEIVERS_NUM = 1;
 float Board::DIST_GOAL_PENAL = 30;
 float Board::DIST_GOAL_TO_PENAL = 1.0;
+float Board::KICK_POS_VARIATION = .0;
 
 bool Board::KICK_IF_NO_PASS = true;
