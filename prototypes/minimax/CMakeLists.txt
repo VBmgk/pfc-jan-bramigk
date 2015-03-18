@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.8)
 project(minimax)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/.cmake/modules)
-add_definitions("-std=c++11")
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 if("${CMAKE_GENERATOR}" STREQUAL "Ninja" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   add_definitions("-Xclang -fcolor-diagnostics")
 endif()
@@ -42,9 +42,11 @@ include_directories(${ZMQ_INCLUDE_DIRS})
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 
-find_package(PkgConfig REQUIRED)
-pkg_search_module(GLFW REQUIRED glfw3)
-include_directories(${GLFW_INCLUDE_DIRS})
+#find_package(PkgConfig REQUIRED)
+#pkg_search_module(GLFW REQUIRED glfw3)
+#include_directories(${GLFW_INCLUDE_DIRS})
+add_subdirectory(vendor/glfw)
+include_directories(vendor/glfw/include)
 
 find_package(Threads REQUIRED)
 
@@ -60,6 +62,7 @@ set(COMMON_LIBRARIES
   ${CMAKE_THREAD_LIBS_INIT}
 )
 
+
 add_executable(minimax_tests tests/main.cpp $<TARGET_OBJECTS:minimax>)
 target_link_libraries(minimax_tests ${COMMON_LIBRARIES})
 
@@ -67,7 +70,8 @@ add_executable(minimax_cli src/main.cpp $<TARGET_OBJECTS:minimax>)
 target_link_libraries(minimax_cli ${COMMON_LIBRARIES})
 
 add_executable(minimax_gui src/glfw_main.cpp $<TARGET_OBJECTS:minimax>)
-target_link_libraries(minimax_gui ${COMMON_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
+#target_link_libraries(minimax_gui ${COMMON_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
+target_link_libraries(minimax_gui ${COMMON_LIBRARIES} glfw ${GLFW_LIBRARIES})
 
 #
 # DOCS

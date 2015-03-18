@@ -20,10 +20,6 @@ install:
   - sudo apt-get install -qq libzmq3-dev
   # GLUT
   - sudo apt-get install -qq freeglut3-dev
-  # GLFW
-  - sudo apt-get install -qq xorg-dev libglew-dev
-  - wget https://github.com/glfw/glfw/archive/3.1.tar.gz && tar xzf 3.1.tar.gz
-  - cd glfw-3.1 && cmake . && make && sudo make install && cd ..
 
 # Install
 before_script: "cd prototypes/minimax"
