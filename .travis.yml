@@ -21,9 +21,9 @@ install:
   # GLUT
   - sudo apt-get install -qq freeglut3-dev
   # GLFW
-  - 'git clone https://github.com/glfw/glfw.git'
-  - sudo apt-get install -qq xorg-dev libgl1-mesa-dev libglu1-mesa-dev
-  - 'cd glfw && git checkout 3.0.4 && cmake . && make && sudo make install && cd ..'
+  - sudo apt-get install -qq xorg-dev libglew-dev
+  - wget https://github.com/glfw/glfw/archive/3.1.tar.gz && tar xzf 3.1.tar.gz
+  - cd glfw-3.1 && cmake . && make && sudo make install && cd ..
 
 # Install
 before_script: "cd prototypes/minimax"
