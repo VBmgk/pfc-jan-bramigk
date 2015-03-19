@@ -253,7 +253,8 @@ Board::getGoalGapsDraw(Player player, const Body &body) const {
     glEnd();
 #endif
 
-    glColor3ubv(BLACK);
+#if 0
+    glColor3ubv(DARK_GREEN);
     glBegin(GL_LINES);
     glVertex3f(bu.x(), bu.y(), 0.0f);
     glVertex3f(gx, y_shadow_1, 0.0f);
@@ -262,6 +263,7 @@ Board::getGoalGapsDraw(Player player, const Body &body) const {
     glVertex3f(bd.x(), bd.y(), 0.0f);
     glVertex3f(gx, y_shadow_2, 0.0f);
     glEnd();
+#endif
 
     if (u_shadow <= -goalWidth() / 2 || d_shadow >= goalWidth() / 2)
       continue;
