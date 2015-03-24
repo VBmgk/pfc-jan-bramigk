@@ -2,6 +2,7 @@
 #define MINIMAX_APP_H
 
 #include "minimax.h"
+#include "adaptative_control.h"
 
 struct App {
   Board board;
@@ -9,6 +10,7 @@ struct App {
   TeamAction command, enemy_command;
   Board command_board;
   std::mutex command_mutex;
+  struct AdaptativeControl::AdaptativeControlEval adptv_cntrl_eval;
   struct {
     int uptime = 0;
     int minimax_count = 0;
@@ -84,6 +86,8 @@ struct App {
   MOVE(right, Vector(move_step, 0))
   MOVE(left, Vector(-move_step, 0))
 #undef MOVE
+  double adpt_eval_brd(void)   { return adptv_cntrl_eval.eval(board); }
+  double adpt_eval_n_brd(void) { return    adptv_cntrl_eval.eval_n(); }
 };
 
 #endif
