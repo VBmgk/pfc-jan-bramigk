@@ -36,3 +36,7 @@
 relatorio.pdf
 apresentacao.pdf
 *.synctex.*
+
+/build
+*.swp
+~*
