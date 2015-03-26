@@ -26,7 +26,6 @@ install:
   - 'cd glfw && git checkout 3.0.4 && cmake . && make && sudo make install && cd ..'
 
 # Install
-before_script: "cd prototypes/minimax"
 script: "mkdir build && cd build && cmake .. && make"
 notifications:
   email:
