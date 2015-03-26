@@ -71,3 +71,15 @@ Decision gen_decision(bool kick, const State &state, Player player, DecisionTabl
 
   return decision;
 }
+
+Decision from_decision_table(const struct DecisionTable &table) {
+  Decision d;
+  FOR_N(i, N_ROBOTS) { d.action[i] = table.move[i]; }
+  if (table.kick_robot > 0) {
+    d.action[ID(table.kick_robot)] = table.kick;
+  }
+  if (table.pass_robot > 0) {
+    d.action[ID(table.pass_robot)] = table.pass;
+  }
+  return d;
+}

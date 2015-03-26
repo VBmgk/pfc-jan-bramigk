@@ -267,31 +267,37 @@ float max_gap_len_from_pos(const State state, Vector pos, Player player, int ign
   return max_len;
 }
 
-#if 0
-float Board::gap_value(Body object, Player player) const {
-  auto goal = goalPos(player);
-  float distance_to_goal = getBall().getDist(goal);
-  float total_gap =
-      2 * atan2f(totalGoalGap(player, object) / 2, distance_to_goal);
-  if (total_gap < 0)
-    total_gap = 0;
-  if (total_gap > M_PI)
-    total_gap = M_PI;
-  float max_gap = 2 * atan2f(maxGoalGap(player, object) / 2, distance_to_goal);
-  if (max_gap < 0)
-    max_gap = 0;
-  if (max_gap > M_PI)
-    max_gap = M_PI;
+float gap_value(const State state, Player player, Vector pos) {
+  Vector goal = GOAL_POS(player);
+  float dist_to_goal = dist(pos, goal);
+
+  float total_gap_linear = total_gap_len_from_pos(state, pos, player);
+  float total_gap = DEGREES(2 * atan2f(total_gap_linear / 2, dist_to_goal));
+  while (total_gap < 0)
+    total_gap += 360;
+  while (total_gap > 360)
+    total_gap -= 360;
+
+  float max_gap_linear = max_gap_len_from_pos(state, pos, player);
+  float max_gap = DEGREES(2 * atan2f(max_gap_linear / 2, dist_to_goal));
+  while (max_gap < 0)
+    max_gap += 360;
+  while (max_gap > 360)
+    max_gap -= 360;
+
   return TOTAL_MAX_GAP_RATIO * total_gap + (1 - TOTAL_MAX_GAP_RATIO) * max_gap;
 }
-#endif
 
-float evaluate_with_decision(const State &state, const Decision &decision, Player player) {
+float evaluate_with_decision(Player player, const State &state, const struct Decision &decision,
+                             const struct DecisionTable &table) {
 #if 0
   Player enemy = player == MAX ? MIN : MAX;
   auto enemy_goal = goalPos(enemy);
+#endif
 
   float value = 0.0;
+
+#if 0
 
   // check who has the ball
   bool has_ball;
@@ -318,20 +324,18 @@ float evaluate_with_decision(const State &state, const Decision &decision, Playe
       value -= DIST_GOAL_PENAL;
     }
   }
+#endif
 
   // penalty for exposing own goal
-  for (auto &robot : getTeam(enemy).getRobots()) {
-    value -= WEIGHT_BLOCK_GOAL * gap_value(robot, player);
-  }
+  FOR_TEAM_ROBOT(i, ENEMY_FOR(player)) { value -= WEIGHT_BLOCK_GOAL * gap_value(state, player, state.robots[i]); }
 
+#if 0
   // bonus for having more robots able to receive a pass
   if (has_ball) {
     float receivers_num = canGetPass(player).size();
     value += WEIGHT_RECEIVERS_NUM * receivers_num;
   }
+#endif
 
   return value;
-#endif
-  static float val = 99.0;
-  return val++;
 }

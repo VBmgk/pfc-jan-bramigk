@@ -227,7 +227,11 @@ void app_run(std::function<void(void)> loop_func) {
 
       if (eval_state || eval_state_once) {
         eval_state_once = false;
-        display.val = evaluate_with_decision(local_state, local_decision_max, MAX);
+        if (MAX_DEPTH == 0) {
+          display.val = evaluate_with_decision(MAX, local_state, local_decision_max, optimization.table);
+        } else {
+          // TODO: use minimax decision table
+        }
         display.has_val = true;
       }
 

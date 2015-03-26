@@ -28,6 +28,7 @@ float time_to_pos(Vector robot_p, Vector robot_v, Vector pos, Vector pos_v);
 void discover_gaps_from_pos(const State state, Vector pos, Player player, Segment *gaps, int *gaps_count,
                             int ignore_robot = -1);
 
-float evaluate_with_decision(const State &state, const struct Decision &decision, Player player);
+float evaluate_with_decision(Player player, const State &state, const struct Decision &decision,
+                             const struct DecisionTable &table);
 
 #endif
