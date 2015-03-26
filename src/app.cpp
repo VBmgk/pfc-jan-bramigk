@@ -3,6 +3,7 @@
 #include <atomic>
 #include <chrono>
 
+#include <imgui.h>
 #include <zmq.hpp>
 #include "discrete.pb.h"
 #include "update.pb.h"
@@ -11,24 +12,32 @@
 #include "state.h"
 #include "decision.h"
 #include "player.h"
+#include "consts.h"
+#include "optimization.h"
+#include "minimax.h"
+#include "draw.h"
 
-static std::mutex state_mutex, command_mutex, display_mutex;
+static std::mutex state_mutex, decision_mutex, display_mutex;
 static Decision decision_min, decision_max;
 static State state, command_state;
+static Optimization optimization;
 
 const State *app_state = &state;
+const struct Decision *app_decision_max = &decision_max;
+const struct Decision *app_decision_min = &decision_min;
 
 static struct {
   int uptime = 0;
-  int minimax_count = 0;
+  int decision_count = 0;
   int pps = 0;
   int mps = 0;
   float val = 0.0;
   bool has_val = false;
-  float minimax_val = 0.0;
+  float decision_val = 0.0;
 } display;
 
-static bool play_minimax = false, play_minimax_once = false, eval_state_once = false, use_experimental = false;
+static bool play_minimax = false, play_decision_once = false, eval_state = false, eval_state_once = false,
+            use_experimental = false;
 
 static Player selected_player = MIN;
 static int selected_robot = -1;
@@ -156,7 +165,7 @@ void app_run(std::function<void(void)> loop_func) {
           // iterating over it
           TeamAction local_decision_max;
           {
-            std::lock_guard<std::mutex> _(command_mutex);
+            std::lock_guard<std::mutex> _(decision_mutex);
             local_decision_max = command;
           }
 
@@ -184,7 +193,7 @@ void app_run(std::function<void(void)> loop_func) {
     }
   });
 
-  std::thread minimax_thread([&]() {
+  std::thread decision_thread([&]() {
     // single minimax instance, may make use of cache in the future
     // Minimax minimax;
     State local_state;
@@ -198,35 +207,38 @@ void app_run(std::function<void(void)> loop_func) {
         local_state = command_state;
       }
 
-      if (play_minimax || play_minimax_once) {
-        play_minimax_once = false;
+      if (play_minimax || play_decision_once) {
+        play_decision_once = false;
         float val;
-#if 0
-        if (use_experimental) {
-          std::tie(val, local_decision_max, local_decision_min) = minimax.decision_experimental(local_state);
+
+        if (MAX_DEPTH == 0) {
+          // optimization decision
+          auto valued_decision = decide(optimization, local_state, MAX);
+          local_decision_max = valued_decision.decision;
+          val = valued_decision.value;
         } else {
-          std::tie(val, local_decision_max, local_decision_min) = minimax.decision_value(local_state);
+          // TODO: minimax decision
         }
-#endif
+
         mnmx_count++;
-        display.minimax_count++;
-        display.minimax_val = val;
+        display.decision_count++;
+        display.decision_val = val;
       }
 
-      if (eval_state_once) {
+      if (eval_state || eval_state_once) {
         eval_state_once = false;
-        // display.val = local_state.evaluate();
+        display.val = evaluate_with_decision(local_state, local_decision_max, MAX);
         display.has_val = true;
       }
 
       {
-        std::lock_guard<std::mutex> _(command_mutex);
-        decision_min = local_decision_max;
+        std::lock_guard<std::mutex> _(decision_mutex);
+        decision_max = local_decision_max;
         decision_min = local_decision_min;
       }
 
       n_ticks++;
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      // std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
   });
 
@@ -234,7 +246,7 @@ void app_run(std::function<void(void)> loop_func) {
 
   should_recv = false;
   count_thread.join();
-  minimax_thread.join();
+  decision_thread.join();
   zmq_thread.join();
 }
 
@@ -244,16 +256,18 @@ void app_random() {
   display.has_val = false;
 }
 
-void app_decide_once() { play_minimax_once = true; }
+void app_decide_once() { play_decision_once = true; }
 
 void app_decide_toggle() { play_minimax = !play_minimax; }
 
 void app_eval_once() { eval_state_once = true; }
 
+void app_eval_toggle() { eval_state = !eval_state; }
+
 void app_apply() {
   std::lock_guard<std::mutex> _(state_mutex);
-  // TODO
-  // state = state.applyTeamAction(command, enemy_command);
+  apply_to_state(decision_max, MAX, &state);
+  apply_to_state(decision_min, MIN, &state);
 }
 
 void app_toggle_experimental() { use_experimental = !use_experimental; }
@@ -290,3 +304,14 @@ MOVE(down, Vector(0, -move_step))
 MOVE(right, Vector(move_step, 0))
 MOVE(left, Vector(-move_step, 0))
 #undef MOVE
+
+void draw_app_status(void) {
+  std::lock_guard<std::mutex> _(display_mutex);
+  ImGui::Text("uptime: %is", display.uptime);
+  ImGui::Text("decision: #%i", display.decision_count);
+  ImGui::Text("%i packets/s", display.pps);
+  ImGui::Text("%i decisions/s", display.mps);
+  ImGui::Text("decision: %f", display.decision_val);
+  if (display.has_val)
+    ImGui::Text("value: %f", display.val);
+}

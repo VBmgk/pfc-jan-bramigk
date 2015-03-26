@@ -15,6 +15,7 @@
 #include "utils.h"
 #include "decision.h"
 #include "action.h"
+#include "segment.h"
 
 constexpr int NSIDES = 64;
 
@@ -47,11 +48,11 @@ void draw_circle(float radius) {
   glEnd();
 }
 
-void draw_robot(Vector pos, const GLubyte *color) {
+void draw_robot(Vector pos, const GLubyte *color, float extra_radius = 0.0) {
   glPushMatrix();
   glTranslatef(pos.x, pos.y, 0.0);
   glColor3ubv(color);
-  draw_circle(ROBOT_RADIUS);
+  draw_circle(ROBOT_RADIUS + extra_radius);
   glPopMatrix();
 }
 
@@ -76,7 +77,31 @@ void draw_shadow(const Board &board) {
   }
 }
 #else
-void draw_shadow(const State &state) {}
+
+void draw_shadow(const State &state) {
+  int gaps_count;
+  Segment gaps[N_ROBOTS * 2];
+
+  int robot = robot_with_ball(state);
+  discover_gaps_from_pos(state, state.ball, ENEMY_OF(robot), gaps, &gaps_count, robot);
+  float gx = GOAL_X(ENEMY_OF(robot));
+
+  auto b = state.ball;
+
+  FOR_N(i, gaps_count) {
+    glColor3ubv(LIGHT_GREEN);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(b.x, b.y, 0.0);
+    glVertex3f(gx, gaps[i].u, 0.0);
+    glVertex3f(gx, gaps[i].d, 0.0);
+    glEnd();
+    glColor3ubv(WHITE);
+    glBegin(GL_LINES);
+    glVertex3f(gx, gaps[i].u, 0.0);
+    glVertex3f(gx, gaps[i].d, 0.0);
+    glEnd();
+  }
+}
 #endif
 
 void draw_ball(Vector pos) {
@@ -87,25 +112,6 @@ void draw_ball(Vector pos) {
   glPopMatrix();
 }
 
-#if 0
-void draw_goals(const Board &board) {
-  if (board.isMaxLeft())
-    glColor3ubv(BLUE);
-  else
-    glColor3ubv(YELLOW);
-
-  glRectf(-board.goalX() - board.goalDepth(), board.goalWidth() / 2,
-          -board.goalX(), -board.goalWidth() / 2);
-
-  if (board.isMaxLeft())
-    glColor3ubv(YELLOW);
-  else
-    glColor3ubv(BLUE);
-
-  glRectf(board.goalX() + board.goalDepth(), board.goalWidth() / 2,
-          board.goalX(), -board.goalWidth() / 2);
-}
-#else
 void draw_goals() {
   glColor3ubv(BLUE);
   glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH, GOAL_WIDTH / 2, -FIELD_WIDTH / 2, -GOAL_WIDTH / 2);
@@ -113,7 +119,6 @@ void draw_goals() {
   glColor3ubv(YELLOW);
   glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH, GOAL_WIDTH / 2, FIELD_WIDTH / 2, -GOAL_WIDTH / 2);
 }
-#endif
 
 void draw_state(const State &state) {
   glColor3ubv(FIELD_GREEN);
@@ -122,42 +127,39 @@ void draw_state(const State &state) {
   draw_goals();
   draw_shadow(state);
 
-// XXX: TEST
-#if 0
-  auto with_ball = board.getRobotWithBall();
-  auto robot_with_ball = with_ball.first;
-  if (robot_with_ball != nullptr && false) {
-    float step_time = board.timeToBall(*robot_with_ball);
-    Board vrt_board = board.virtualStep(step_time);
-    Ball vrt_ball = vrt_board.getBall();
-    // vrt_ball.setV(Vector{5, 0});
-    vrt_ball.setV((vrt_ball.pos() - Vector{0, 0}).unit() * Robot::kickV());
-
-    float maxV2 = 4 * 4;
-    float inc = 0.05;
-    for (float x = -board.fieldWidth() / 2; x < inc + board.fieldWidth() / 2;
-         x += inc) {
-      for (float y = -board.fieldHeight() / 2;
-           y < inc + board.fieldHeight() / 2; y += inc) {
-        float t = board.timeToVirtualBall(Vector{x, y}, maxV2, vrt_ball);
-        glColor3f(1 - t, 0, 0);
-        // glTranslatef(x, y, 0.f);
-        // glBegin(GL_TRIANGLE_FAN);
-        glRectf(x - inc / 3, y - inc / 3, x + inc / 3, y + inc / 3);
-        // raw_circle(0.1, 6);
-        // glEnd();
-      }
+#define DEBUG_DRAW_TIME_TO_BALL
+#ifdef DEBUG_DRAW_TIME_TO_BALL
+  constexpr float I = 0.10;
+  constexpr float S = I / 2;
+  glPushMatrix();
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  for (float x = -FIELD_WIDTH / 2 + std::fmod(FIELD_WIDTH, I) / 2; x < S + FIELD_WIDTH / 2; x += I) {
+    for (float y = -FIELD_HEIGHT / 2 + std::fmod(FIELD_HEIGHT, I) / 2; y < S + FIELD_HEIGHT / 2; y += I) {
+      float t = time_to_pos(Vector(x, y), Vector(), state.ball, state.ball_v);
+      float c = (1 - std::sqrt(t)) / 2 - 0.1;
+      glColor4f(1, 0, 1, c); // this works ok because t=1 means 1 second, which is ok
+      // glRectf(x, y, x + S, y + S);
+      glPushMatrix();
+      glTranslatef(x, y, 0.0);
+      glBegin(GL_TRIANGLE_FAN);
+      raw_circle(S / 2, 8);
+      glEnd();
+      glPopMatrix();
     }
   }
+  glPopMatrix();
 #endif
 
-  FOR_EVERY_ROBOT(i) { draw_robot(state.robots[i], PLAYER_FOR(i) == MAX ? BLUE : YELLOW); }
+  int wb = robot_with_ball(state);
+  draw_robot(state.robots[wb], PINK, 2 * BALL_RADIUS);
+  FOR_EVERY_ROBOT(i) { draw_robot(state.robots[i], PLAYER_OF(i) == MAX ? BLUE : YELLOW); }
 
   draw_ball(state.ball);
 }
 
 void draw_decision(const struct Decision &decision, const struct State &state, Player player) {
-  FOR_EVERY_ROBOT(i) {
+  FOR_TEAM_ROBOT(i, player) {
     auto action = decision.action[i % N_ROBOTS];
     switch (action.type) {
     case MOVE: {
@@ -220,3 +222,5 @@ void draw_app(App *app, double fps, int width, int height) {
   draw_teamaction(app->enemy_command, app->command_board, MIN);
 }
 #endif
+
+// void draw_app_status(void) is implemented on app.cpp

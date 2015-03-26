@@ -14,5 +14,6 @@ static const GLubyte WHITE[3] = {239, 239, 239};
 static const GLubyte YELLOW[3] = {237, 229, 40};
 static const GLubyte RED[3] = {177, 84, 84};
 static const GLubyte RED2[3] = {142, 67, 67};
+static const GLubyte PINK[3] = {177, 67, 177};
 
 #endif

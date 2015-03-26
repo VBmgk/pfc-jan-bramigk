@@ -6,5 +6,6 @@
 void screen_zoom(int width, int height, float zoom);
 void draw_state(const struct State &state);
 void draw_decision(const struct Decision &decision, const struct State &state, Player player);
+void draw_app_status(void);
 
 #endif

@@ -8,6 +8,7 @@ void app_random();
 void app_decide_once();
 void app_decide_toggle();
 void app_eval_once();
+void app_eval_toggle();
 void app_apply();
 void app_toggle_experimental();
 void app_select_save_slot(int slot);
@@ -21,5 +22,7 @@ void app_move_left();
 void app_move_right();
 
 extern const struct State *app_state;
+extern const struct Decision *app_decision_max;
+extern const struct Decision *app_decision_min;
 
 #endif

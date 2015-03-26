@@ -40,6 +40,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
       app_eval_once();
     } break;
 
+    case GLFW_KEY_V: {
+      app_eval_toggle();
+    } break;
+
     case GLFW_KEY_A: {
       app_apply();
     } break;
@@ -271,17 +275,15 @@ static void imgui_setclipboardtextfn(const char *text) { glfwSetClipboardString(
 void load_fonts_texture() {
   ImGuiIO &io = ImGui::GetIO();
   // ImFont* my_font1 = io.Fonts->AddFontDefault();
-  // ImFont* my_font2 =
-  // io.Fonts->AddFontFromFileTTF("extra_fonts/Karla-Regular.ttf", 15.0f);
-  // ImFont* my_font3 =
-  // io.Fonts->AddFontFromFileTTF("extra_fonts/ProggyClean.ttf", 13.0f);
+  // ImFont* my_font2 = io.Fonts->AddFontFromFileTTF("extra_fonts/Karla-Regular.ttf", 15.0f);
+  // ImFont* my_font3 = io.Fonts->AddFontFromFileTTF("extra_fonts/ProggyClean.ttf", 13.0f);
   // my_font3->DisplayOffset.y += 1;
-  // ImFont* my_font4 =
-  // io.Fonts->AddFontFromFileTTF("extra_fonts/ProggyTiny.ttf", 10.0f);
+  // ImFont* my_font4 = io.Fonts->AddFontFromFileTTF("extra_fonts/ProggyTiny.ttf", 10.0f);
   // my_font4->DisplayOffset.y += 1;
-  // ImFont* my_font5 =
-  // io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 20.0f,
+  // ImFont* my_font5 = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 20.0f,
   // io.Fonts->GetGlyphRangesJapanese());
+
+  // ImFont* my_font2 = io.Fonts->AddFontFromFileTTF("../vendor/fonts/anonymous-pro.ttf", 12.0f);
 
   unsigned char *pixels;
   int width, height;
@@ -299,7 +301,7 @@ void load_fonts_texture() {
 }
 
 void gui_init_imgui(void) {
-  ImGuiIO &io = ImGui::GetIO();
+  auto &io = ImGui::GetIO();
   io.IniFilename = "minimax_gui.ini";
   io.LogFilename = "minimax_gui.log";
   io.DeltaTime = 1.0f / 60.0f;            // Time elapsed since last frame, in seconds (in
@@ -330,6 +332,14 @@ void gui_init_imgui(void) {
   io.GetClipboardTextFn = imgui_getclipboardtextfn;
 
   load_fonts_texture();
+
+  // Styling
+  auto &style = ImGui::GetStyle();
+  style.Alpha = 0.6;
+  style.WindowRounding = 6.0;
+  style.WindowPadding = {3.0, 3.0};
+  style.FrameRounding = 2.0;
+  style.FramePadding = {1.0, 1.0};
 }
 
 void gui_update(void) {
@@ -385,34 +395,16 @@ void gui_render(void) {
   screen_zoom(width, height, zoom);
 
   draw_state(*app_state);
-
-  ImGui::GetStyle().Alpha = 0.6;
+  draw_decision(*app_decision_max, *app_state, MAX);
+  draw_decision(*app_decision_min, *app_state, MIN);
+  draw_app_status();
 
   // ImGui::ShowTestWindow();
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
               ImGui::GetIO().Framerate);
-#if 0
-  if (text) {
-    // draw the copied board, lock area could be reduced maybe
-    {
-      std::lock_guard<std::mutex> _(app->display_mutex);
-      draw_board(app->command_board);
-      draw_teamaction(app->command, app->command_board, MAX);
-      draw_teamaction(app->enemy_command, app->command_board, MIN);
-      ImGui::Text("uptime: %is", app->display.uptime);
-      ImGui::Text("minimax: #%i", app->display.minimax_count);
-      ImGui::Text("%i packets/s", app->display.pps);
-      ImGui::Text("%i minimax/s", app->display.mps);
-      ImGui::Text("minimax: %f", app->display.minimax_val);
-      if (app->display.has_val)
-        ImGui::Text("value: %f", app->display.val);
-    }
-
-    ImGui::Checkbox("KICK_IF_NO_PASS", &Board::KICK_IF_NO_PASS);
-    ImGui::SliderInt("RAMIFICATION_NUMBER", &Minimax::RAMIFICATION_NUMBER, 1,
-                     5000);
-    ImGui::SliderInt("MAX_DEPTH", &Minimax::MAX_DEPTH, 0, 3);
-#endif
+  ImGui::Checkbox("KICK_IF_NO_PASS", &KICK_IF_NO_PASS);
+  ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER, 1, 20000);
+  ImGui::SliderInt("MAX_DEPTH", &MAX_DEPTH, 0, 3);
 
 #define SLIDER(V, A, B) ImGui::SliderFloat(#V, &V, A, B);
   SLIDER(MIN_GAP_TO_KICK, 0, 180)

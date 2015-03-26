@@ -3,7 +3,7 @@
 
 #include "vector.h"
 
-enum ActionType { NONE, MOVE, PASS, KICK };
+enum ActionType { NONE = 0x0, MOVE = 0x1, PASS = 0x2, KICK = 0x4 };
 
 struct Action {
   ActionType type;
@@ -13,7 +13,7 @@ struct Action {
     int pass_receiver;
   };
 
-  Action() : type(NONE) {}
+  Action(ActionType type = NONE) : type(type) {}
   Action(const Action &a);
   Action &operator=(const Action &a);
 };
@@ -26,6 +26,8 @@ struct State;
 Action gen_move_action(int robot, const State &state);
 Action gen_kick_action(int robot, const State &state);
 Action gen_pass_action(int robot, const State &state);
+
+void apply_to_state(Action action, int robot, State *state);
 
 namespace roboime {
 class Action;

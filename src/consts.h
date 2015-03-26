@@ -3,19 +3,21 @@
 
 constexpr unsigned long N_ROBOTS = 6;
 
-extern const float FIELD_WIDTH;
-extern const float FIELD_HEIGHT;
-extern const float GOAL_WIDTH;
-extern const float GOAL_DEPTH;
-extern const float DEFENSE_RADIUS;
-extern const float ROBOT_RADIUS;
-extern const float BALL_RADIUS;
-extern const float ROBOT_MAX_SPEED;
-extern const float ROBOT_KICK_SPEED;
+// Units are SI: m, m/s, s, ...
 
-extern const char *PROGRAM_NAME;
-extern const int GUI_DEFAULT_WIDTH;
-extern const int GUI_DEFAULT_HEIGHT;
+constexpr float FIELD_WIDTH = 8.090;
+constexpr float FIELD_HEIGHT = 6.050;
+constexpr float GOAL_WIDTH = 1.000;
+constexpr float GOAL_DEPTH = 0.180;
+constexpr float DEFENSE_RADIUS = 1.000;
+constexpr float ROBOT_RADIUS = 0.180 / 2;
+constexpr float BALL_RADIUS = 0.043 / 2;
+constexpr float ROBOT_MAX_SPEED = 4.0;
+constexpr float ROBOT_KICK_SPEED = 7.0;
+
+constexpr const char *PROGRAM_NAME = "AI for RoboIME"; // TODO: better name maybe?
+constexpr int GUI_DEFAULT_WIDTH = 944;
+constexpr int GUI_DEFAULT_HEIGHT = 740;
 
 #ifdef _CONST_IMPL
 #define DEF_CONST(TYPE, NAME, DEFAULT, ...) TYPE NAME = DEFAULT;
@@ -23,9 +25,10 @@ extern const int GUI_DEFAULT_HEIGHT;
 #define DEF_CONST(TYPE, NAME, DEFAULT, ...) extern TYPE NAME;
 #endif
 
-DEF_CONST(int, RAMIFICATION_NUMBER, 500);
+DEF_CONST(bool, KICK_IF_NO_PASS, false);
+DEF_CONST(int, RAMIFICATION_NUMBER, 5000);
 DEF_CONST(int, MAX_DEPTH, 0);
-DEF_CONST(float, MIN_GAP_TO_KICK, 30);
+DEF_CONST(float, MIN_GAP_TO_KICK, 18);
 DEF_CONST(float, WEIGHT_MOVE_DIST_TOTAL, 2);
 DEF_CONST(float, WEIGHT_MOVE_DIST_MAX, 2);
 DEF_CONST(float, WEIGHT_MOVE_CHANGE, 2);
@@ -42,7 +45,6 @@ DEF_CONST(float, DIST_GOAL_TO_PENAL, 1.0);
 DEF_CONST(float, MOVE_RADIUS_0, 1.0);
 DEF_CONST(float, MOVE_RADIUS_1, 2.0);
 DEF_CONST(float, MOVE_RADIUS_2, 6.0);
-DEF_CONST(bool, KICK_IF_NO_PASS, false);
 
 #ifndef _CONST_IMPL
 #undef DEF_CONST
