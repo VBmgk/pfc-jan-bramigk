@@ -1,10 +1,10 @@
 #ifndef ID_TABLE_H
 #define ID_TABLE_H
 
-#include "consts.h"
+#include "array.h"
 
 struct IdTable {
-  int id[N_ROBOTS];
+  GameArray<int> id;
 };
 
 #endif

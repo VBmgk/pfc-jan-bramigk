@@ -158,6 +158,6 @@ void to_proto_action(Action &action, roboime::Action *ptb_action, int robot_id) 
   } break;
 
   case NONE:
-    fprintf(stderr, "WARNING: tried to dispatch NONE action, ignored");
+    fprintf(stderr, "WARNING: tried to dispatch NONE action for robot %i, ignored\n", robot_id);
   }
 }

@@ -15,8 +15,18 @@ ValuedDecision decide(Optimization &opt, State state, Player player) {
   vd.value = -std::numeric_limits<float>::infinity();
 
   FOR_N(i, RAMIFICATION_NUMBER) {
-    Decision decision =
-        i == 0 ? from_decision_table(opt.table) : gen_decision(kick, state, player, &opt.table, opt.robot_to_move);
+    Decision decision;
+
+    // always consider the previous decision (based on the decision table)
+    if (i == 0) {
+      decision = from_decision_table(opt.table);
+      // on some cases try to move everyone at once, this may lead to better results
+    } else if (100.0 * i / RAMIFICATION_NUMBER < FULL_CHANGE_PERCENTAGE) {
+      decision = gen_decision(kick, state, player, &opt.table);
+      // on everything else roun-robin between trying to move each robot
+    } else {
+      decision = gen_decision(kick, state, player, &opt.table, opt.robot_to_move);
+    }
 
     State next_state = state;
     apply_to_state(decision, player, &next_state);
@@ -26,7 +36,6 @@ ValuedDecision decide(Optimization &opt, State state, Player player) {
     if (value > vd.value) {
       vd.value = value;
       vd.decision = decision;
-      // printf("%i\n", vd.decision.action[0].type);
     }
   }
 
@@ -34,7 +43,7 @@ ValuedDecision decide(Optimization &opt, State state, Player player) {
   opt.table.kick_robot = -1;
   opt.table.pass_robot = -1;
   FOR_TEAM_ROBOT(i, player) {
-    auto action = vd.decision.action[ID(i)];
+    auto action = vd.decision.action[i];
     switch (action.type) {
     case KICK: {
       opt.table.kick_robot = i;
@@ -45,7 +54,7 @@ ValuedDecision decide(Optimization &opt, State state, Player player) {
       opt.table.pass = action;
     } break;
     case MOVE: {
-      opt.table.move[ID(i)] = action;
+      opt.table.move[i] = action;
     } break;
     case NONE:
       break;

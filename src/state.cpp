@@ -7,6 +7,10 @@
 #include "vector.h"
 #include "consts.h"
 #include "segment.h"
+#include "decision.h"
+#include "decision_table.h"
+#include "update.pb.h"
+#include "id_table.h"
 
 State uniform_rand_state() {
   State s;
@@ -337,5 +341,65 @@ float evaluate_with_decision(Player player, const State &state, const struct Dec
   }
 #endif
 
+  float move_dist_total = 0, move_dist_max = 0, move_change = 0, pass_change = 0, kick_change = 0;
+
+  FOR_TEAM_ROBOT(i, player) {
+    auto action = decision.action[i];
+    auto rpos = state.robots[i];
+    switch (action.type) {
+    case MOVE: {
+      float move_dist = norm(action.move_pos - rpos);
+      move_dist_max = std::max(move_dist_max, move_dist);
+      move_dist_total += move_dist;
+      move_change += norm(action.move_pos - table.move[i].move_pos);
+    } break;
+    case PASS:
+      if (table.pass_robot >= 0) {
+        // XXX: assuming everything is ok and the receiver has a move action
+        pass_change +=
+            norm(decision.action[action.pass_receiver].move_pos - table.move[table.pass.pass_receiver].move_pos);
+      }
+      break;
+    case KICK:
+      if (table.kick_robot >= 0) {
+        kick_change += norm(action.kick_pos - table.move[i].kick_pos);
+      }
+      break;
+    case NONE:
+      break;
+    }
+  }
+
+  value -= WEIGHT_MOVE_DIST_TOTAL * move_dist_total;
+  value -= WEIGHT_MOVE_DIST_MAX * move_dist_max;
+  value -= WEIGHT_MOVE_CHANGE * move_change;
+  value -= WEIGHT_PASS_CHANGE * pass_change;
+  value -= WEIGHT_KICK_CHANGE * kick_change;
+
   return value;
+}
+
+void update_from_proto(State &state, roboime::Update &ptb_update, IdTable &table) {
+  // TODO: more reliable mapping, what may happen now is that the mapping {0:4, 1:5} may change to {0:5, 1:4} simply
+  // because of ordering
+
+  auto ball = ptb_update.ball();
+  state.ball = {ball.x(), ball.y()};
+  state.ball_v = {ball.vx(), ball.vy()};
+
+  FOR_N(i, ptb_update.min_team_size()) {
+    auto robot = ptb_update.min_team(i);
+    int r = ROBOT_WITH_PLAYER(i, MIN);
+    table.id[r] = robot.i();
+    state.robots[r] = {robot.x(), robot.y()};
+    state.robots_v[r] = {robot.vx(), robot.vy()};
+  }
+
+  FOR_N(i, ptb_update.max_team_size()) {
+    auto robot = ptb_update.max_team(i);
+    int r = ROBOT_WITH_PLAYER(i, MAX);
+    table.id[r] = robot.i();
+    state.robots[r] = {robot.x(), robot.y()};
+    state.robots_v[r] = {robot.vx(), robot.vy()};
+  }
 }

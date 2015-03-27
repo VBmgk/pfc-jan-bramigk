@@ -95,7 +95,8 @@ void draw_shadow(const State &state) {
     glVertex3f(gx, gaps[i].u, 0.0);
     glVertex3f(gx, gaps[i].d, 0.0);
     glEnd();
-    glColor3ubv(WHITE);
+    // glColor3ubv(WHITE);
+    glColor3ubv(PINK);
     glBegin(GL_LINES);
     glVertex3f(gx, gaps[i].u, 0.0);
     glVertex3f(gx, gaps[i].d, 0.0);

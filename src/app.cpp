@@ -16,11 +16,14 @@
 #include "optimization.h"
 #include "minimax.h"
 #include "draw.h"
+#include "utils.h"
+#include "id_table.h"
 
 static std::mutex state_mutex, decision_mutex, display_mutex;
 static Decision decision_min, decision_max;
 static State state, command_state;
 static Optimization optimization;
+static IdTable id_table;
 
 const State *app_state = &state;
 const struct Decision *app_decision_max = &decision_max;
@@ -129,53 +132,29 @@ void app_run(std::function<void(void)> loop_func) {
           req_count++;
 
           // ok, time to parse that data
-          ::roboime::Update u;
-          u.ParseFromString(buffer_str);
+          ::roboime::Update update;
+          update.ParseFromString(buffer_str);
 
-#if 0
-          // now that we've got the parsed data,
-          // we'll start by populating two teams to build our state
-          Team min_t, max_t;
-          for (int i = 0; i < u.min_team_size(); i++) {
-            const ::roboime::Robot &r = u.min_team(i);
-            // yeah the line breaks there, autoformatter does that
-            // and it's fine, don't cry over it
-            min_t.addRobot(Robot(r.i(), Vector(r.x(), r.y()), Vector(r.vx(), r.vy())));
-          }
-          for (int i = 0; i < u.max_team_size(); i++) {
-            const ::roboime::Robot &r = u.max_team(i);
-            max_t.addRobot(Robot(r.i(), Vector(r.x(), r.y()), Vector(r.vx(), r.vy())));
-          }
-          // don't forget the ball
-          Ball ball(Vector(u.ball().x(), u.ball().y()), Vector(u.ball().vx(), u.ball().vy()));
-
-          // now we assemble the state
-          Board local_state(min_t, max_t, ball);
           {
-            // this is the critical section, where we atomically
-            // switch the app state with our freshly built one
-            std::lock_guard<std::mutex> _(board_mutex);
+            // critical section to update the global state
+            std::lock_guard<std::mutex> _(state_mutex);
+            update_from_proto(state, update, id_table);
             display.has_val = false;
-            state = local_state;
           }
 
           // update done, time to reply that request, remember?
-          // just like above we'll atomically copy the latest command
+          // just like above we'll atomically copy the latest decision
           // staright from the app, we don't want it to change while
           // iterating over it
-          TeamAction local_decision_max;
+          Decision local_decision_max;
           {
             std::lock_guard<std::mutex> _(decision_mutex);
-            local_decision_max = command;
+            local_decision_max = decision_max;
           }
 
           // another important part, we'll assemble the protobuf command packet
           ::roboime::Command command;
-          for (auto robot_action : local_decision_max) {
-            ::roboime::Action *action = command.add_action();
-            // don't worry, each action knows how to generate itself:
-            robot_action.discreteAction(action);
-          }
+          to_proto_command(local_decision_max, MAX, command, id_table);
 
           // now let's serialize and shove it on our message buffer
           command.SerializeToString(&data);
@@ -184,7 +163,6 @@ void app_run(std::function<void(void)> loop_func) {
 
           // finally, reply:
           socket.send(command_message);
-#endif
         }
       } catch (zmq::error_t e) {
         // what? an error?? what's that???

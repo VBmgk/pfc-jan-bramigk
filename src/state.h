@@ -3,14 +3,13 @@
 
 #include "consts.h"
 #include "vector.h"
+#include "array.h"
 #include "player.h"
 #include "segment.h"
 
 struct State {
-  Vector ball;
-  Vector ball_v;
-  Vector robots[2 * N_ROBOTS];
-  Vector robots_v[2 * N_ROBOTS];
+  Vector ball, ball_v;
+  GameArray<Vector> robots, robots_v;
 };
 
 State uniform_rand_state();
@@ -30,5 +29,10 @@ void discover_gaps_from_pos(const State state, Vector pos, Player player, Segmen
 
 float evaluate_with_decision(Player player, const State &state, const struct Decision &decision,
                              const struct DecisionTable &table);
+
+namespace roboime {
+class Update;
+}
+void update_from_proto(State &state, roboime::Update &ptb_update, struct IdTable &table);
 
 #endif

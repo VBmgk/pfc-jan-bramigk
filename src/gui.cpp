@@ -403,7 +403,8 @@ void gui_render(void) {
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
               ImGui::GetIO().Framerate);
   ImGui::Checkbox("KICK_IF_NO_PASS", &KICK_IF_NO_PASS);
-  ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER, 1, 20000);
+  ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER, 10, 20000);
+  ImGui::SliderInt("FULL_CHANGE_PERCENTAGE", &FULL_CHANGE_PERCENTAGE, 0, 100);
   ImGui::SliderInt("MAX_DEPTH", &MAX_DEPTH, 0, 3);
 
 #define SLIDER(V, A, B) ImGui::SliderFloat(#V, &V, A, B);

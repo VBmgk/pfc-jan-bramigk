@@ -18,7 +18,6 @@ constexpr int ROBOT_WITH_PLAYER(int R, Player P) { return P * N_ROBOTS + R % N_R
 constexpr Player ENEMY_FOR(Player P) { return P == MIN ? MAX : MIN; }
 constexpr Player PLAYER_OF(int R) { return R / N_ROBOTS == MIN ? MIN : MAX; }
 constexpr Player ENEMY_OF(int R) { return ENEMY_FOR(PLAYER_OF(R)); }
-constexpr int ID(int ROBOT) { return ROBOT % N_ROBOTS; }
 
 // 1 for MIN -1 for MAX
 constexpr int PLAYER_SIGN(Player P) { return P == MAX ? 1 : -1; }

@@ -6,17 +6,19 @@
 #include "action.h"
 #include "consts.h"
 #include "utils.h"
+#include "discrete.pb.h"
+#include "id_table.h"
 
 void apply_to_state(const Decision decision, Player player, struct State *state) {
   // apply all moves first
   FOR_TEAM_ROBOT(i, player) {
-    if (decision.action[ID(i)].type == MOVE)
-      apply_to_state(decision.action[ID(i)], i, state);
+    if (decision.action[i].type == MOVE)
+      apply_to_state(decision.action[i], i, state);
   }
   // and then all others
   FOR_TEAM_ROBOT(i, player) {
-    if (decision.action[ID(i)].type != MOVE)
-      apply_to_state(decision.action[ID(i)], i, state);
+    if (decision.action[i].type != MOVE)
+      apply_to_state(decision.action[i], i, state);
   }
 }
 
@@ -30,7 +32,7 @@ Decision gen_decision(bool kick, const State &state, Player player, DecisionTabl
   if (player == PLAYER_OF(rwb)) {
 
     if (kick) {
-      decision.action[ID(rwb)] = gen_kick_action(rwb, state);
+      decision.action[rwb] = gen_kick_action(rwb, state);
     } else {
       bool any_pass = false;
 #if 0
@@ -47,13 +49,13 @@ Decision gen_decision(bool kick, const State &state, Player player, DecisionTabl
       // for the robot with ball, we'll make it move or kick
 #endif
       if (!any_pass) {
-        auto &action = decision.action[ID(rwb)];
+        auto &action = decision.action[rwb];
         if (KICK_IF_NO_PASS) {
           action = gen_kick_action(rwb, state);
         } else if (robot_to_move == rwb || robot_to_move == -1) {
           action = gen_move_action(rwb, state);
         } else {
-          action = table->move[ID(rwb)];
+          action = table->move[rwb];
         }
       }
     }
@@ -61,11 +63,11 @@ Decision gen_decision(bool kick, const State &state, Player player, DecisionTabl
 
   // push a Move action for every other robot
   FOR_TEAM_ROBOT(i, player) if (i != rwb) {
-    auto &action = decision.action[ID(i)];
+    auto &action = decision.action[i];
     if (robot_to_move == i || robot_to_move == -1) {
       action = gen_move_action(i, state);
     } else {
-      action = table->move[ID(i)];
+      action = table->move[i];
     }
   }
 
@@ -75,11 +77,21 @@ Decision gen_decision(bool kick, const State &state, Player player, DecisionTabl
 Decision from_decision_table(const struct DecisionTable &table) {
   Decision d;
   FOR_N(i, N_ROBOTS) { d.action[i] = table.move[i]; }
-  if (table.kick_robot > 0) {
-    d.action[ID(table.kick_robot)] = table.kick;
+  if (table.kick_robot >= 0) {
+    d.action[table.kick_robot] = table.kick;
   }
-  if (table.pass_robot > 0) {
-    d.action[ID(table.pass_robot)] = table.pass;
+  if (table.pass_robot >= 0) {
+    d.action[table.pass_robot] = table.pass;
   }
   return d;
+}
+
+void to_proto_command(const Decision &decision, Player player, roboime::Command &ptb_command, const IdTable &table) {
+  FOR_TEAM_ROBOT(i, MAX) {
+    Action &&action = decision.action[i];
+    if (action.type != NONE) {
+      ::roboime::Action *ptb_action = ptb_command.add_action();
+      to_proto_action(action, ptb_action, table.id[i]);
+    }
+  }
 }
