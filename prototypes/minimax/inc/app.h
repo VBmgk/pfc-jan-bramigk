@@ -86,8 +86,11 @@ struct App {
   MOVE(right, Vector(move_step, 0))
   MOVE(left, Vector(-move_step, 0))
 #undef MOVE
-  double adpt_eval_brd(void)   { return adptv_cntrl_eval.eval(board); }
-  double adpt_eval_n_brd(void) { return    adptv_cntrl_eval.eval_n(); }
+  float adpt_eval_brd(void)   { return adptv_cntrl_eval.eval(board); }
+  float adpt_eval_n_brd(void) { return adptv_cntrl_eval.get_eval_n(); }
+  int adpt_num(void) { return adptv_cntrl_eval.curr_n; }
+	  float * get_eval_n(void) { return adptv_cntrl_eval.evals_n; }
+  float scale(void) { return adptv_cntrl_eval.scale(); }
 };
 
 #endif

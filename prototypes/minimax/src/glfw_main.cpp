@@ -205,11 +205,21 @@ void render(GLFWwindow *window, int width, int height, bool text) {
       ImGui::Text("%i minimax/s", app->display.mps);
       ImGui::Text("%i ramifications/s", Minimax::RAMIFICATION_NUMBER * app->display.mps);
       ImGui::Text("minimax: %f",           app->display.minimax_val);
-      ImGui::Text("adaptative eval_n: %lf", app->adpt_eval_n_brd());
-      ImGui::Text("adaptative eval: %lf",   app->adpt_eval_brd());
+      ImGui::Text("adaptative eval: %lf, eval_n: %lf, curr_n: %i",
+        app->adpt_eval_brd(), app->adpt_eval_n_brd(), app->adpt_num());
       if (app->display.has_val)
         ImGui::Text("value: %f", app->display.val);
     }
+
+    ImGui::PlotLines(
+         /* outside lable   */"",
+         /* values to print */app->get_eval_n(), 
+         /* count           */ 1000,
+         /* offset          */ 1,  
+         /* inside label    */ "Adaptatiove Control Evaluation", 
+         /* scale min, max  */ -.1, .1,
+         /* graph size      */ ImVec2(500, 300)
+                    );
 
     ImGui::Checkbox("KICK_IF_NO_PASS", &Board::KICK_IF_NO_PASS);
     ImGui::SliderInt("RAMIFICATION_NUMBER", &Minimax::RAMIFICATION_NUMBER, 1,
