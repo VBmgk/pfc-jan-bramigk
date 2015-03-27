@@ -45,8 +45,8 @@ Board::getRobotWithVirtualBall(const Ball &virt_ball,
                                std::pair<const Robot *, Player> r_rcv) const;
 #endif
 
-float time_to_pos(Vector robot_p, Vector robot_v, Vector pos, Vector pos_v) {
-  // TODO: take into account robot_v
+float time_to_pos(Vector rpos, Vector rpos_v, Vector pos, Vector pos_v) {
+  // TODO: take into account rpos_v
 
   /*
    * vb.t + pb = vr.t + pr, t_min? vr?
@@ -63,15 +63,15 @@ float time_to_pos(Vector robot_p, Vector robot_v, Vector pos, Vector pos_v) {
 
   // vb.(pb - pr)
   float a = SQ(ROBOT_MAX_SPEED) - norm2(pos_v);
-  float c = -norm2(robot_p - pos);
-  float b_div_2 = pos_v * (pos - robot_p);
+  float c = -norm2(rpos - pos);
+  float b_div_2 = pos_v * (rpos - pos);
   float delta_div_4 = b_div_2 * b_div_2 - a * c;
 
   if (a != 0) {
     // It's impossible to reach the ball
-    if (delta_div_4 < 0)
+    if (delta_div_4 < 0) {
       return std::numeric_limits<float>::max();
-    else if (delta_div_4 == 0) {
+    } else if (delta_div_4 == 0) {
       float t = -b_div_2 / a;
 
       if (t >= 0)
@@ -124,9 +124,8 @@ std::vector<std::pair<float, float>>
 Board::getGoalGaps(Player player, const Body &body) const {
 #endif
 
-bool cmp_segments(Segment a, Segment b) { return a.u == b.u ? a.d > b.d : a.u > b.u; }
-
 // returns false if there is no shadow, otherwise return true and write on the given pointer
+#if 0
 bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shadow) {
   auto d = rpos - pos;
   auto k = norm2(d) - SQ(ROBOT_RADIUS);
@@ -161,6 +160,210 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shado
   shadow->d = d_shadow;
   return true;
 }
+
+#else
+struct Sol { float x1, x2; };
+
+bool solve_lineq(float a, float b, Sol& x, float c) {
+  if (a == 0 && b == 0) {
+    if (c == 0) {
+      x.x1 = x.x2 = 0;
+      return true;
+    } else {
+      return false;
+    }
+  } else if (a == 0) {
+    x.x2 = c / b;
+    x.x1 = 0;
+    return true;
+  } else {
+    x.x1 = c / a;
+    x.x2 = 0;
+    return true;
+  }
+}
+
+bool linear_dependency(float a1, float a2, float &x, float b1, float b2) {
+  float norm_a  = sqrt(a1*a1 + a2*a2),
+        norm_b  = sqrt(b1*b1 + b2*b2),
+        norm_ab = sqrt((a1+b1)*(a1+b1) +
+                       (a2+b2)*(a2+b2));
+
+  if (norm_ab == norm_a + norm_b) {
+    if (norm_ab == 0) {
+      x = 0;
+      return true;
+    }
+    if (norm_a == 0)  {
+      return false;
+    }
+    x = norm_b / norm_a;
+    return true;
+  } else if (norm_ab == fabs(norm_a - norm_b)) {
+    x = - norm_b / norm_a;
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool solve_Ax_b(float a11, float a12, float a21, float a22, Sol& x, float b1, float b2) {
+/*
+ * x1 = (b1 . a22 - a12 . b2) / det
+ * x2 = (b2 . a11 - a21 . b1) / det 
+ * */
+  float det = a11 * a22 - a12 * a21;
+  if (det == 0) {
+    // parallel lines case
+    if ( a11 * a22 != 0) {
+      if (b1 == b2) {
+        // lines are identical any result for x is valid, but
+        // usin zero just in case...
+        x.x1 = x.x2 = 0; return true;
+      } else return false;
+    }
+    // a11 or a22 == 0 (0,x,x,x), (x,x,x,0)
+    // a12 or a21 == 0 (x,0,x,x), (x,x,0,x)
+    // (0,0,x,x), (0,x,0,x)
+    // (x,0,x,0), (x,x,0,0)
+    if (a11 == 0 && a12 == 0) {
+      if (b1 != 0) return false;
+      return solve_lineq(a21, a22, x, b2);
+    }
+    if (a21 == 0 && a22 == 0) {
+      if (b2 != 0) return false;
+      return solve_lineq(a11, a12, x, b1);
+    }
+    if (a11 == 0 && a21 == 0) {
+      x.x1 = 0;
+      return linear_dependency(a12, a22, x.x2, b1, b2);
+    }
+    if (a12 == 0 && a22 == 0) {
+      x.x2 = 0;
+      return linear_dependency(a12, a22,  x.x1, b1, b2);
+    }
+
+    return false;
+  }
+
+  x.x1  = (b1 * a22 - a12 * b2) / det;
+  x.x2 = (b2 * a11 - a21 * b1) / det;
+
+  return true;
+}
+
+bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shadow) {
+  auto d = rpos - pos;
+  auto k = norm2(d) - SQ(ROBOT_RADIUS);
+
+  if (k <= 0)
+    return false; // FIXME: should return maximum shadow or no gap
+
+  if (d.x * gx <= 0)
+    return false;
+
+
+  // --------------------------------------------------------------------------
+  // Old way to compute the gap, consider the ball as a point light source
+  //float tan_alpha = Robot::radius() / std::sqrt(k);
+  //float tan_theta = d[1] / std::fabs(d[0]);
+  //float tan_1 = (tan_theta + tan_alpha) / (1 - tan_theta * tan_alpha);
+  //float tan_2 = (tan_theta - tan_alpha) / (1 + tan_theta * tan_alpha);
+  float y_shadow_1; // = tan_1 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
+  float y_shadow_2; // = tan_2 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
+  // New
+  // n: vector normal to the line that join
+  //    ball and the robot
+  // n = [ 0 1 ] 
+  //     [-1 0 ].(b.pos() - r.pos())/|| b.pos() - r.pos() ||
+  Vector n = { rpos.y - pos.y, pos.x - rpos.x };
+  // normalization, to use radius later
+  n = n * (1.0 / norm(d)) ;
+
+  // nu -- upper line that toches the imaginary radius
+  //       of the ball and the radius of the robot
+  //       nu = Ru - Bu = radius_robot * n + robot.pos() -
+  //                     (radius_body  * n + ball.pos())
+  // nd -- lower line that toches the imaginary radius
+  //       of the ball and the radius of the robot
+  //       nd = Rd - Bd = -radius_robot * n + robot.pos() -
+  //                     (-radius_body  * n + ball.pos())
+  auto rd = n * -ROBOT_RADIUS       + rpos;
+  auto ru = n *  ROBOT_RADIUS       + rpos;
+  auto bu = n *  KICK_POS_VARIATION + pos;
+  auto bd = n * -KICK_POS_VARIATION + pos;
+  auto nu = ru - bu;
+  auto nd = rd - bd;
+
+  // solving sistem: [ nu_x  nd_x ] [ auxu ]
+  //                 [ nu_y  nd_y ] [ auxd ] = Rd - Ru
+  // to eliminate robots with no shadow
+  Sol aux = {0.0, 0.0};
+
+  if (solve_Ax_b(nu.x, nd.x, nu.y, nd.y, aux, (rd - ru).x, (rd - ru).y)) {
+    // system has solution
+    // p = intersection of lu = { aux . nu + ru} and
+    //                     ld = { aux . nd + rd}
+    auto p = nu * aux.x1 + ru;
+
+    // intersection lies between goal and robot
+    // so there is no shadow
+    if (aux.x1 > 0) {
+      if (gx < 0 && p.x > gx) return false;
+      if (gx > 0 && p.x < gx) return false;
+    }
+  }
+
+  // if there is no interseption is parallel to this line.
+  // [ gx   ]
+  // [ yu/d ] = ku/d'. nu/d + ru/d
+  //  
+  //     [ nu/d_x   0 ] [ ku/d'] = [ gx - ru/d_x ]
+  // --> [ nu/d_y  -1 ] [ yu/d ] = [    - ru/d_y ]
+  if (solve_Ax_b(nu.x, 0, nu.y, -1, aux, gx - ru.x, - ru.y)) {
+    // system has solution: aux --> ku', yu
+    y_shadow_1 = aux.x2;
+  } else {
+    if (nu.y > 0)
+      y_shadow_1 = std::numeric_limits<float>::infinity();
+    else
+      y_shadow_1 = -std::numeric_limits<float>::infinity();
+  }
+
+  if (solve_Ax_b(nd.x, 0, nd.y, -1, aux, gx - rd.x, - rd.y)) {
+    // system has solution: aux --> kd', yd
+    y_shadow_2 = aux.x2;
+  } else {
+    if (nu.y > 0)
+      y_shadow_2 = std::numeric_limits<float>::infinity();
+    else
+      y_shadow_2 = -std::numeric_limits<float>::infinity();
+  }
+
+  // Old way code
+  //if ((ball.pos()[0] - robot.pos()[0] + Robot::radius()) *
+  //        (ball.pos()[0] - robot.pos()[0] - Robot::radius()) <
+  //    0) {
+  //  if (ball.pos()[1] > robot.pos()[1])
+  //    y_shadow_2 = -std::numeric_limits<float>::infinity();
+  //  else
+  //    y_shadow_1 = std::numeric_limits<float>::infinity();
+  //}
+  // --------------------------------------------------------------------------
+
+  float u_shadow = std::max(y_shadow_1, y_shadow_2);
+  float d_shadow = std::min(y_shadow_1, y_shadow_2);
+
+  if (u_shadow <= -GOAL_WIDTH / 2 || d_shadow >= GOAL_WIDTH / 2)
+    return false;
+
+  shadow->u = u_shadow;
+  shadow->d = d_shadow;
+  return true;
+}
+#endif
+
+bool cmp_segments(Segment a, Segment b) { return a.u == b.u ? a.d > b.d : a.u > b.u; }
 
 void discover_gaps_from_pos(const State state, Vector pos, Player player, Segment *gaps, int *gaps_count_ptr,
                             int ignore_robot) {

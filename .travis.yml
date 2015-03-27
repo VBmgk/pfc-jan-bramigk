@@ -20,10 +20,6 @@ install:
   - sudo apt-get install -qq libzmq3-dev
   # GLUT
   - sudo apt-get install -qq freeglut3-dev
-  # GLFW
-  - 'git clone https://github.com/glfw/glfw.git'
-  - sudo apt-get install -qq xorg-dev libgl1-mesa-dev libglu1-mesa-dev
-  - 'cd glfw && git checkout 3.0.4 && cmake . && make && sudo make install && cd ..'
 
 # Install
 script: "mkdir build && cd build && cmake .. && make"
