@@ -89,8 +89,13 @@ struct App {
   float adpt_eval_brd(void)   { return adptv_cntrl_eval.eval(board); }
   float adpt_eval_n_brd(void) { return adptv_cntrl_eval.get_eval_n(); }
   int adpt_num(void) { return adptv_cntrl_eval.curr_n; }
-	  float * get_eval_n(void) { return adptv_cntrl_eval.evals_n; }
-  float scale(void) { return adptv_cntrl_eval.scale(); }
+  float * get_eval_n(void) { return adptv_cntrl_eval.evals_n; }
+  void change_vars(void) {
+    // get corect list of variables
+    adptv_cntrl_eval.gen_var_index();
+    adptv_cntrl_eval.change_var();
+    adptv_cntrl_eval.go_back_var();
+  }
 };
 
 #endif

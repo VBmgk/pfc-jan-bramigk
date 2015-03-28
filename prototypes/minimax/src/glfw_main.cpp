@@ -210,6 +210,8 @@ void render(GLFWwindow *window, int width, int height, bool text) {
       if (app->display.has_val)
         ImGui::Text("value: %f", app->display.val);
     }
+    // TODO: do it on a better place
+    app->change_vars();
 
     ImGui::PlotLines(
          /* outside lable   */"",

@@ -1,3 +1,4 @@
+#include <cfloat>
 #include "adaptative_control.h"
 #include "minimax.h"
 
@@ -35,6 +36,38 @@ float AdaptativeControl::AdaptativeControlEval::
 }
 
 void AdaptativeControl::AdaptativeControlEval::
+ gen_var_index(void) {
+  if (wait_change == false) {
+    // gen random variable index
+    var_index = rand() % VAR_NUM;
+  }
+}
+
+void AdaptativeControl::AdaptativeControlEval::
+ change_var(float delta) {
+  // save current variables and modify the desired variable
+  if (wait_change == false) {
+    PREV_VALS[var_index] = *CONST_ADDRS[var_index];
+    *CONST_ADDRS[var_index] += delta;
+    change_curr_n = curr_n; wait_change = true;
+  }
+}
+
+void AdaptativeControl::AdaptativeControlEval::
+ go_back_var(float delta) {
+  // go back if some new evaluation is worst than before
+  if (wait_change && change_curr_n != curr_n){
+    if (evals_n[curr_n] < evals_n[change_curr_n]) {
+      // go back if it is worst
+      *CONST_ADDRS[var_index] -= delta;
+    }
+
+    // enable new variable change
+    wait_change = false;
+  }
+}
+
+void AdaptativeControl::AdaptativeControlEval::
  add_eval(float new_eval) {
   curr++; curr %= NUM_BOARD_EVALS;
   
@@ -55,4 +88,21 @@ void AdaptativeControl::AdaptativeControlEval::
     // checking overflow
     if (curr_n == NUM_BOARD_EVALS_N-1) { overflow = true; }
   }
+}
+
+void AdaptativeControl::AdaptativeControlEval::
+ save_addrs(void) {
+  CONST_ADDRS[0]  = &Board::KICK_POS_VARIATION;
+  CONST_ADDRS[1]  = &Board::MIN_GAP_TO_KICK;
+  CONST_ADDRS[2]  = &Board::WEIGHT_MOVE_DIST_TOTAL;
+  CONST_ADDRS[3]  = &Board::WEIGHT_MOVE_DIST_MAX;
+  CONST_ADDRS[4]  = &Board::WEIGHT_MOVE_CHANGE;
+  CONST_ADDRS[5]  = &Board::TOTAL_MAX_GAP_RATIO;
+  CONST_ADDRS[6]  = &Board::WEIGHT_ATTACK;
+  CONST_ADDRS[7]  = &Board::WEIGHT_SEE_ENEMY_GOAL;
+  CONST_ADDRS[8]  = &Board::WEIGHT_BLOCK_GOAL;
+  CONST_ADDRS[9]  = &Board::WEIGHT_BLOCK_ATTACKER;
+  CONST_ADDRS[10] = &Board::WEIGHT_RECEIVERS_NUM;
+  CONST_ADDRS[11] = &Board::DIST_GOAL_PENAL;
+  CONST_ADDRS[12] = &Board::DIST_GOAL_TO_PENAL;
 }
