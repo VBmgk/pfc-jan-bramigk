@@ -28,6 +28,7 @@ static IdTable id_table;
 const State *app_state = &state;
 const struct Decision *app_decision_max = &decision_max;
 const struct Decision *app_decision_min = &decision_min;
+const struct DecisionTable *app_decision_table = &optimization.table;
 
 static struct {
   int uptime = 0;

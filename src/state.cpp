@@ -119,6 +119,21 @@ int robot_with_ball(const State state) {
   return robot;
 }
 
+int vrobot_with_vball(const State state, int vrobot, Vector vpos, Vector vball, Vector vball_v) {
+  int robot = 0;
+  float min_time = std::numeric_limits<float>::max();
+
+  FOR_EVERY_ROBOT(i) {
+    float t = time_to_pos(i == vrobot ? vpos : state.robots[i], Vector(), vball, vball_v);
+    if (t < min_time) {
+      robot = i;
+      min_time = t;
+    }
+  }
+
+  return robot;
+}
+
 #if 0
 std::vector<std::pair<float, float>>
 Board::getGoalGaps(Player player, const Body &body) const {
@@ -162,9 +177,11 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shado
 }
 
 #else
-struct Sol { float x1, x2; };
+struct Sol {
+  float x1, x2;
+};
 
-bool solve_lineq(float a, float b, Sol& x, float c) {
+bool solve_lineq(float a, float b, Sol &x, float c) {
   if (a == 0 && b == 0) {
     if (c == 0) {
       x.x1 = x.x2 = 0;
@@ -184,54 +201,54 @@ bool solve_lineq(float a, float b, Sol& x, float c) {
 }
 
 bool linear_dependency(float a1, float a2, float &x, float b1, float b2) {
-  float norm_a  = sqrt(a1*a1 + a2*a2),
-        norm_b  = sqrt(b1*b1 + b2*b2),
-        norm_ab = sqrt((a1+b1)*(a1+b1) +
-                       (a2+b2)*(a2+b2));
+  float norm_a = sqrt(a1 * a1 + a2 * a2), norm_b = sqrt(b1 * b1 + b2 * b2),
+        norm_ab = sqrt((a1 + b1) * (a1 + b1) + (a2 + b2) * (a2 + b2));
 
   if (norm_ab == norm_a + norm_b) {
     if (norm_ab == 0) {
       x = 0;
       return true;
     }
-    if (norm_a == 0)  {
+    if (norm_a == 0) {
       return false;
     }
     x = norm_b / norm_a;
     return true;
   } else if (norm_ab == fabs(norm_a - norm_b)) {
-    x = - norm_b / norm_a;
+    x = -norm_b / norm_a;
     return true;
   } else {
     return false;
   }
 }
 
-bool solve_Ax_b(float a11, float a12, float a21, float a22, Sol& x, float b1, float b2) {
-/*
- * x1 = (b1 . a22 - a12 . b2) / det
- * x2 = (b2 . a11 - a21 . b1) / det 
- * */
+bool solve_Ax_b(float a11, float a12, float a21, float a22, Sol &x, float b1, float b2) {
+  // x1 = (b1 . a22 - a12 . b2) / det
+  // x2 = (b2 . a11 - a21 . b1) / det
   float det = a11 * a22 - a12 * a21;
   if (det == 0) {
     // parallel lines case
-    if ( a11 * a22 != 0) {
+    if (a11 * a22 != 0) {
       if (b1 == b2) {
         // lines are identical any result for x is valid, but
         // usin zero just in case...
-        x.x1 = x.x2 = 0; return true;
-      } else return false;
+        x.x1 = x.x2 = 0;
+        return true;
+      } else
+        return false;
     }
     // a11 or a22 == 0 (0,x,x,x), (x,x,x,0)
     // a12 or a21 == 0 (x,0,x,x), (x,x,0,x)
     // (0,0,x,x), (0,x,0,x)
     // (x,0,x,0), (x,x,0,0)
     if (a11 == 0 && a12 == 0) {
-      if (b1 != 0) return false;
+      if (b1 != 0)
+        return false;
       return solve_lineq(a21, a22, x, b2);
     }
     if (a21 == 0 && a22 == 0) {
-      if (b2 != 0) return false;
+      if (b2 != 0)
+        return false;
       return solve_lineq(a11, a12, x, b1);
     }
     if (a11 == 0 && a21 == 0) {
@@ -240,13 +257,13 @@ bool solve_Ax_b(float a11, float a12, float a21, float a22, Sol& x, float b1, fl
     }
     if (a12 == 0 && a22 == 0) {
       x.x2 = 0;
-      return linear_dependency(a12, a22,  x.x1, b1, b2);
+      return linear_dependency(a12, a22, x.x1, b1, b2);
     }
 
     return false;
   }
 
-  x.x1  = (b1 * a22 - a12 * b2) / det;
+  x.x1 = (b1 * a22 - a12 * b2) / det;
   x.x2 = (b2 * a11 - a21 * b1) / det;
 
   return true;
@@ -262,23 +279,22 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shado
   if (d.x * gx <= 0)
     return false;
 
-
   // --------------------------------------------------------------------------
   // Old way to compute the gap, consider the ball as a point light source
-  //float tan_alpha = Robot::radius() / std::sqrt(k);
-  //float tan_theta = d[1] / std::fabs(d[0]);
-  //float tan_1 = (tan_theta + tan_alpha) / (1 - tan_theta * tan_alpha);
-  //float tan_2 = (tan_theta - tan_alpha) / (1 + tan_theta * tan_alpha);
+  // float tan_alpha = Robot::radius() / std::sqrt(k);
+  // float tan_theta = d[1] / std::fabs(d[0]);
+  // float tan_1 = (tan_theta + tan_alpha) / (1 - tan_theta * tan_alpha);
+  // float tan_2 = (tan_theta - tan_alpha) / (1 + tan_theta * tan_alpha);
   float y_shadow_1; // = tan_1 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
   float y_shadow_2; // = tan_2 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
   // New
   // n: vector normal to the line that join
   //    ball and the robot
-  // n = [ 0 1 ] 
+  // n = [ 0 1 ]
   //     [-1 0 ].(b.pos() - r.pos())/|| b.pos() - r.pos() ||
-  Vector n = { rpos.y - pos.y, pos.x - rpos.x };
+  Vector n = {rpos.y - pos.y, pos.x - rpos.x};
   // normalization, to use radius later
-  n = n * (1.0 / norm(d)) ;
+  n = n * (1.0 / norm(d));
 
   // nu -- upper line that toches the imaginary radius
   //       of the ball and the radius of the robot
@@ -288,9 +304,9 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shado
   //       of the ball and the radius of the robot
   //       nd = Rd - Bd = -radius_robot * n + robot.pos() -
   //                     (-radius_body  * n + ball.pos())
-  auto rd = n * -ROBOT_RADIUS       + rpos;
-  auto ru = n *  ROBOT_RADIUS       + rpos;
-  auto bu = n *  KICK_POS_VARIATION + pos;
+  auto rd = n * -ROBOT_RADIUS + rpos;
+  auto ru = n * ROBOT_RADIUS + rpos;
+  auto bu = n * KICK_POS_VARIATION + pos;
   auto bd = n * -KICK_POS_VARIATION + pos;
   auto nu = ru - bu;
   auto nd = rd - bd;
@@ -309,18 +325,20 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shado
     // intersection lies between goal and robot
     // so there is no shadow
     if (aux.x1 > 0) {
-      if (gx < 0 && p.x > gx) return false;
-      if (gx > 0 && p.x < gx) return false;
+      if (gx < 0 && p.x > gx)
+        return false;
+      if (gx > 0 && p.x < gx)
+        return false;
     }
   }
 
   // if there is no interseption is parallel to this line.
   // [ gx   ]
   // [ yu/d ] = ku/d'. nu/d + ru/d
-  //  
+  //
   //     [ nu/d_x   0 ] [ ku/d'] = [ gx - ru/d_x ]
   // --> [ nu/d_y  -1 ] [ yu/d ] = [    - ru/d_y ]
-  if (solve_Ax_b(nu.x, 0, nu.y, -1, aux, gx - ru.x, - ru.y)) {
+  if (solve_Ax_b(nu.x, 0, nu.y, -1, aux, gx - ru.x, -ru.y)) {
     // system has solution: aux --> ku', yu
     y_shadow_1 = aux.x2;
   } else {
@@ -330,7 +348,7 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shado
       y_shadow_1 = -std::numeric_limits<float>::infinity();
   }
 
-  if (solve_Ax_b(nd.x, 0, nd.y, -1, aux, gx - rd.x, - rd.y)) {
+  if (solve_Ax_b(nd.x, 0, nd.y, -1, aux, gx - rd.x, -rd.y)) {
     // system has solution: aux --> kd', yd
     y_shadow_2 = aux.x2;
   } else {
@@ -341,7 +359,7 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shado
   }
 
   // Old way code
-  //if ((ball.pos()[0] - robot.pos()[0] + Robot::radius()) *
+  // if ((ball.pos()[0] - robot.pos()[0] + Robot::radius()) *
   //        (ball.pos()[0] - robot.pos()[0] - Robot::radius()) <
   //    0) {
   //  if (ball.pos()[1] > robot.pos()[1])
@@ -497,44 +515,31 @@ float gap_value(const State state, Player player, Vector pos) {
 
 float evaluate_with_decision(Player player, const State &state, const struct Decision &decision,
                              const struct DecisionTable &table) {
-#if 0
-  Player enemy = player == MAX ? MIN : MAX;
-  auto enemy_goal = goalPos(enemy);
-#endif
-
+  Player enemy = ENEMY_FOR(player);
   float value = 0.0;
 
-#if 0
-
-  // check who has the ball
-  bool has_ball;
-  {
-    auto _with_ball = getRobotWithBall();
-    auto robot_with_ball = _with_ball.first;
-    auto player_with_ball = _with_ball.second;
-    has_ball = player_with_ball == player;
-  }
+  // check wheter we have the ball
+  bool has_ball = PLAYER_OF(robot_with_ball(state)) == player;
 
   // bonus for having the ball
   if (has_ball)
-    value += WEIGHT_ATTACK * gap_value(getBall(), enemy);
+    value += WEIGHT_ATTACK * gap_value(state, enemy, state.ball);
   // or penalty for not having it
   else
-    value -= WEIGHT_BLOCK_ATTACKER * gap_value(getBall(), player);
+    value -= WEIGHT_BLOCK_ATTACKER * gap_value(state, player, state.ball);
 
   // bonus for seeing enemy goal
-  for (auto &robot : getTeam(player).getRobots()) {
-    value += WEIGHT_SEE_ENEMY_GOAL * gap_value(robot, enemy);
+  FOR_TEAM_ROBOT(i, player) {
+    value += WEIGHT_SEE_ENEMY_GOAL * gap_value(state, enemy, state.robots[i]);
 
     // penalty for being too close to enemy goal
-    if (robot.getDist(enemy_goal) < DIST_GOAL_TO_PENAL) {
+    if (dist(state.robots[i], GOAL_POS(enemy)) < DIST_GOAL_TO_PENAL) {
       value -= DIST_GOAL_PENAL;
     }
   }
-#endif
 
   // penalty for exposing own goal
-  FOR_TEAM_ROBOT(i, ENEMY_FOR(player)) { value -= WEIGHT_BLOCK_GOAL * gap_value(state, player, state.robots[i]); }
+  FOR_TEAM_ROBOT(i, enemy) { value -= WEIGHT_BLOCK_GOAL * gap_value(state, player, state.robots[i]); }
 
 #if 0
   // bonus for having more robots able to receive a pass
@@ -604,5 +609,25 @@ void update_from_proto(State &state, roboime::Update &ptb_update, IdTable &table
     table.id[r] = robot.i();
     state.robots[r] = {robot.x(), robot.y()};
     state.robots_v[r] = {robot.vx(), robot.vy()};
+  }
+}
+
+void discover_possible_receivers(const State state, const DecisionTable &table, Player player,
+                                 TeamArray<bool> &result) {
+  int rwb = robot_with_ball(state);
+
+  if (PLAYER_OF(rwb) != player)
+    return;
+
+  result[rwb] = false;
+  FOR_TEAM_ROBOT_IN(i, player, result) {
+    // XXX: not using virtual step, is that a problem?
+    // TODO: think of edge cases, make this more realistic
+
+    Vector move_pos = table.move[i].move_pos;
+    int vrobot = vrobot_with_vball(state, i, move_pos, state.ball, unit(state.ball - move_pos) * ROBOT_KICK_SPEED);
+
+    if (vrobot == i)
+      result[i] = true;
   }
 }

@@ -16,6 +16,8 @@
 #include "decision.h"
 #include "action.h"
 #include "segment.h"
+#include "array.h"
+#include "app.h"
 
 constexpr int NSIDES = 64;
 
@@ -152,8 +154,14 @@ void draw_state(const State &state) {
   glPopMatrix();
 #endif
 
-  int wb = robot_with_ball(state);
-  draw_robot(state.robots[wb], PINK, 2 * BALL_RADIUS);
+  int rwb = robot_with_ball(state);
+  draw_robot(state.robots[rwb], PINK, 2 * BALL_RADIUS);
+
+  TeamArray<bool> receivers = {};
+  FOR_TEAM_ROBOT(i, PLAYER_OF(rwb)) receivers[i] = true;
+  discover_possible_receivers(state, *app_decision_table, PLAYER_OF(rwb), receivers);
+  FOR_TEAM_ROBOT_IN(i, PLAYER_OF(rwb), receivers) { draw_robot(state.robots[i], PINK2, 2 * BALL_RADIUS); }
+
   FOR_EVERY_ROBOT(i) { draw_robot(state.robots[i], PLAYER_OF(i) == MAX ? BLUE : YELLOW); }
 
   draw_ball(state.ball);

@@ -12,6 +12,9 @@ struct State {
   GameArray<Vector> robots, robots_v;
 };
 
+struct Decision;
+struct DecisionTable;
+
 State uniform_rand_state();
 
 bool can_kick_directly(const State state, Player player);
@@ -27,8 +30,9 @@ float time_to_pos(Vector robot_p, Vector robot_v, Vector pos, Vector pos_v);
 void discover_gaps_from_pos(const State state, Vector pos, Player player, Segment *gaps, int *gaps_count,
                             int ignore_robot = -1);
 
-float evaluate_with_decision(Player player, const State &state, const struct Decision &decision,
-                             const struct DecisionTable &table);
+float evaluate_with_decision(Player player, const State &state, const Decision &decision, const DecisionTable &table);
+
+void discover_possible_receivers(const State state, const DecisionTable &table, Player player, TeamArray<bool> &result);
 
 namespace roboime {
 class Update;
