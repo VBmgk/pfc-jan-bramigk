@@ -22,10 +22,10 @@ ValuedDecision decide(Optimization &opt, State state, Player player) {
       decision = from_decision_table(opt.table);
       // on some cases try to move everyone at once, this may lead to better results
     } else if (100.0 * i / RAMIFICATION_NUMBER < FULL_CHANGE_PERCENTAGE) {
-      decision = gen_decision(kick, state, player, &opt.table);
+      decision = gen_decision(kick, state, player, opt.table);
       // on everything else roun-robin between trying to move each robot
     } else {
-      decision = gen_decision(kick, state, player, &opt.table, opt.robot_to_move);
+      decision = gen_decision(kick, state, player, opt.table, opt.robot_to_move);
     }
 
     State next_state = state;

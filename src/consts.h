@@ -13,7 +13,7 @@ constexpr float DEFENSE_RADIUS = 1.000;
 constexpr float ROBOT_RADIUS = 0.180 / 2;
 constexpr float BALL_RADIUS = 0.043 / 2;
 constexpr float ROBOT_MAX_SPEED = 3.0;
-constexpr float ROBOT_KICK_SPEED = 7.0;
+constexpr float ROBOT_KICK_SPEED = 6.0;
 
 constexpr const char *PROGRAM_NAME = "AI for RoboIME"; // TODO: better name maybe?
 constexpr int GUI_DEFAULT_WIDTH = 944;

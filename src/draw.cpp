@@ -21,6 +21,14 @@
 
 constexpr int NSIDES = 64;
 
+bool DRAW_DECISON = true;
+bool DRAW_GAP = true;
+bool DRAW_TIME_TO_BALL = true;
+bool DRAW_POSSIBLE_RECEIVERS = true;
+bool DRAW_BALL_OWNER = true;
+
+void draw_options_window(void) {}
+
 void screen_zoom(int width, int height, float zoom) {
   float ratio = width / (float)height;
   glViewport(0, 0, width, height);
@@ -157,8 +165,7 @@ void draw_state(const State &state) {
   int rwb = robot_with_ball(state);
   draw_robot(state.robots[rwb], PINK, 2 * BALL_RADIUS);
 
-  TeamArray<bool> receivers = {};
-  FOR_TEAM_ROBOT(i, PLAYER_OF(rwb)) receivers[i] = true;
+  TeamFilter receivers;
   discover_possible_receivers(state, *app_decision_table, PLAYER_OF(rwb), receivers);
   FOR_TEAM_ROBOT_IN(i, PLAYER_OF(rwb), receivers) { draw_robot(state.robots[i], PINK2, 2 * BALL_RADIUS); }
 

@@ -10,8 +10,8 @@
 #define FOR_N(I, N) for (int I = 0; I < (N); I++)
 #define FOR_EVERY_ROBOT(I) for (int I = 0; I < 2 * N_ROBOTS; I++)
 #define FOR_TEAM_ROBOT(I, T) for (int I = T * N_ROBOTS; I < (1 + T) * N_ROBOTS; I++)
-#define FOR_EVERY_ROBOT_IN(I, F) FOR_EVERY_ROBOT(I) if (F[I])
-#define FOR_TEAM_ROBOT_IN(I, T, F) FOR_TEAM_ROBOT(I, T) if (F[I])
+#define FOR_EVERY_ROBOT_IN(I, F) FOR_EVERY_ROBOT(I) if (!F[I])
+#define FOR_TEAM_ROBOT_IN(I, T, F) FOR_TEAM_ROBOT(I, T) if (!F[I])
 
 constexpr int ROBOT_WITH_PLAYER(int R, Player P) { return P * N_ROBOTS + R % N_ROBOTS; }
 

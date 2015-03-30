@@ -612,14 +612,13 @@ void update_from_proto(State &state, roboime::Update &ptb_update, IdTable &table
   }
 }
 
-void discover_possible_receivers(const State state, const DecisionTable &table, Player player,
-                                 TeamArray<bool> &result) {
+void discover_possible_receivers(const State state, const DecisionTable &table, Player player, TeamFilter &result) {
   int rwb = robot_with_ball(state);
 
   if (PLAYER_OF(rwb) != player)
     return;
 
-  result[rwb] = false;
+  filter_out(result, rwb);
   FOR_TEAM_ROBOT_IN(i, player, result) {
     // XXX: not using virtual step, is that a problem?
     // TODO: think of edge cases, make this more realistic
@@ -627,7 +626,7 @@ void discover_possible_receivers(const State state, const DecisionTable &table, 
     Vector move_pos = table.move[i].move_pos;
     int vrobot = vrobot_with_vball(state, i, move_pos, state.ball, unit(state.ball - move_pos) * ROBOT_KICK_SPEED);
 
-    if (vrobot == i)
-      result[i] = true;
+    //if (vrobot != i)
+    //  filter_out(result, i);
   }
 }

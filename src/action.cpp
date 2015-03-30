@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <random>
 
 #include "action.h"
 #include "state.h"
@@ -6,6 +7,7 @@
 #include "player.h"
 #include "utils.h"
 #include "vector.h"
+#include "decision_table.h"
 
 static void update(Action *a, const Action *b) {
   switch (b->type) {
@@ -107,7 +109,35 @@ Action gen_kick_action(int robot, const State &state) {
   return make_kick_action({kx, ky});
 }
 
-Action gen_pass_action(int robot, const State &state); // TODO
+Action gen_pass_action(int robot, const State &state, DecisionTable &table) {
+  TeamFilter receivers;
+  Player player = PLAYER_OF(robot);
+  discover_possible_receivers(state, table, player, receivers);
+  if (receivers.count > 0) {
+
+    // select a random receiver
+    static std::random_device rd;
+    static std::mt19937_64 gen(rd());
+    std::uniform_int_distribution<> dis(0, receivers.count - 1);
+    int sel = dis(gen);
+    int rcv;
+    FOR_TEAM_ROBOT(i, player) {
+      if (sel-- == 0) {
+        rcv = i;
+        break;
+      }
+    }
+    return make_pass_action(rcv);
+
+  } else {
+    // in case there isn't any possible pass
+    // for the robot with ball, we'll make it move or kick
+    if (KICK_IF_NO_PASS)
+      return gen_kick_action(robot, state);
+    else
+      return gen_move_action(robot, state);
+  }
+}
 
 void apply_to_state(Action action, int robot, State *state) {
   switch (action.type) {

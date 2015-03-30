@@ -22,6 +22,7 @@ set(SRC
   src/vector.cpp
   src/consts.cpp
   src/state.cpp
+  src/filter.cpp
   vendor/imgui/imgui.cpp
 )
 

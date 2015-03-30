@@ -6,6 +6,7 @@
 #include "array.h"
 #include "player.h"
 #include "segment.h"
+#include "filter.h"
 
 struct State {
   Vector ball, ball_v;
@@ -32,7 +33,7 @@ void discover_gaps_from_pos(const State state, Vector pos, Player player, Segmen
 
 float evaluate_with_decision(Player player, const State &state, const Decision &decision, const DecisionTable &table);
 
-void discover_possible_receivers(const State state, const DecisionTable &table, Player player, TeamArray<bool> &result);
+void discover_possible_receivers(const State state, const DecisionTable &table, Player player, TeamFilter &result);
 
 namespace roboime {
 class Update;
