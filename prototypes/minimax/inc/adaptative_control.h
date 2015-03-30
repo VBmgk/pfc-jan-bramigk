@@ -20,13 +20,6 @@ float f_gap (float);
  * add_eval:  Function to insert and move
  *            curr variable properly
  */
-//struct VARS {
-//  float PREV_VALS[VAR_NUM] = {};
-//  void load(float *);
-//  void load(float *, int index);
-//  void save(float *);
-//  void save(float *, int index);
-//};
 
 struct AdaptativeControlEval {
   // TODO: add time
@@ -48,6 +41,8 @@ struct AdaptativeControlEval {
   void save_addrs(void);
   void add_eval(float); 
   void add_eval_n(float); 
+  void load(void);
+  void save(void);
 };
 }
 #endif

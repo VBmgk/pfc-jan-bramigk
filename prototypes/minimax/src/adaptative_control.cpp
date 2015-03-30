@@ -106,3 +106,15 @@ void AdaptativeControl::AdaptativeControlEval::
   CONST_ADDRS[11] = &Board::DIST_GOAL_PENAL;
   CONST_ADDRS[12] = &Board::DIST_GOAL_TO_PENAL;
 }
+
+void load(void) {
+  for(int i = 0; i<VAR_NUM ; i++) {
+    *CONST_ADDRS[i] = PREV_VALS[i];
+  }
+}
+
+void save(void) {
+  for(int i = 0; i<VAR_NUM ; i++) {
+    PREV_VALS[i] = *CONST_ADDRS[i];
+  }
+}
