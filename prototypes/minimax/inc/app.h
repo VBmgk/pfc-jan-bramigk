@@ -98,8 +98,8 @@ struct App {
   float adpt_eval_n_brd(void) { return adptv_cntrl_eval->get_eval_n(); }
   int adpt_num(void) { return adptv_cntrl_eval->curr_n; }
   float * get_eval_n(void) { return adptv_cntrl_eval->evals_n; }
-  void selec_table(void) {
-    bool attack, ball_on_enemy_field;
+  void select_table(void) {
+    bool attack = false, ball_on_enemy_field = false;
     std::pair<const Robot *, Player>
       robot_with_ball = board.getRobotWithBall();
 
