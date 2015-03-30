@@ -8,6 +8,7 @@
 #include "app.h"
 #include "draw.h"
 #include "minimax.h"
+#include "adaptative_control.h"
 
 //
 // STATIC DATA
@@ -202,10 +203,25 @@ void render(GLFWwindow *window, int width, int height, bool text) {
       ImGui::Text("minimax: #%i", app->display.minimax_count);
       ImGui::Text("%i packets/s", app->display.pps);
       ImGui::Text("%i minimax/s", app->display.mps);
-      ImGui::Text("minimax: %f", app->display.minimax_val);
+      ImGui::Text("%i ramifications/s", Minimax::RAMIFICATION_NUMBER * app->display.mps);
+      ImGui::Text("minimax: %f",           app->display.minimax_val);
+      ImGui::Text("adaptative eval: %lf, eval_n: %lf, curr_n: %i",
+        app->adpt_eval_brd(), app->adpt_eval_n_brd(), app->adpt_num());
       if (app->display.has_val)
         ImGui::Text("value: %f", app->display.val);
     }
+    // TODO: do it on a better place
+    app->change_vars();
+
+    ImGui::PlotLines(
+         /* outside lable   */"",
+         /* values to print */app->get_eval_n(), 
+         /* count           */ 1000,
+         /* offset          */ 1,  
+         /* inside label    */ "Adaptatiove Control Evaluation", 
+         /* scale min, max  */ -.1, .1,
+         /* graph size      */ ImVec2(500, 300)
+                    );
 
     ImGui::Checkbox("KICK_IF_NO_PASS", &Board::KICK_IF_NO_PASS);
     ImGui::SliderInt("RAMIFICATION_NUMBER", &Minimax::RAMIFICATION_NUMBER, 1,
@@ -215,7 +231,7 @@ void render(GLFWwindow *window, int width, int height, bool text) {
 #define SLIDER(V, A, B) ImGui::SliderFloat(#V, &Board::V, A, B);
     SLIDER(KICK_POS_VARIATION, 0, 1);
     SLIDER(MIN_GAP_TO_KICK, 0, 180)
-    SLIDER(WEIGHT_MOVE_DIST_TOTAL, 0, 5000);
+    SLIDER(WEIGHT_MOVE_DIST_TOTAL, 0, 50);
     SLIDER(WEIGHT_MOVE_DIST_MAX, 0, 5000);
     SLIDER(WEIGHT_MOVE_CHANGE, 0, 5000);
     SLIDER(TOTAL_MAX_GAP_RATIO, 0, 1)

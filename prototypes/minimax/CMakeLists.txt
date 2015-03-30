@@ -18,6 +18,7 @@ set(SRC
   src/app.cpp
   src/draw.cpp
   src/consts.cpp
+  src/adaptative_control.cpp
   imgui/imgui.cpp
 )
 

@@ -8,6 +8,7 @@
 #endif
 
 #include <cmath>
+#include <algorithm>
 #include <imgui.h>
 
 #include "app.h"
