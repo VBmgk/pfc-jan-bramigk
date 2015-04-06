@@ -25,7 +25,7 @@ constexpr int PLAYER_SIGN(Player P) { return P == MAX ? 1 : -1; }
 // XXX: MAX to the left, not taking into account that it may be otherwise
 constexpr float GOAL_Y(Player P) { return 0; }
 constexpr float GOAL_X(Player P) { return -PLAYER_SIGN(P) * FIELD_WIDTH / 2; }
-constexpr Vector GOAL_POS(Player P) { return Vector(GOAL_X(P), GOAL_Y(P)); }
+constexpr Vector GOAL_POS(Player P) { return {GOAL_X(P), GOAL_Y(P)}; }
 
 // angle mesures conversions radians <-> degrees
 template <typename T> constexpr T RADIANS(T DEGREES) { return M_PI * DEGREES / 180.; }

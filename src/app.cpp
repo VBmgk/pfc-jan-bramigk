@@ -43,8 +43,8 @@ static struct {
 static bool play_minimax = false, play_decision_once = false, eval_state = false, eval_state_once = false,
             use_experimental = false;
 
-static Player selected_player = MIN;
-static int selected_robot = -1;
+static int selected_robot = 0;
+const int *app_selected_robot = &selected_robot;
 
 // TODO: maybe persist these
 static constexpr int save_slots = 10;
@@ -265,22 +265,17 @@ void app_load_state() {
 void app_save_state() { save_states[save_slot] = state; }
 
 void app_toggle_selected_player() {
-  if (selected_player == MIN)
-    selected_player = MAX;
-  else
-    selected_player = MIN;
-  app_select_next_robot();
+  selected_robot = (selected_robot / N_ROBOTS + 1) % 2 * N_ROBOTS + (selected_robot + 1) % N_ROBOTS;
 }
 
 void app_select_next_robot() {
-  selected_robot++;
-  selected_robot %= N_ROBOTS;
+  selected_robot = (selected_robot / N_ROBOTS) * N_ROBOTS + (selected_robot + 1) % N_ROBOTS;
 }
 
 #define MOVE(D, V)                                                                                                     \
   void app_move_##D() {                                                                                                \
     if (selected_robot >= 0)                                                                                           \
-      state.robots[selected_robot + selected_player * N_ROBOTS] += V;                                                  \
+      state.robots[selected_robot] += V;                                                                               \
   }
 MOVE(up, Vector(0, move_step))
 MOVE(down, Vector(0, -move_step))

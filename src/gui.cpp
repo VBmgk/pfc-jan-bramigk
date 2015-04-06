@@ -389,21 +389,30 @@ void gui_init(void) {
   gui_init_imgui();
 }
 
+extern bool DRAW_DECISON;
+
 void gui_render(void) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
   screen_zoom(width, height, zoom);
 
   draw_state(*app_state);
-  draw_decision(*app_decision_max, *app_state, MAX);
-  draw_decision(*app_decision_min, *app_state, MIN);
-  draw_app_status();
+  if (DRAW_DECISON) {
+    draw_decision(*app_decision_max, *app_state, MAX);
+    draw_decision(*app_decision_min, *app_state, MIN);
+  }
 
-  // ImGui::ShowTestWindow();
+  draw_options_window();
+
+  ImGui::Begin("App status");
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
               ImGui::GetIO().Framerate);
+  draw_app_status();
+  ImGui::End();
+
+  ImGui::Begin("Calibration");
   ImGui::Checkbox("KICK_IF_NO_PASS", &KICK_IF_NO_PASS);
-  ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER, 10, 20000);
+  ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER, 10, 5000);
   ImGui::SliderInt("FULL_CHANGE_PERCENTAGE", &FULL_CHANGE_PERCENTAGE, 0, 100);
   ImGui::SliderInt("MAX_DEPTH", &MAX_DEPTH, 0, 3);
 
@@ -427,7 +436,7 @@ void gui_render(void) {
   SLIDER(MOVE_RADIUS_1, 0, 10)
   SLIDER(MOVE_RADIUS_2, 0, 10)
 #undef SLIDER
-  //}
+  ImGui::End();
 
   ImGui::Render();
   glfwSwapBuffers(window);

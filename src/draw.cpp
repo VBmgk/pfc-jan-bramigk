@@ -14,6 +14,7 @@
 #include "state.h"
 #include "utils.h"
 #include "decision.h"
+#include "decision_table.h"
 #include "action.h"
 #include "segment.h"
 #include "array.h"
@@ -23,11 +24,28 @@ constexpr int NSIDES = 64;
 
 bool DRAW_DECISON = true;
 bool DRAW_GAP = true;
-bool DRAW_TIME_TO_BALL = true;
 bool DRAW_POSSIBLE_RECEIVERS = true;
 bool DRAW_BALL_OWNER = true;
+int DRAW_BALL_SHADOW = 2; // 0: none, 1: time to ball, 2: time when kick to selected robot
+bool DRAW_SELECTED_ROBOT = true;
 
-void draw_options_window(void) {}
+void draw_options_window(void) {
+  if (!ImGui::Begin("Draw options")) {
+    ImGui::End();
+    return;
+  }
+
+  ImGui::Checkbox("draw decisions", &DRAW_DECISON);
+  ImGui::Checkbox("draw gap", &DRAW_GAP);
+  ImGui::RadioButton("no time to ball", &DRAW_BALL_SHADOW, 0);
+  ImGui::RadioButton("draw time to ball", &DRAW_BALL_SHADOW, 1);
+  ImGui::RadioButton("draw time to ball after pass", &DRAW_BALL_SHADOW, 2);
+  ImGui::Checkbox("draw possible receivers", &DRAW_POSSIBLE_RECEIVERS);
+  ImGui::Checkbox("draw ball owner", &DRAW_BALL_OWNER);
+  ImGui::Checkbox("draw selected robot", &DRAW_SELECTED_ROBOT);
+
+  ImGui::End();
+}
 
 void screen_zoom(int width, int height, float zoom) {
   float ratio = width / (float)height;
@@ -136,41 +154,83 @@ void draw_state(const State &state) {
   glRectf(-FIELD_WIDTH / 2, FIELD_HEIGHT / 2, FIELD_WIDTH / 2, -FIELD_HEIGHT / 2);
 
   draw_goals();
-  draw_shadow(state);
+  if (DRAW_GAP) {
+    draw_shadow(state);
+  }
 
-#define DEBUG_DRAW_TIME_TO_BALL
-#ifdef DEBUG_DRAW_TIME_TO_BALL
-  constexpr float I = 0.10;
-  constexpr float S = I / 2;
-  glPushMatrix();
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  for (float x = -FIELD_WIDTH / 2 + std::fmod(FIELD_WIDTH, I) / 2; x < S + FIELD_WIDTH / 2; x += I) {
-    for (float y = -FIELD_HEIGHT / 2 + std::fmod(FIELD_HEIGHT, I) / 2; y < S + FIELD_HEIGHT / 2; y += I) {
-      float t = time_to_pos(Vector(x, y), Vector(), state.ball, state.ball_v);
-      float c = (1 - std::sqrt(t)) / 2 - 0.1;
-      glColor4f(1, 0, 1, c); // this works ok because t=1 means 1 second, which is ok
-      // glRectf(x, y, x + S, y + S);
-      glPushMatrix();
-      glTranslatef(x, y, 0.0);
-      glBegin(GL_TRIANGLE_FAN);
-      raw_circle(S / 2, 8);
-      glEnd();
-      glPopMatrix();
+  if (DRAW_BALL_SHADOW == 1) {
+    constexpr float I = 0.10;
+    constexpr float S = I / 2;
+    glPushMatrix();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    for (float x = -FIELD_WIDTH / 2 + std::fmod(FIELD_WIDTH, I) / 2; x < S + FIELD_WIDTH / 2; x += I) {
+      for (float y = -FIELD_HEIGHT / 2 + std::fmod(FIELD_HEIGHT, I) / 2; y < S + FIELD_HEIGHT / 2; y += I) {
+        float t = time_to_pos({x, y}, {}, state.ball, state.ball_v);
+        float c = (1 - std::sqrt(t)) / 2 - 0.1;
+        glColor4f(1, 0, 1, c); // this works ok because t=1 means 1 second, which is ok
+        // glRectf(x, y, x + S, y + S);
+        glPushMatrix();
+        glTranslatef(x, y, 0.0);
+        glBegin(GL_TRIANGLE_FAN);
+        raw_circle(S / 2, 8);
+        glEnd();
+        glPopMatrix();
+      }
+    }
+    glPopMatrix();
+  }
+
+  if (DRAW_BALL_SHADOW == 2 && *app_selected_robot != -1) {
+    constexpr float I = 0.10;
+    constexpr float S = I / 2;
+    auto target = app_decision_table->move[*app_selected_robot].move_pos;
+    auto kick_v = unit(target - state.ball) * ROBOT_KICK_SPEED;
+    glPushMatrix();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    for (float x = -FIELD_WIDTH / 2 + std::fmod(FIELD_WIDTH, I) / 2; x < S + FIELD_WIDTH / 2; x += I) {
+      for (float y = -FIELD_HEIGHT / 2 + std::fmod(FIELD_HEIGHT, I) / 2; y < S + FIELD_HEIGHT / 2; y += I) {
+        float t = time_to_pos({x, y}, {}, state.ball, kick_v, ROBOT_MAX_SPEED);
+        float c = (1 - std::sqrt(t)) / 2 - 0.1;
+        glColor4f(1, 0, 1, c); // this works ok because t=1 means 1 second, which is ok
+        // glRectf(x, y, x + S, y + S);
+        glPushMatrix();
+        glTranslatef(x, y, 0.0);
+        glBegin(GL_TRIANGLE_FAN);
+        raw_circle(S / 2, 8);
+        glEnd();
+        glPopMatrix();
+      }
+    }
+    glPopMatrix();
+  }
+
+  if (DRAW_BALL_OWNER || DRAW_POSSIBLE_RECEIVERS) {
+    int rwb = robot_with_ball(state);
+
+    if (DRAW_BALL_OWNER) {
+      // shadow for ball owner
+      draw_robot(state.robots[rwb], PINK, 2 * BALL_RADIUS);
+    }
+
+    TeamFilter receivers;
+    if (DRAW_POSSIBLE_RECEIVERS) {
+      // shadow for possible receivers (from owner)
+      discover_possible_receivers(state, *app_decision_table, PLAYER_OF(rwb), receivers);
+      FOR_TEAM_ROBOT_IN(i, PLAYER_OF(rwb), receivers) { draw_robot(state.robots[i], PINK2, 2 * BALL_RADIUS); }
     }
   }
-  glPopMatrix();
-#endif
 
-  int rwb = robot_with_ball(state);
-  draw_robot(state.robots[rwb], PINK, 2 * BALL_RADIUS);
+  if (DRAW_SELECTED_ROBOT) {
+    // shadow for selected robot
+    draw_robot(state.robots[*app_selected_robot], RED2, BALL_RADIUS);
+  }
 
-  TeamFilter receivers;
-  discover_possible_receivers(state, *app_decision_table, PLAYER_OF(rwb), receivers);
-  FOR_TEAM_ROBOT_IN(i, PLAYER_OF(rwb), receivers) { draw_robot(state.robots[i], PINK2, 2 * BALL_RADIUS); }
-
+  // DRAW ALL THE ROBOTS!!!!
   FOR_EVERY_ROBOT(i) { draw_robot(state.robots[i], PLAYER_OF(i) == MAX ? BLUE : YELLOW); }
 
+  // and the ball
   draw_ball(state.ball);
 }
 
