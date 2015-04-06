@@ -26,7 +26,7 @@ float total_gap_len_from_pos(const State state, Vector pos, Player player, int i
 
 float max_gap_len_from_pos(const State state, Vector pos, Player player, int ignore_robot = -1);
 
-float time_to_pos(Vector robot_p, Vector robot_v, Vector pos, Vector pos_v);
+float time_to_pos(Vector robot_p, Vector robot_v, Vector pos, Vector pos_v, float max_speed = ROBOT_MAX_SPEED);
 
 void discover_gaps_from_pos(const State state, Vector pos, Player player, Segment *gaps, int *gaps_count,
                             int ignore_robot = -1);

@@ -9,6 +9,7 @@
 struct Optimization {
   DecisionTable table;
   int robot_to_move = 0;
+  bool table_initialized = false;
 };
 
 ValuedDecision decide(Optimization &opt, State state, Player player);

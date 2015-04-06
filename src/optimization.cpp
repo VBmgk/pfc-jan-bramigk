@@ -8,6 +8,11 @@
 
 ValuedDecision decide(Optimization &opt, State state, Player player) {
 
+  if (!opt.table_initialized) {
+    opt.table_initialized = true;
+    FOR_EVERY_ROBOT(i) { opt.table.move[i] = make_move_action(state.robots[i]); }
+  }
+
   opt.robot_to_move = ROBOT_WITH_PLAYER((opt.robot_to_move + 1) % N_ROBOTS, player);
   bool kick = can_kick_directly(state, player);
 

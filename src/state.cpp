@@ -45,7 +45,7 @@ Board::getRobotWithVirtualBall(const Ball &virt_ball,
                                std::pair<const Robot *, Player> r_rcv) const;
 #endif
 
-float time_to_pos(Vector rpos, Vector rpos_v, Vector pos, Vector pos_v) {
+float time_to_pos(Vector rpos, Vector rpos_v, Vector pos, Vector pos_v, float max_speed) {
   // TODO: take into account rpos_v
 
   /*
@@ -62,7 +62,7 @@ float time_to_pos(Vector rpos, Vector rpos_v, Vector pos, Vector pos_v) {
    */
 
   // vb.(pb - pr)
-  float a = SQ(ROBOT_MAX_SPEED) - norm2(pos_v);
+  float a = SQ(max_speed) - norm2(pos_v);
   float c = -norm2(rpos - pos);
   float b_div_2 = pos_v * (rpos - pos);
   float delta_div_4 = b_div_2 * b_div_2 - a * c;
@@ -119,12 +119,13 @@ int robot_with_ball(const State state) {
   return robot;
 }
 
-int vrobot_with_vball(const State state, int vrobot, Vector vpos, Vector vball, Vector vball_v) {
-  int robot = 0;
-  float min_time = std::numeric_limits<float>::max();
+int can_receive_pass(const State state, int vrobot, Player player, Vector vpos, Vector vball, Vector vball_v) {
+  int robot = vrobot;
+  // XXX: speed 0 for us maybe?
+  float min_time = time_to_pos(vpos, {}, vball, vball_v, ROBOT_MAX_SPEED);
 
-  FOR_EVERY_ROBOT(i) {
-    float t = time_to_pos(i == vrobot ? vpos : state.robots[i], Vector(), vball, vball_v);
+  FOR_TEAM_ROBOT(i, ENEMY_OF(player)) {
+    float t = time_to_pos(state.robots[i], {}, vball, vball_v, ROBOT_MAX_SPEED);
     if (t < min_time) {
       robot = i;
       min_time = t;
@@ -623,10 +624,11 @@ void discover_possible_receivers(const State state, const DecisionTable &table, 
     // XXX: not using virtual step, is that a problem?
     // TODO: think of edge cases, make this more realistic
 
-    Vector move_pos = table.move[i].move_pos;
-    int vrobot = vrobot_with_vball(state, i, move_pos, state.ball, unit(state.ball - move_pos) * ROBOT_KICK_SPEED);
+    Vector move_pos = player == MAX ? table.move[i].move_pos : state.robots[i];
+    int vrobot =
+        can_receive_pass(state, i, player, move_pos, state.ball, unit(move_pos - state.ball) * ROBOT_KICK_SPEED);
 
-    //if (vrobot != i)
-    //  filter_out(result, i);
+    if (vrobot != i)
+      filter_out(result, i);
   }
 }

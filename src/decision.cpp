@@ -27,15 +27,23 @@ Decision gen_decision(bool kick, const State &state, Player player, DecisionTabl
   Decision decision;
 
   int rwb = robot_with_ball(state);
+  int rcv = -1;
 
   // push an action for the robot with ball, if it's us
   if (player == PLAYER_OF(rwb)) {
-    decision.action[rwb] = kick ? gen_kick_action(rwb, state) : gen_pass_action(rwb, state, table);
+    auto action = decision.action[rwb] = kick ? gen_kick_action(rwb, state) : gen_pass_action(rwb, state, table);
+
+    if (action.type == PASS) {
+      rcv = action.pass_receiver;
+    }
   }
 
   // push a Move action for every other robot
   FOR_TEAM_ROBOT(i, player) if (i != rwb) {
-    decision.action[i] = (robot_to_move == i || robot_to_move == -1) ? gen_move_action(i, state) : table.move[i];
+    if (i == rcv)
+      decision.action[i] = make_move_action(state.robots[i]);
+    else
+      decision.action[i] = (robot_to_move == i || robot_to_move == -1) ? gen_move_action(i, state) : table.move[i];
   }
 
   return decision;
