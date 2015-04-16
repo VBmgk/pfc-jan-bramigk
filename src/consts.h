@@ -5,11 +5,17 @@ constexpr unsigned long N_ROBOTS = 6;
 
 // Units are SI: m, m/s, s, ...
 
+constexpr float LINE_WIDTH = 0.010;
 constexpr float FIELD_WIDTH = 8.090;
 constexpr float FIELD_HEIGHT = 6.050;
 constexpr float GOAL_WIDTH = 1.000;
 constexpr float GOAL_DEPTH = 0.180;
+constexpr float GOAL_WALL_WIDTH = 0.020;
+constexpr float CENTER_CIRCLE_RADIUS = 0.500;
 constexpr float DEFENSE_RADIUS = 1.000;
+constexpr float DEFENSE_STRETCH = 0.500;
+constexpr float BOUNDARY_WIDTH = 0.500;
+constexpr float REFEREE_WIDTH = 0.250;
 constexpr float ROBOT_RADIUS = 0.180 / 2;
 constexpr float BALL_RADIUS = 0.043 / 2;
 constexpr float ROBOT_MAX_SPEED = 3.0;

@@ -133,6 +133,133 @@ void draw_shadow(const State &state) {
 }
 #endif
 
+void draw_field(void) {
+  glColor3ubv(FIELD_GREEN);
+  glRectf(-FIELD_WIDTH / 2 - BOUNDARY_WIDTH - REFEREE_WIDTH,
+          -FIELD_HEIGHT / 2 - BOUNDARY_WIDTH - REFEREE_WIDTH,
+          FIELD_WIDTH / 2 + BOUNDARY_WIDTH + REFEREE_WIDTH,
+          FIELD_HEIGHT / 2 + BOUNDARY_WIDTH + REFEREE_WIDTH);
+
+  glColor3ubv(WHITE);
+
+  // mid line
+  glRectf(-LINE_WIDTH / 2, -FIELD_HEIGHT / 2, LINE_WIDTH / 2,
+          FIELD_HEIGHT / 2);
+
+  // BACK LINES
+  glRectf(-FIELD_WIDTH / 2, -FIELD_HEIGHT / 2,
+          -FIELD_WIDTH / 2 + LINE_WIDTH, FIELD_HEIGHT / 2);
+  glRectf(FIELD_WIDTH / 2, -FIELD_HEIGHT / 2,
+          FIELD_WIDTH / 2 - LINE_WIDTH, FIELD_HEIGHT / 2);
+
+  // SIDE LINES
+  glRectf(-FIELD_WIDTH / 2, -FIELD_HEIGHT / 2, FIELD_WIDTH / 2,
+          -FIELD_HEIGHT / 2 + LINE_WIDTH);
+  glRectf(-FIELD_WIDTH / 2, FIELD_HEIGHT / 2, FIELD_WIDTH / 2,
+          FIELD_HEIGHT / 2 - LINE_WIDTH);
+
+  // center dot
+  constexpr int PSIDES{20};
+  glBegin(GL_TRIANGLE_FAN);
+  for (int i = 0; i < PSIDES; i++) {
+    float a = RADIANS(i * 360.0 / PSIDES);
+    float r = 1.5 * LINE_WIDTH;
+    glVertex2f(r * cos(a), r * sin(a));
+  }
+  glEnd();
+
+  // center circle
+  constexpr int CSIDES{60};
+  glBegin(GL_TRIANGLE_STRIP);
+  for (int i = 0; i <= CSIDES; i++) {
+    float a = RADIANS(i * 360.0 / CSIDES);
+    float r1 = CENTER_CIRCLE_RADIUS - LINE_WIDTH;
+    float r2 = CENTER_CIRCLE_RADIUS;
+    glVertex2f(r1 * cos(a), r1 * sin(a));
+    glVertex2f(r2 * cos(a), r2 * sin(a));
+  }
+  glEnd();
+
+  // defense areas
+  constexpr int DSIDES{15};
+  glBegin(GL_TRIANGLE_STRIP);
+  for (int i = -DSIDES; i <= 0; i++) {
+    float a = RADIANS(i * 90.0 / DSIDES);
+    float r1 = DEFENSE_RADIUS - LINE_WIDTH;
+    float r2 = DEFENSE_RADIUS;
+    float yoff = -DEFENSE_STRETCH / 2;
+    glVertex2f(-FIELD_WIDTH / 2 + r1 * cos(a), yoff + r1 * sin(a));
+    glVertex2f(-FIELD_WIDTH / 2 + r2 * cos(a), yoff + r2 * sin(a));
+  }
+  for (int i = 0; i <= DSIDES; i++) {
+    float a = RADIANS(i * 90.0 / DSIDES);
+    float r1 = DEFENSE_RADIUS - LINE_WIDTH;
+    float r2 = DEFENSE_RADIUS;
+    float yoff = DEFENSE_STRETCH / 2;
+    glVertex2f(-FIELD_WIDTH / 2 + r1 * cos(a), yoff + r1 * sin(a));
+    glVertex2f(-FIELD_WIDTH / 2 + r2 * cos(a), yoff + r2 * sin(a));
+  }
+  glEnd();
+  glBegin(GL_TRIANGLE_STRIP);
+  for (int i = -DSIDES; i <= 0; i++) {
+    float a = RADIANS(i * 90.0 / DSIDES);
+    float r1 = DEFENSE_RADIUS - LINE_WIDTH;
+    float r2 = DEFENSE_RADIUS;
+    float yoff = -DEFENSE_STRETCH / 2;
+    glVertex2f(FIELD_WIDTH / 2 - r1 * cos(a), yoff + r1 * sin(a));
+    glVertex2f(FIELD_WIDTH / 2 - r2 * cos(a), yoff + r2 * sin(a));
+  }
+  for (int i = 0; i <= DSIDES; i++) {
+    float a = RADIANS(i * 90.0 / DSIDES);
+    float r1 = DEFENSE_RADIUS - LINE_WIDTH;
+    float r2 = DEFENSE_RADIUS;
+    float yoff = DEFENSE_STRETCH / 2;
+    glVertex2f(FIELD_WIDTH / 2 - r1 * cos(a), yoff + r1 * sin(a));
+    glVertex2f(FIELD_WIDTH / 2 - r2 * cos(a), yoff + r2 * sin(a));
+  }
+  glEnd();
+
+  // penalty dots
+  glBegin(GL_TRIANGLE_FAN);
+  for (int i = 0; i < PSIDES; i++) {
+    float a = RADIANS(i * 360.0 / PSIDES);
+    float r = 1.5 * LINE_WIDTH;
+    float x = -FIELD_WIDTH / 2 + DEFENSE_RADIUS - LINE_WIDTH / 2;
+    glVertex2f(x + r * cos(a), r * sin(a));
+  }
+  glEnd();
+  glBegin(GL_TRIANGLE_FAN);
+  for (int i = 0; i < PSIDES; i++) {
+    float a = RADIANS(i * 360.0 / PSIDES);
+    float r = 1.5 * LINE_WIDTH;
+    float x = FIELD_WIDTH / 2 - DEFENSE_RADIUS + LINE_WIDTH / 2;
+    glVertex2f(x + r * cos(a), r * sin(a));
+  }
+  glEnd();
+
+  // the goals
+  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH,
+          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, -FIELD_WIDTH / 2,
+          -GOAL_WIDTH / 2);
+  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH,
+          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, -FIELD_WIDTH / 2,
+          GOAL_WIDTH / 2);
+  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH,
+          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH,
+          -FIELD_WIDTH / 2 - GOAL_DEPTH,
+          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH);
+  glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH,
+          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, FIELD_WIDTH / 2,
+          -GOAL_WIDTH / 2);
+  glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH,
+          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, FIELD_WIDTH / 2,
+          GOAL_WIDTH / 2);
+  glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH,
+          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH,
+          FIELD_WIDTH / 2 + GOAL_DEPTH,
+          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH);
+}
+
 void draw_ball(Vector pos) {
   glPushMatrix();
   glTranslatef(pos.x, pos.y, 0.0);
@@ -150,8 +277,9 @@ void draw_goals() {
 }
 
 void draw_state(const State &state) {
-  glColor3ubv(FIELD_GREEN);
-  glRectf(-FIELD_WIDTH / 2, FIELD_HEIGHT / 2, FIELD_WIDTH / 2, -FIELD_HEIGHT / 2);
+  //glColor3ubv(FIELD_GREEN);
+  //glRectf(-FIELD_WIDTH / 2, FIELD_HEIGHT / 2, FIELD_WIDTH / 2, -FIELD_HEIGHT / 2);
+  draw_field();
 
   draw_goals();
   if (DRAW_GAP) {
