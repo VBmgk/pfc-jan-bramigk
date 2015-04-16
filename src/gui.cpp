@@ -2,6 +2,7 @@
 #include <math.h>
 #include <chrono>
 #include <thread>
+#include <cmath>
 #include <imgui.h>
 #include <GLFW/glfw3.h>
 
@@ -111,11 +112,11 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
   static constexpr double zoom_speed = 0.01;
   static constexpr double zoom_min = 0.15;
   static constexpr double zoom_max = 5.50;
-  double offset2 = xoffset * abs(xoffset) + yoffset * abs(yoffset);
+  double offset2 = xoffset * std::abs(xoffset) + yoffset * std::abs(yoffset);
   // nonsqrt'd
   // zoom += offset2 * zoom_speed;
   // sqrt'd
-  zoom += copysign(sqrt(abs(offset2)), offset2) * zoom_speed;
+  zoom += copysign(sqrt(std::abs(offset2)), offset2) * zoom_speed;
   // restrict zoom in [zoom_min, zoom_max] interval
   zoom = (zoom > zoom_max) ? zoom_max : (zoom < zoom_min) ? zoom_min : zoom;
   // std::cout << zoom << std::endl;

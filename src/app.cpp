@@ -67,7 +67,7 @@ struct Timer {
   std::chrono::time_point<std::chrono::system_clock> start, end;
 };
 
-void app_run(std::function<void(void)> loop_func) {
+void app_run(std::function<void(void)> loop_func, bool play_as_max) {
   state = uniform_rand_state();
 
   // Timer tmr;
@@ -105,7 +105,7 @@ void app_run(std::function<void(void)> loop_func) {
     zmq::socket_t socket(context, ZMQ_REP);
 
     // we will listen on any interface at port 5555
-    static const char *addr = "tcp://*:5555";
+    static const char *addr = play_as_max? "tcp://*:5555" : "tcp://*:5556";
     socket.bind(addr);
 
     // this is importante to avoid blocking the whole process
@@ -147,15 +147,16 @@ void app_run(std::function<void(void)> loop_func) {
           // just like above we'll atomically copy the latest decision
           // staright from the app, we don't want it to change while
           // iterating over it
-          Decision local_decision_max;
+          Decision local_decision;
           {
             std::lock_guard<std::mutex> _(decision_mutex);
-            local_decision_max = decision_max;
+            if (play_as_max) local_decision = decision_max;
+            else local_decision = decision_min;
           }
 
           // another important part, we'll assemble the protobuf command packet
           ::roboime::Command command;
-          to_proto_command(local_decision_max, MAX, command, id_table);
+          to_proto_command(local_decision, play_as_max? MAX : MIN, command, id_table);
 
           // now let's serialize and shove it on our message buffer
           command.SerializeToString(&data);
@@ -192,9 +193,15 @@ void app_run(std::function<void(void)> loop_func) {
 
         if (MAX_DEPTH == 0) {
           // optimization decision
-          auto valued_decision = decide(optimization, local_state, MAX);
-          local_decision_max = valued_decision.decision;
-          val = valued_decision.value;
+          if (play_as_max) {
+            auto valued_decision = decide(optimization, local_state, MAX);
+            local_decision_max = valued_decision.decision;
+            val = valued_decision.value;
+          } else {
+            auto valued_decision = decide(optimization, local_state, MIN);
+            local_decision_min = valued_decision.decision;
+            val = valued_decision.value;
+          }
         } else {
           // TODO: minimax decision
         }
@@ -207,7 +214,7 @@ void app_run(std::function<void(void)> loop_func) {
       if (eval_state || eval_state_once) {
         eval_state_once = false;
         if (MAX_DEPTH == 0) {
-          display.val = evaluate_with_decision(MAX, local_state, local_decision_max, optimization.table);
+          display.val = evaluate_with_decision(play_as_max? MAX : MIN, local_state, local_decision_max, optimization.table);
         } else {
           // TODO: use minimax decision table
         }
