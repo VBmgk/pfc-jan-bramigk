@@ -31,7 +31,7 @@ Decision gen_decision(bool kick, const State &state, Player player, DecisionTabl
 
   // push an action for the robot with ball, if it's us
   if (player == PLAYER_OF(rwb)) {
-    auto action = decision.action[rwb] = kick ? gen_kick_action(rwb, state) : gen_pass_action(rwb, state, table);
+    auto action = decision.action[rwb] = kick ? gen_kick_action(rwb, state, table) : gen_pass_action(rwb, state, table);
 
     if (action.type == PASS) {
       rcv = action.pass_receiver;
@@ -43,7 +43,8 @@ Decision gen_decision(bool kick, const State &state, Player player, DecisionTabl
     if (i == rcv)
       decision.action[i] = make_move_action(state.robots[i]);
     else
-      decision.action[i] = (robot_to_move == i || robot_to_move == -1) ? gen_move_action(i, state) : table.move[i];
+      decision.action[i] =
+          (robot_to_move == i || robot_to_move == -1) ? gen_move_action(i, state, table) : table.move[i];
   }
 
   return decision;

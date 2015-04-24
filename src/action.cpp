@@ -50,7 +50,7 @@ Action make_pass_action(int pass_receiver) {
   return a;
 }
 
-Action gen_move_action(int robot, const State &state) {
+Action gen_move_action(int robot, const State &state, struct DecisionTable &table) {
   Vector pos;
   bool ok = true;
   float r_radius;
@@ -76,11 +76,13 @@ again:
     goto again;
 
   // too close to the ball
-  if (norm(state.ball - pos) <= ROBOT_RADIUS + BALL_RADIUS)
+  if (norm2(state.ball - pos) <= SQ(ROBOT_RADIUS + BALL_RADIUS))
     goto again;
 
   FOR_EVERY_ROBOT(i) if (i != robot) {
-    if (norm(state.robots[i] - pos) <= 2 * ROBOT_RADIUS)
+    if (norm2(state.robots[i] - pos) <= SQ(2 * ROBOT_RADIUS))
+      goto again;
+    if (norm2(table.move[i].move_pos - pos) <= SQ(2 * ROBOT_RADIUS))
       goto again;
   }
 
@@ -89,7 +91,8 @@ again:
   return make_move_action(pos);
 }
 
-Action gen_kick_action(int robot, const State &state) {
+Action gen_kick_action(int robot, const State &state, struct DecisionTable &table) {
+  // XXX: can table help in any way? avoid maybe?
 
   float ky, kx = GOAL_X(ENEMY_OF(robot));
 
@@ -110,8 +113,9 @@ Action gen_kick_action(int robot, const State &state) {
 }
 
 Action gen_pass_action(int robot, const State &state, DecisionTable &table) {
-  TeamFilter receivers;
   Player player = PLAYER_OF(robot);
+  TeamFilter receivers;
+  filter_out(receivers, robot);
   discover_possible_receivers(state, table, player, receivers);
   if (receivers.count > 0) {
 
@@ -133,9 +137,9 @@ Action gen_pass_action(int robot, const State &state, DecisionTable &table) {
     // in case there isn't any possible pass
     // for the robot with ball, we'll make it move or kick
     if (KICK_IF_NO_PASS)
-      return gen_kick_action(robot, state);
+      return gen_kick_action(robot, state, table);
     else
-      return gen_move_action(robot, state);
+      return gen_move_action(robot, state, table);
   }
 }
 

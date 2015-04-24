@@ -23,8 +23,8 @@ Action make_kick_action(Vector kick_pos);
 Action make_pass_action(int pass_receiver);
 
 struct State;
-Action gen_move_action(int robot, const State &state);
-Action gen_kick_action(int robot, const State &state);
+Action gen_move_action(int robot, const State &state, struct DecisionTable &table);
+Action gen_kick_action(int robot, const State &state, struct DecisionTable &table);
 Action gen_pass_action(int robot, const State &state, struct DecisionTable &table);
 
 void apply_to_state(Action action, int robot, State *state);
