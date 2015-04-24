@@ -405,10 +405,20 @@ void gui_render(void) {
 
   draw_options_window();
 
-  ImGui::Begin("App status");
+  ImGui::Begin("Main");
   ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
               ImGui::GetIO().Framerate);
   draw_app_status();
+
+  static char filename[256] = "local.cfg";
+  ImGui::InputText("Params file", filename, 256);
+  if (ImGui::Button("Save params")) {
+    app_save_params(filename);
+  }
+  ImGui::SameLine();
+  if (ImGui::Button("Load params")) {
+    app_load_params(filename);
+  }
   ImGui::End();
 
   ImGui::Begin("Calibration");

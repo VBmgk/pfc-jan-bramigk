@@ -318,3 +318,102 @@ void draw_app_status(void) {
   if (display.has_val)
     ImGui::Text("current val: %f", display.val);
 }
+
+#define PARAMS_FILE_HEADER "[AI params version 1]"
+void app_save_params(const char *filename) {
+  auto file = fopen(filename, "w");
+  if (!file) {
+    perror("Could not save params");
+    return;
+  }
+  fprintf(file, PARAMS_FILE_HEADER "\n");
+#define SEP " = "
+#define SAVE_PARAM(MODE, NAME) fprintf(file, #NAME SEP MODE "\n", NAME)
+  SAVE_PARAM("%i", CONSTANT_RATE);
+  SAVE_PARAM("%i", KICK_IF_NO_PASS);
+  if (CONSTANT_RATE)
+    SAVE_PARAM("%i", DECISION_RATE);
+  else
+    SAVE_PARAM("%i", RAMIFICATION_NUMBER);
+  SAVE_PARAM("%i", FULL_CHANGE_PERCENTAGE);
+  SAVE_PARAM("%i", MAX_DEPTH);
+  SAVE_PARAM("%f", KICK_POS_VARIATION);
+  SAVE_PARAM("%f", MIN_GAP_TO_KICK);
+  SAVE_PARAM("%f", WEIGHT_MOVE_DIST_MAX);
+  SAVE_PARAM("%f", WEIGHT_MOVE_DIST_TOTAL);
+  SAVE_PARAM("%f", WEIGHT_MOVE_CHANGE);
+  SAVE_PARAM("%f", WEIGHT_PASS_CHANGE);
+  SAVE_PARAM("%f", WEIGHT_KICK_CHANGE);
+  SAVE_PARAM("%f", TOTAL_MAX_GAP_RATIO);
+  SAVE_PARAM("%f", WEIGHT_ATTACK);
+  SAVE_PARAM("%f", WEIGHT_SEE_ENEMY_GOAL);
+  SAVE_PARAM("%f", WEIGHT_BLOCK_GOAL);
+  SAVE_PARAM("%f", WEIGHT_BLOCK_ATTACKER);
+  SAVE_PARAM("%f", WEIGHT_RECEIVERS_NUM);
+  SAVE_PARAM("%f", WEIGHT_ENEMY_RECEIVERS_NUM);
+  SAVE_PARAM("%f", DIST_GOAL_PENAL);
+  SAVE_PARAM("%f", DIST_GOAL_TO_PENAL);
+  SAVE_PARAM("%f", MOVE_RADIUS_0);
+  SAVE_PARAM("%f", MOVE_RADIUS_1);
+  SAVE_PARAM("%f", MOVE_RADIUS_2);
+#undef SAVE_PARAM
+#undef SEP
+  fclose(file);
+}
+
+void app_load_params(const char *filename) {
+  auto file = fopen(filename, "r");
+  if (!file) {
+    perror("Could not load params");
+    return;
+  }
+  int CONSTANT_RATE;
+  int KICK_IF_NO_PASS;
+
+  char line[256];
+  fgets(line, 256, file);
+  if (strcmp(line, PARAMS_FILE_HEADER "\n")) {
+    fprintf(stderr, "Incompatible header detected, maybe newer or invalid.\n");
+    goto out;
+  }
+
+  // TODO: warn duplicates, warn missing, warn extraneous
+
+  while (!feof(file)) {
+    fgets(line, 256, file);
+#define SEP " = "
+#define LOAD_PARAM(MODE, NAME) strncmp(line, #NAME, strlen(#NAME)) ?: sscanf(line, "%*s" SEP MODE, &NAME)
+    LOAD_PARAM("%i", CONSTANT_RATE);
+    LOAD_PARAM("%i", KICK_IF_NO_PASS);
+    LOAD_PARAM("%i", DECISION_RATE);
+    LOAD_PARAM("%i", RAMIFICATION_NUMBER);
+    LOAD_PARAM("%i", FULL_CHANGE_PERCENTAGE);
+    LOAD_PARAM("%i", MAX_DEPTH);
+    LOAD_PARAM("%f", KICK_POS_VARIATION);
+    LOAD_PARAM("%f", MIN_GAP_TO_KICK);
+    LOAD_PARAM("%f", WEIGHT_MOVE_DIST_MAX);
+    LOAD_PARAM("%f", WEIGHT_MOVE_DIST_TOTAL);
+    LOAD_PARAM("%f", WEIGHT_MOVE_CHANGE);
+    LOAD_PARAM("%f", WEIGHT_PASS_CHANGE);
+    LOAD_PARAM("%f", WEIGHT_KICK_CHANGE);
+    LOAD_PARAM("%f", TOTAL_MAX_GAP_RATIO);
+    LOAD_PARAM("%f", WEIGHT_ATTACK);
+    LOAD_PARAM("%f", WEIGHT_SEE_ENEMY_GOAL);
+    LOAD_PARAM("%f", WEIGHT_BLOCK_GOAL);
+    LOAD_PARAM("%f", WEIGHT_BLOCK_ATTACKER);
+    LOAD_PARAM("%f", WEIGHT_RECEIVERS_NUM);
+    LOAD_PARAM("%f", WEIGHT_ENEMY_RECEIVERS_NUM);
+    LOAD_PARAM("%f", DIST_GOAL_PENAL);
+    LOAD_PARAM("%f", DIST_GOAL_TO_PENAL);
+    LOAD_PARAM("%f", MOVE_RADIUS_0);
+    LOAD_PARAM("%f", MOVE_RADIUS_1);
+    LOAD_PARAM("%f", MOVE_RADIUS_2);
+#undef LOAD_PARAM
+#undef SEP
+  }
+  ::CONSTANT_RATE = CONSTANT_RATE;
+  ::KICK_IF_NO_PASS = KICK_IF_NO_PASS;
+
+out:
+  fclose(file);
+}

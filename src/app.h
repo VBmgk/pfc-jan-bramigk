@@ -20,6 +20,8 @@ void app_move_up();
 void app_move_down();
 void app_move_left();
 void app_move_right();
+void app_save_params(const char *filename);
+void app_load_params(const char *filename);
 
 extern const struct State *app_state;
 extern const struct Decision *app_decision_max;
