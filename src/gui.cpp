@@ -419,6 +419,17 @@ void gui_render(void) {
   if (ImGui::Button("Load params")) {
     app_load_params(filename);
   }
+  ImGui::Checkbox("PARAM_GROUP_AUTOSELECT", &PARAM_GROUP_AUTOSELECT);
+  const char *groups[] = {"MAX_ATTACK", "MIN_ATTACK", "MAX_CONQUER", "MIN_CONQUER"};
+  if (PARAM_GROUP_AUTOSELECT) {
+    ImGui::Text(groups[*PARAM_GROUP]);
+  } else {
+    static int _PARAM_GROUP = 0;
+    // XXX: enable 4 groups in the future
+    ImGui::Combo("PARAM_GROUP", &_PARAM_GROUP, groups, 2);
+    if (*PARAM_GROUP != _PARAM_GROUP)
+      change_param_group(_PARAM_GROUP);
+  }
   ImGui::End();
 
   ImGui::Begin("Calibration");
