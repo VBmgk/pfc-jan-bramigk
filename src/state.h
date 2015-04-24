@@ -33,7 +33,7 @@ void discover_gaps_from_pos(const State state, Vector pos, Player player, Segmen
 
 float evaluate_with_decision(Player player, const State &state, const Decision &decision, const DecisionTable &table);
 
-void discover_possible_receivers(const State state, const DecisionTable &table, Player player, TeamFilter &result);
+void discover_possible_receivers(const State state, const DecisionTable *table, Player player, TeamFilter &result);
 
 namespace roboime {
 class Update;

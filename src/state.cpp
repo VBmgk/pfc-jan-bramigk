@@ -542,13 +542,15 @@ float evaluate_with_decision(Player player, const State &state, const struct Dec
   // penalty for exposing own goal
   FOR_TEAM_ROBOT(i, enemy) { value -= WEIGHT_BLOCK_GOAL * gap_value(state, player, state.robots[i]); }
 
-#if 0
   // bonus for having more robots able to receive a pass
-  if (has_ball) {
-    float receivers_num = canGetPass(player).size();
-    value += WEIGHT_RECEIVERS_NUM * receivers_num;
-  }
-#endif
+  TeamFilter receivers;
+  discover_possible_receivers(state, &table, player, receivers);
+  value += WEIGHT_RECEIVERS_NUM * receivers.count;
+
+  // onus for having enemies able to receive a pass
+  TeamFilter enemy_receivers;
+  discover_possible_receivers(state, &table, enemy, enemy_receivers);
+  value -= WEIGHT_ENEMY_RECEIVERS_NUM * enemy_receivers.count;
 
   float move_dist_total = 0, move_dist_max = 0, move_change = 0, pass_change = 0, kick_change = 0;
 
@@ -613,18 +615,18 @@ void update_from_proto(State &state, roboime::Update &ptb_update, IdTable &table
   }
 }
 
-void discover_possible_receivers(const State state, const DecisionTable &table, Player player, TeamFilter &result) {
-  int rwb = robot_with_ball(state);
+void discover_possible_receivers(const State state, const DecisionTable *table, Player player, TeamFilter &result) {
+  // int rwb = robot_with_ball(state);
 
-  if (PLAYER_OF(rwb) != player)
-    return;
+  // if (PLAYER_OF(rwb) != player)
+  //  return;
 
-  filter_out(result, rwb);
+  // filter_out(result, rwb);
   FOR_TEAM_ROBOT_IN(i, player, result) {
     // XXX: not using virtual step, is that a problem?
     // TODO: think of edge cases, make this more realistic
 
-    Vector move_pos = player == MAX ? table.move[i].move_pos : state.robots[i];
+    Vector move_pos = table ? table->move[i].move_pos : state.robots[i];
     int vrobot =
         can_receive_pass(state, i, player, move_pos, state.ball, unit(move_pos - state.ball) * ROBOT_KICK_SPEED);
 

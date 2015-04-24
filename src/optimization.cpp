@@ -23,7 +23,8 @@ ValuedDecision decide(Optimization &opt, State state, Player player) {
     Decision decision;
 
     // always consider the previous decision (based on the decision table)
-    if (i == 0) {
+    // unless it's a kick action, those can only happen if kick
+    if (i == 0 && (kick || opt.table.kick_robot == -1)) {
       decision = from_decision_table(opt.table);
       // on some cases try to move everyone at once, this may lead to better results
     } else if (100.0 * i / RAMIFICATION_NUMBER < FULL_CHANGE_PERCENTAGE) {

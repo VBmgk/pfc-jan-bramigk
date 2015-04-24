@@ -116,7 +116,7 @@ Action gen_pass_action(int robot, const State &state, DecisionTable &table) {
   Player player = PLAYER_OF(robot);
   TeamFilter receivers;
   filter_out(receivers, robot);
-  discover_possible_receivers(state, table, player, receivers);
+  discover_possible_receivers(state, &table, player, receivers);
   if (receivers.count > 0) {
 
     // select a random receiver

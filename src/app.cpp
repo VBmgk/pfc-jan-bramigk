@@ -105,7 +105,7 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
     zmq::socket_t socket(context, ZMQ_REP);
 
     // we will listen on any interface at port 5555
-    static const char *addr = play_as_max? "tcp://*:5555" : "tcp://*:5556";
+    static const char *addr = play_as_max ? "tcp://*:5555" : "tcp://*:5556";
     socket.bind(addr);
 
     // this is importante to avoid blocking the whole process
@@ -150,13 +150,15 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
           Decision local_decision;
           {
             std::lock_guard<std::mutex> _(decision_mutex);
-            if (play_as_max) local_decision = decision_max;
-            else local_decision = decision_min;
+            if (play_as_max)
+              local_decision = decision_max;
+            else
+              local_decision = decision_min;
           }
 
           // another important part, we'll assemble the protobuf command packet
           ::roboime::Command command;
-          to_proto_command(local_decision, play_as_max? MAX : MIN, command, id_table);
+          to_proto_command(local_decision, play_as_max ? MAX : MIN, command, id_table);
 
           // now let's serialize and shove it on our message buffer
           command.SerializeToString(&data);
@@ -214,7 +216,8 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
       if (eval_state || eval_state_once) {
         eval_state_once = false;
         if (MAX_DEPTH == 0) {
-          display.val = evaluate_with_decision(play_as_max? MAX : MIN, local_state, local_decision_max, optimization.table);
+          display.val =
+              evaluate_with_decision(play_as_max ? MAX : MIN, local_state, local_decision_max, optimization.table);
         } else {
           // TODO: use minimax decision table
         }

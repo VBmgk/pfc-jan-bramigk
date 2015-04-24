@@ -12,21 +12,22 @@ int main(int argc, char **argv) {
     play_as_max = false;
   }
 
-  printf("Playing as %s.\n", play_as_max? "blue" : "yellow");
+  printf("Playing as %s.\n", play_as_max ? "blue" : "yellow");
 
   app_run([&]() {
 
-    gui_init();
+            gui_init();
 
-    while (!gui_should_close()) {
-      gui_update();
-      gui_sync();
-      gui_render();
-    }
+            while (!gui_should_close()) {
+              gui_update();
+              gui_sync();
+              gui_render();
+            }
 
-    gui_destroy();
-    printf("\rGood");
-  }, play_as_max);
+            gui_destroy();
+            printf("\rGood");
+          },
+          play_as_max);
 
   printf("bye!\n");
   return EXIT_SUCCESS;

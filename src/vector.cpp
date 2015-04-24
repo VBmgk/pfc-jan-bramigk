@@ -23,6 +23,10 @@ template <typename T> VectorT<T> normal_rand_vector(const VectorT<T> &v, T s) {
 template <typename T> VectorT<T> rand_vector_bounded(const VectorT<T> vec, T radius, T xb, T yb) {
   VectorT<T> pos;
 
+  if (std::abs(vec.x) > xb || std::abs(vec.y) > yb) {
+    radius = norm(vec);
+  }
+
   static std::uniform_real_distribution<T> angle_dice(-M_PI, M_PI);
   std::uniform_real_distribution<T> radius_dice(0, radius);
 
@@ -31,8 +35,6 @@ template <typename T> VectorT<T> rand_vector_bounded(const VectorT<T> vec, T rad
     float rand_r = radius_dice(generator);
 
     pos = vec + VectorT<T>(rand_r * cos(theta), rand_r * sin(theta));
-    if (std::abs(vec.x) > xb || std::abs(vec.y) > yb)
-      break;
   } while (std::abs(pos.x) > xb || std::abs(pos.y) > yb);
 
   return pos;

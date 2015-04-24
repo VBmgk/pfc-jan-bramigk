@@ -135,28 +135,21 @@ void draw_shadow(const State &state) {
 
 void draw_field(void) {
   glColor3ubv(FIELD_GREEN);
-  glRectf(-FIELD_WIDTH / 2 - BOUNDARY_WIDTH - REFEREE_WIDTH,
-          -FIELD_HEIGHT / 2 - BOUNDARY_WIDTH - REFEREE_WIDTH,
-          FIELD_WIDTH / 2 + BOUNDARY_WIDTH + REFEREE_WIDTH,
-          FIELD_HEIGHT / 2 + BOUNDARY_WIDTH + REFEREE_WIDTH);
+  glRectf(-FIELD_WIDTH / 2 - BOUNDARY_WIDTH - REFEREE_WIDTH, -FIELD_HEIGHT / 2 - BOUNDARY_WIDTH - REFEREE_WIDTH,
+          FIELD_WIDTH / 2 + BOUNDARY_WIDTH + REFEREE_WIDTH, FIELD_HEIGHT / 2 + BOUNDARY_WIDTH + REFEREE_WIDTH);
 
   glColor3ubv(WHITE);
 
   // mid line
-  glRectf(-LINE_WIDTH / 2, -FIELD_HEIGHT / 2, LINE_WIDTH / 2,
-          FIELD_HEIGHT / 2);
+  glRectf(-LINE_WIDTH / 2, -FIELD_HEIGHT / 2, LINE_WIDTH / 2, FIELD_HEIGHT / 2);
 
   // BACK LINES
-  glRectf(-FIELD_WIDTH / 2, -FIELD_HEIGHT / 2,
-          -FIELD_WIDTH / 2 + LINE_WIDTH, FIELD_HEIGHT / 2);
-  glRectf(FIELD_WIDTH / 2, -FIELD_HEIGHT / 2,
-          FIELD_WIDTH / 2 - LINE_WIDTH, FIELD_HEIGHT / 2);
+  glRectf(-FIELD_WIDTH / 2, -FIELD_HEIGHT / 2, -FIELD_WIDTH / 2 + LINE_WIDTH, FIELD_HEIGHT / 2);
+  glRectf(FIELD_WIDTH / 2, -FIELD_HEIGHT / 2, FIELD_WIDTH / 2 - LINE_WIDTH, FIELD_HEIGHT / 2);
 
   // SIDE LINES
-  glRectf(-FIELD_WIDTH / 2, -FIELD_HEIGHT / 2, FIELD_WIDTH / 2,
-          -FIELD_HEIGHT / 2 + LINE_WIDTH);
-  glRectf(-FIELD_WIDTH / 2, FIELD_HEIGHT / 2, FIELD_WIDTH / 2,
-          FIELD_HEIGHT / 2 - LINE_WIDTH);
+  glRectf(-FIELD_WIDTH / 2, -FIELD_HEIGHT / 2, FIELD_WIDTH / 2, -FIELD_HEIGHT / 2 + LINE_WIDTH);
+  glRectf(-FIELD_WIDTH / 2, FIELD_HEIGHT / 2, FIELD_WIDTH / 2, FIELD_HEIGHT / 2 - LINE_WIDTH);
 
   // center dot
   constexpr int PSIDES{20};
@@ -238,26 +231,18 @@ void draw_field(void) {
   glEnd();
 
   // the goals
-  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH,
-          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, -FIELD_WIDTH / 2,
+  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH, -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, -FIELD_WIDTH / 2,
           -GOAL_WIDTH / 2);
-  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH,
-          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, -FIELD_WIDTH / 2,
+  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH, GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, -FIELD_WIDTH / 2,
           GOAL_WIDTH / 2);
-  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH,
-          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH,
-          -FIELD_WIDTH / 2 - GOAL_DEPTH,
-          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH);
-  glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH,
-          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, FIELD_WIDTH / 2,
+  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH, -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH,
+          -FIELD_WIDTH / 2 - GOAL_DEPTH, GOAL_WIDTH / 2 + GOAL_WALL_WIDTH);
+  glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH, -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, FIELD_WIDTH / 2,
           -GOAL_WIDTH / 2);
-  glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH,
-          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, FIELD_WIDTH / 2,
+  glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH, GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, FIELD_WIDTH / 2,
           GOAL_WIDTH / 2);
-  glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH,
-          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH,
-          FIELD_WIDTH / 2 + GOAL_DEPTH,
-          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH);
+  glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH, -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH,
+          FIELD_WIDTH / 2 + GOAL_DEPTH, GOAL_WIDTH / 2 + GOAL_WALL_WIDTH);
 }
 
 void draw_ball(Vector pos) {
@@ -277,8 +262,8 @@ void draw_goals() {
 }
 
 void draw_state(const State &state) {
-  //glColor3ubv(FIELD_GREEN);
-  //glRectf(-FIELD_WIDTH / 2, FIELD_HEIGHT / 2, FIELD_WIDTH / 2, -FIELD_HEIGHT / 2);
+  // glColor3ubv(FIELD_GREEN);
+  // glRectf(-FIELD_WIDTH / 2, FIELD_HEIGHT / 2, FIELD_WIDTH / 2, -FIELD_HEIGHT / 2);
   draw_field();
 
   draw_goals();
@@ -334,20 +319,23 @@ void draw_state(const State &state) {
     glPopMatrix();
   }
 
-  if (DRAW_BALL_OWNER || DRAW_POSSIBLE_RECEIVERS) {
+#define DRAW_RECEIVERS(T)                                                                                              \
+  do {                                                                                                                 \
+    TeamFilter receivers;                                                                                              \
+    discover_possible_receivers(state, nullptr, T, receivers);                                                         \
+    FOR_TEAM_ROBOT_IN(i, T, receivers) { draw_robot(state.robots[i], PINK2, 2 * BALL_RADIUS); }           \
+  } while (false)
+
+  if (DRAW_POSSIBLE_RECEIVERS) {
+    // shadow for possible receivers (from owner)
+    DRAW_RECEIVERS(MIN);
+    DRAW_RECEIVERS(MAX);
+  }
+
+  if (DRAW_BALL_OWNER) {
     int rwb = robot_with_ball(state);
-
-    if (DRAW_BALL_OWNER) {
-      // shadow for ball owner
-      draw_robot(state.robots[rwb], PINK, 2 * BALL_RADIUS);
-    }
-
-    TeamFilter receivers;
-    if (DRAW_POSSIBLE_RECEIVERS) {
-      // shadow for possible receivers (from owner)
-      discover_possible_receivers(state, *app_decision_table, PLAYER_OF(rwb), receivers);
-      FOR_TEAM_ROBOT_IN(i, PLAYER_OF(rwb), receivers) { draw_robot(state.robots[i], PINK2, 2 * BALL_RADIUS); }
-    }
+    // shadow for ball owner
+    draw_robot(state.robots[rwb], PINK, 2 * BALL_RADIUS);
   }
 
   if (DRAW_SELECTED_ROBOT) {
