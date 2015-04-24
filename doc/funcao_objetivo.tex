@@ -62,9 +62,9 @@ exato neste nível de planejamento, já que isso aumentaria muito o custo
 computacional desta etapa do planejamento e, consequentemente, reduziria
 o número de simulações possíveis. Por essas razões mudanças no planejamento
 dos \textit{moves} são penalizadas de acordo com a distância euclidiana
-entre o \textit{move_p} planejado anteriormente e o \textit{move_m} modificado.
-Isso permite que sejam selecionados \textit{moves_m} mais próximos do
-\textit{move_p}, refinado assim o planejamento anterior.
+entre o $move_p$ planejado anteriormente e o $move_mr$} modificado.
+Isso permite que sejam selecionados $moves_m$ mais próximos do
+$move_p$, refinado assim o planejamento anterior.
 
 
 TOTAL{\_}MAX{\_}GAP{\_}RATIO: o objetivos deste parâmetro é valorizar \textit{gaps} maiores
@@ -72,5 +72,6 @@ de acordo com a soma total dos \textit{gaps} e com o maior \textit{gap}.
 O cálculo do \textit{gap} é feito da seguinte maneira:
 
 \begin{equation} 
- gap value = TOTAL\_MAX\_GAP\_RATIO * \sum gap_i + (1 - TOTAL\_MAX\_GAP\_RATIO) * max{gap_i}
+ gap value = TOTAL\_MAX\_GAP\_RATIO * \sum gap_i + (1 - TOTAL\_MAX\_GAP\_RATIO) *
+\lbrace maxgap_i \rbrace
 \end{equation} 
