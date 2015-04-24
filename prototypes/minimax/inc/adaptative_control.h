@@ -31,7 +31,10 @@ struct AdaptativeControlEval {
 
   // functions
   // Saving address of variables to enable further modification
-  AdaptativeControlEval(void) { save_addrs(); }
+  AdaptativeControlEval(void) {
+    save_addrs();
+    loadInitialConsts();
+  }
 
   float eval(const Board& board); 
   float get_eval_n (void) { return evals_n[curr_n]; }
@@ -42,7 +45,7 @@ struct AdaptativeControlEval {
   void add_eval(float); 
   void add_eval_n(float); 
   void load(void);
-  void load_0(void);
+  void loadInitialConsts(void);
   void save(void);
 };
 }
