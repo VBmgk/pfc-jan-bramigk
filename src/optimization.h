@@ -12,6 +12,6 @@ struct Optimization {
   bool table_initialized = false;
 };
 
-ValuedDecision decide(Optimization &opt, State state, Player player);
+ValuedDecision decide(Optimization &opt, State state, Player player, int *ramification_count);
 
 #endif

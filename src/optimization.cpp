@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <limits>
+#include <chrono>
 
 #include "optimization.h"
 #include "utils.h"
 #include "consts.h"
 #include "vector.h"
 
-ValuedDecision decide(Optimization &opt, State state, Player player) {
+ValuedDecision decide(Optimization &opt, State state, Player player, int *ramification_count) {
+
+  using namespace std::chrono;
 
   if (!opt.table_initialized) {
     opt.table_initialized = true;
@@ -19,7 +22,12 @@ ValuedDecision decide(Optimization &opt, State state, Player player) {
   ValuedDecision vd;
   vd.value = -std::numeric_limits<float>::infinity();
 
-  FOR_N(i, RAMIFICATION_NUMBER) {
+  const duration<double> max_delta{1.0 / DECISION_RATE};
+  const auto start = steady_clock::now();
+
+  int i = 0;
+  while (true) {
+    //FOR_N(i, RAMIFICATION_NUMBER) {
     Decision decision;
 
     // always consider the previous decision (based on the decision table)
@@ -43,7 +51,18 @@ ValuedDecision decide(Optimization &opt, State state, Player player) {
       vd.value = value;
       vd.decision = decision;
     }
+
+    // check stop condition
+    i++;
+    if (CONSTANT_RATE) {
+      const auto now = steady_clock::now();
+      if (now - start >= max_delta)
+        break;
+    } else if (i >= RAMIFICATION_NUMBER) {
+      break;
+    }
   }
+  *ramification_count = i;
 
   // update the decision table
   opt.table.kick_robot = -1;

@@ -35,6 +35,7 @@ static struct {
   int decision_count = 0;
   int pps = 0;
   int mps = 0;
+  float rpd = 0.0;
   float val = 0.0;
   bool has_val = false;
   float decision_val = 0.0;
@@ -79,19 +80,28 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
 
   // for counting received messages
   std::atomic<int> req_count(0);
-  std::atomic<int> mnmx_count(0);
+  std::atomic<int> dec_count(0);
+  std::atomic<int> tram_count(0);
 
   std::thread count_thread([&]() {
     std::this_thread::sleep_for(std::chrono::seconds(1));
     int n_ticks = 0;
     while (should_recv) {
       int count = req_count.exchange(0);
-      int mcount = mnmx_count.exchange(0);
+      int dcount = dec_count.exchange(0);
+      int rcount = tram_count.exchange(0);
       {
         std::lock_guard<std::mutex> _(display_mutex);
         display.uptime = ++n_ticks;
         display.pps = count;
-        display.mps = mcount;
+        display.mps = dcount;
+        display.rpd = ((float)rcount) / dcount;
+      }
+      if (CONSTANT_RATE) {
+        if (dcount > 0)
+          RAMIFICATION_NUMBER = rcount / dcount;
+      } else {
+        DECISION_RATE = dcount;
       }
       std::this_thread::sleep_for(std::chrono::seconds(1));
     }
@@ -191,16 +201,17 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
 
       if (play_minimax || play_decision_once) {
         play_decision_once = false;
+        int ram_count = 0;
         float val;
 
         if (MAX_DEPTH == 0) {
           // optimization decision
           if (play_as_max) {
-            auto valued_decision = decide(optimization, local_state, MAX);
+            auto valued_decision = decide(optimization, local_state, MAX, &ram_count);
             local_decision_max = valued_decision.decision;
             val = valued_decision.value;
           } else {
-            auto valued_decision = decide(optimization, local_state, MIN);
+            auto valued_decision = decide(optimization, local_state, MIN, &ram_count);
             local_decision_min = valued_decision.decision;
             val = valued_decision.value;
           }
@@ -208,7 +219,8 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
           // TODO: minimax decision
         }
 
-        mnmx_count++;
+        dec_count++;
+        tram_count += ram_count;
         display.decision_count++;
         display.decision_val = val;
       }
@@ -298,8 +310,11 @@ void draw_app_status(void) {
   ImGui::Text("uptime: %is", display.uptime);
   ImGui::Text("decision: #%i", display.decision_count);
   ImGui::Text("%i packets/s", display.pps);
-  ImGui::Text("%i decisions/s", display.mps);
-  ImGui::Text("decision: %f", display.decision_val);
+  if (CONSTANT_RATE)
+    ImGui::Text("%.2f ramifications/decision", display.rpd);
+  else
+    ImGui::Text("%i decisions/s", display.mps);
+  ImGui::Text("decided val: %f", display.decision_val);
   if (display.has_val)
-    ImGui::Text("value: %f", display.val);
+    ImGui::Text("current val: %f", display.val);
 }

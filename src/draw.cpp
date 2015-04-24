@@ -323,7 +323,7 @@ void draw_state(const State &state) {
   do {                                                                                                                 \
     TeamFilter receivers;                                                                                              \
     discover_possible_receivers(state, nullptr, T, receivers);                                                         \
-    FOR_TEAM_ROBOT_IN(i, T, receivers) { draw_robot(state.robots[i], PINK2, 2 * BALL_RADIUS); }           \
+    FOR_TEAM_ROBOT_IN(i, T, receivers) { draw_robot(state.robots[i], PINK2, 2 * BALL_RADIUS); }                        \
   } while (false)
 
   if (DRAW_POSSIBLE_RECEIVERS) {

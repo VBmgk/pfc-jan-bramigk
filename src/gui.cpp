@@ -412,8 +412,12 @@ void gui_render(void) {
   ImGui::End();
 
   ImGui::Begin("Calibration");
+  ImGui::Checkbox("CONSTANT_RATE", &CONSTANT_RATE);
   ImGui::Checkbox("KICK_IF_NO_PASS", &KICK_IF_NO_PASS);
-  ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER, 10, 20000);
+  if (CONSTANT_RATE)
+    ImGui::SliderInt("DECISION_RATE", &DECISION_RATE, 1, 1000);
+  else
+    ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER, 10, 20000);
   ImGui::SliderInt("FULL_CHANGE_PERCENTAGE", &FULL_CHANGE_PERCENTAGE, 0, 100);
   ImGui::SliderInt("MAX_DEPTH", &MAX_DEPTH, 0, 3);
 
