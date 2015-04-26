@@ -35,6 +35,7 @@ enum _ParamGroup {
 
 extern const int * const PARAM_GROUP;
 extern bool PARAM_GROUP_AUTOSELECT;
+extern float PARAM_GROUP_THRESHOLD;
 void change_param_group(int new_param_group);
 
 #ifdef _CONST_IMPL

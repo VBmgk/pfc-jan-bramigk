@@ -4,6 +4,7 @@
 int param_group;
 const int * const PARAM_GROUP = &param_group;
 bool PARAM_GROUP_AUTOSELECT = true;
+float PARAM_GROUP_THRESHOLD = 1.000; // 1m
 
 void change_param_group(int new_param_group) {
   int oldp = param_group;

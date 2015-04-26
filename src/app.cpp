@@ -68,8 +68,20 @@ struct Timer {
   std::chrono::time_point<std::chrono::system_clock> start, end;
 };
 
+void update_param_group(void) {
+  if (PARAM_GROUP_AUTOSELECT) {
+    auto ball = state.ball;
+    // TODO: in the future test 4 groups
+    if (ball.x < -PARAM_GROUP_THRESHOLD && *PARAM_GROUP != MIN_ATTACK)
+      change_param_group(MIN_ATTACK);
+    if (ball.x > +PARAM_GROUP_THRESHOLD && *PARAM_GROUP != MAX_ATTACK)
+      change_param_group(MAX_ATTACK);
+  }
+}
+
 void app_run(std::function<void(void)> loop_func, bool play_as_max) {
   state = uniform_rand_state();
+  update_param_group();
 
   // Timer tmr;
   bool should_recv(true);
@@ -150,6 +162,7 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
             // critical section to update the global state
             std::lock_guard<std::mutex> _(state_mutex);
             update_from_proto(state, update, id_table);
+            update_param_group();
             display.has_val = false;
           }
 
@@ -258,6 +271,7 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
 void app_random() {
   std::lock_guard<std::mutex> _(state_mutex);
   state = uniform_rand_state();
+  update_param_group();
   display.has_val = false;
 }
 
@@ -273,6 +287,7 @@ void app_apply() {
   std::lock_guard<std::mutex> _(state_mutex);
   apply_to_state(decision_max, MAX, &state);
   apply_to_state(decision_min, MIN, &state);
+  update_param_group();
 }
 
 void app_toggle_experimental() { use_experimental = !use_experimental; }
@@ -282,6 +297,7 @@ void app_select_save_slot(int slot) { save_slot = slot % save_slots; }
 void app_load_state() {
   std::lock_guard<std::mutex> _(state_mutex);
   state = save_states[save_slot];
+  update_param_group();
 }
 
 void app_save_state() { save_states[save_slot] = state; }

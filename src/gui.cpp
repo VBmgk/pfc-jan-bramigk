@@ -420,6 +420,7 @@ void gui_render(void) {
     app_load_params(filename);
   }
   ImGui::Checkbox("PARAM_GROUP_AUTOSELECT", &PARAM_GROUP_AUTOSELECT);
+  ImGui::SliderFloat("PARAM_GROUP_THRESHOLD", &PARAM_GROUP_THRESHOLD, 0.0, 10.0);
   const char *groups[] = {"MAX_ATTACK", "MIN_ATTACK", "MAX_CONQUER", "MIN_CONQUER"};
   if (PARAM_GROUP_AUTOSELECT) {
     ImGui::Text(groups[*PARAM_GROUP]);
