@@ -26,6 +26,8 @@ set(SRC
   src/consts.cpp
   src/state.cpp
   src/filter.cpp
+  src/suggestion_table.cpp
+  src/suggestions.cpp
   vendor/imgui/imgui.cpp
 )
 

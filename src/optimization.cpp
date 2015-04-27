@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <limits>
 #include <chrono>
 
@@ -6,8 +7,10 @@
 #include "utils.h"
 #include "consts.h"
 #include "vector.h"
+#include "suggestions.h"
 
-ValuedDecision decide(Optimization &opt, State state, Player player, int *ramification_count) {
+ValuedDecision decide(Optimization &opt, State state, Player player, const Suggestions *suggestions,
+                      int *ramification_count) {
 
   using namespace std::chrono;
 
@@ -32,7 +35,10 @@ ValuedDecision decide(Optimization &opt, State state, Player player, int *ramifi
 
     // always consider the previous decision (based on the decision table)
     // unless it's a kick action, those can only happen if kick
-    if (i == 0 && (kick || opt.table.kick_robot == -1)) {
+    if (suggestions && i < suggestions->tables_count) {
+      // decision = from_decision_table(opt.suggestions[i]);
+      // TODO
+    } else if (i == (suggestions ? suggestions->tables_count : 0) && (kick || opt.table.kick_robot == -1)) {
       decision = from_decision_table(opt.table);
       // on some cases try to move everyone at once, this may lead to better results
     } else if (100.0 * i / RAMIFICATION_NUMBER < FULL_CHANGE_PERCENTAGE) {

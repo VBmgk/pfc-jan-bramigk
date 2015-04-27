@@ -1,7 +1,9 @@
 #ifndef CONSTS_H
 #define CONSTS_H
 
-constexpr unsigned long N_ROBOTS = 6;
+constexpr int N_ROBOTS = 6;
+constexpr int MAX_SUGGESTIONS = 30;
+constexpr int MAX_SUGGESTION_SPOTS = 30;
 
 // Units are SI: m, m/s, s, ...
 

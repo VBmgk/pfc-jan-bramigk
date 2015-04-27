@@ -5,6 +5,7 @@
 #include "decision_table.h"
 #include "state.h"
 #include "player.h"
+#include "consts.h"
 
 struct Optimization {
   DecisionTable table;
@@ -12,6 +13,7 @@ struct Optimization {
   bool table_initialized = false;
 };
 
-ValuedDecision decide(Optimization &opt, State state, Player player, int *ramification_count);
+ValuedDecision decide(Optimization &opt, State state, Player player, const struct Suggestions *suggestions,
+                      int *ramification_count);
 
 #endif
