@@ -66,7 +66,7 @@ Decision from_decision_table(const struct DecisionTable &table) {
 }
 
 void to_proto_command(const Decision &decision, Player player, roboime::Command &ptb_command, const IdTable &table) {
-  FOR_TEAM_ROBOT(i, MAX) {
+  FOR_TEAM_ROBOT(i, player) {
     Action &&action = decision.action[i];
     if (action.type != NONE) {
       ::roboime::Action *ptb_action = ptb_command.add_action();

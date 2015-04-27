@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.8.8)
 
 project(ai) # TODO: new name maybe?
 
+# Super strict warnings =)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -pedantic-errors ${CMAKE_CXX_FLAGS}")
+
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/.cmake/modules)
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 if("${CMAKE_GENERATOR}" STREQUAL "Ninja" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

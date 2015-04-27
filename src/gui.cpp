@@ -16,9 +16,11 @@
 static GLFWwindow *window;
 static bool mousePressed[2] = {false, false};
 
-static void error_callback(int error, const char *description) { fputs(description, stderr); }
+// void error_callback(int error, const char *description);
+static void error_callback(int, const char *description) { fputs(description, stderr); }
 
-static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+// void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
+static void key_callback(GLFWwindow *window, int key, int, int action, int) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     return glfwSetWindowShouldClose(window, GL_TRUE);
 
@@ -102,13 +104,15 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
   }
 }
 
-static void resize_callback(GLFWwindow *window, int width, int height) {
+// void resize_callback(GLFWwindow *window, int width, int height);
+static void resize_callback(GLFWwindow *, int, int) {
   gui_update();
   gui_render();
 }
 
 static double zoom;
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+// void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
+static void scroll_callback(GLFWwindow *, double xoffset, double yoffset) {
   static constexpr double zoom_speed = 0.01;
   static constexpr double zoom_min = 0.15;
   static constexpr double zoom_max = 5.50;
@@ -123,19 +127,21 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
 }
 
 static bool is_drag;
-void drag_callback(GLFWwindow *window, double xpos, double ypos) {
+// void drag_callback(GLFWwindow *window, double xpos, double ypos);
+static void drag_callback(GLFWwindow *window, double, double) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
   // TODO: dragging#
   // std::cout << xpos - width / 2 << ' ' << ypos - height / 2 << std::endl;
 }
 
-void cursorpos_callback(GLFWwindow *window, double xpos, double ypos) {
+static void cursorpos_callback(GLFWwindow *window, double xpos, double ypos) {
   if (is_drag)
     drag_callback(window, xpos, ypos);
 }
 
-void mousebutton_callback(GLFWwindow *window, int button, int action, int mods) {
+// void mousebutton_callback(GLFWwindow *window, int button, int action, int mods);
+static void mousebutton_callback(GLFWwindow *, int button, int action, int) {
   static constexpr int drag_button = GLFW_MOUSE_BUTTON_LEFT;
   if (button == drag_button) {
     if (action == GLFW_PRESS)
@@ -145,7 +151,7 @@ void mousebutton_callback(GLFWwindow *window, int button, int action, int mods) 
   }
 }
 
-void refresh_callback(GLFWwindow *window) {
+static void refresh_callback(GLFWwindow *window) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
   // render(window, width, height);
@@ -153,7 +159,8 @@ void refresh_callback(GLFWwindow *window) {
 }
 
 static bool is_active = false;
-void focus_callback(GLFWwindow *window, int focus) { is_active = focus == GL_TRUE; }
+// void focus_callback(GLFWwindow *window, int focus);
+static void focus_callback(GLFWwindow *, int focus) { is_active = focus == GL_TRUE; }
 
 void gui_sync(void) {
   if (!is_active) // if running in background idle avoid high cpu usage,
@@ -162,7 +169,8 @@ void gui_sync(void) {
     std::this_thread::sleep_for(std::chrono::milliseconds(16));
 }
 
-static void chars_mod_callback(GLFWwindow *window, unsigned int codepoint, int mods) {
+// void chars_mod_callback(GLFWwindow *window, unsigned int codepoint, int mods);
+static void chars_mod_callback(GLFWwindow *, unsigned int codepoint, int) {
   if (codepoint > 0 && codepoint < 0x10000)
     ImGui::GetIO().AddInputCharacter((unsigned short)codepoint);
 }

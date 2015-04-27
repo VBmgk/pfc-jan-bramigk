@@ -35,9 +35,9 @@ extern float PARAM_GROUP_CONQUER_TIME;
 void set_param_group(int new_param_group);
 
 #ifdef _CONST_IMPL
-#define PARAM(TYPE, NAME, DEFAULT, ...) _CONST_IMPL(TYPE, NAME, DEFAULT)
+#define PARAM(TYPE, NAME, DEFAULT) _CONST_IMPL(TYPE, NAME, DEFAULT)
 #else
-#define PARAM(TYPE, NAME, DEFAULT, ...) extern TYPE NAME;
+#define PARAM(TYPE, NAME, DEFAULT) extern TYPE NAME;
 #endif
 
 PARAM(bool, CONSTANT_RATE, true);

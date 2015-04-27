@@ -52,7 +52,6 @@ Action make_pass_action(int pass_receiver) {
 
 Action gen_move_action(int robot, const State &state, struct DecisionTable &table) {
   Vector pos;
-  bool ok = true;
   float r_radius;
   Player p = PLAYER_OF(robot);
 
@@ -91,7 +90,9 @@ again:
   return make_move_action(pos);
 }
 
-Action gen_kick_action(int robot, const State &state, struct DecisionTable &table) {
+// XXX: how should the table me used here??
+// Action gen_kick_action(int robot, const State &state, struct DecisionTable &table);
+Action gen_kick_action(int robot, const State &state, struct DecisionTable &) {
   // XXX: can table help in any way? avoid maybe?
 
   float ky, kx = GOAL_X(ENEMY_OF(robot));
@@ -124,7 +125,7 @@ Action gen_pass_action(int robot, const State &state, DecisionTable &table) {
     static std::mt19937_64 gen(rd());
     std::uniform_int_distribution<> dis(0, receivers.count - 1);
     int sel = dis(gen);
-    int rcv;
+    int rcv = -1;
     FOR_TEAM_ROBOT(i, player) {
       if (sel-- == 0) {
         rcv = i;

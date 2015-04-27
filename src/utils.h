@@ -7,9 +7,9 @@
 #include "player.h"
 #include "vector.h"
 
-#define FOR_N(I, N) for (int I = 0; I < (N); I++)
-#define FOR_EVERY_ROBOT(I) for (int I = 0; I < 2 * N_ROBOTS; I++)
-#define FOR_TEAM_ROBOT(I, T) for (int I = T * N_ROBOTS; I < (1 + T) * N_ROBOTS; I++)
+#define FOR_N(I, N) for (int I = 0; I < (int)(N); I++)
+#define FOR_EVERY_ROBOT(I) for (int I = 0; I < (int)(2 * N_ROBOTS); I++)
+#define FOR_TEAM_ROBOT(I, T) for (int I = T * N_ROBOTS; I < (int)((1 + T) * N_ROBOTS); I++)
 #define FOR_EVERY_ROBOT_IN(I, F) FOR_EVERY_ROBOT(I) if (!F[I])
 #define FOR_TEAM_ROBOT_IN(I, T, F) FOR_TEAM_ROBOT(I, T) if (!F[I])
 
@@ -23,7 +23,7 @@ constexpr Player ENEMY_OF(int R) { return ENEMY_FOR(PLAYER_OF(R)); }
 constexpr int PLAYER_SIGN(Player P) { return P == MAX ? 1 : -1; }
 
 // XXX: MAX to the left, not taking into account that it may be otherwise
-constexpr float GOAL_Y(Player P) { return 0; }
+constexpr float GOAL_Y(Player) { return 0; }
 constexpr float GOAL_X(Player P) { return -PLAYER_SIGN(P) * FIELD_WIDTH / 2; }
 constexpr Vector GOAL_POS(Player P) { return {GOAL_X(P), GOAL_Y(P)}; }
 

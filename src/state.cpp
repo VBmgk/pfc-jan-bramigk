@@ -45,7 +45,8 @@ Board::getRobotWithVirtualBall(const Ball &virt_ball,
                                std::pair<const Robot *, Player> r_rcv) const;
 #endif
 
-float time_to_pos(Vector rpos, Vector rpos_v, Vector pos, Vector pos_v, float max_speed) {
+// float time_to_pos(Vector rpos, Vector rpos_v, Vector pos, Vector pos_v, float max_speed);
+float time_to_pos(Vector rpos, Vector, Vector pos, Vector pos_v, float max_speed) {
   // TODO: take into account rpos_v
 
   /*

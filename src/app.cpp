@@ -255,6 +255,7 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
           }
         } else {
           // TODO: minimax decision
+          val = 0.0;
         }
 
         dec_count++;
@@ -424,7 +425,7 @@ void app_load_params(const char *filename) {
   while (!feof(file)) {
     fgets(line, 256, file);
 #define SEP " = "
-#define LOAD_PARAM(MODE, NAME) strncmp(line, #NAME, strlen(#NAME)) ?: sscanf(line, "%*s" SEP MODE, &NAME)
+#define LOAD_PARAM(MODE, NAME) if (!strncmp(line, #NAME, strlen(#NAME))) sscanf(line, "%*s" SEP MODE, &NAME)
     LOAD_PARAM("%i", CONSTANT_RATE);
     LOAD_PARAM("%i", KICK_IF_NO_PASS);
     LOAD_PARAM("%i", DECISION_RATE);
