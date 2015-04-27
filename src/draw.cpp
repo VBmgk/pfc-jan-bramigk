@@ -15,6 +15,7 @@
 #include "utils.h"
 #include "decision.h"
 #include "decision_table.h"
+#include "suggestion_table.h"
 #include "action.h"
 #include "segment.h"
 #include "array.h"
@@ -47,7 +48,7 @@ void draw_options_window(void) {
   ImGui::End();
 }
 
-void screen_zoom(int width, int height, float zoom) {
+void screen_zoom(int width, int height, double zoom, double center_x, double center_y) {
   float ratio = width / (float)height;
   glViewport(0, 0, width, height);
 
@@ -58,7 +59,9 @@ void screen_zoom(int width, int height, float zoom) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   float r = 1.0 / zoom;
-  glOrtho(-ratio * r, ratio * r, -1.0 * r, 1.0 * r, 1.0, -1.0);
+  float ox = -center_x / width * 2;
+  float oy = center_y / height * 2;
+  glOrtho((ox - 1.0) * ratio * r, (ox + 1.0) * ratio * r, (oy - 1.0) * r, (oy + 1.0) * r, 1.0, -1.0);
 }
 
 void raw_circle(float radius, int sides = NSIDES) {
@@ -339,13 +342,13 @@ void draw_state(const State &state) {
     draw_robot(state.robots[rwb], PINK, 2 * BALL_RADIUS);
   }
 
-  if (DRAW_SELECTED_ROBOT) {
-    // shadow for selected robot
-    draw_robot(state.robots[*app_selected_robot], RED2, BALL_RADIUS);
-  }
-
   // DRAW ALL THE ROBOTS!!!!
   FOR_EVERY_ROBOT(i) { draw_robot(state.robots[i], PLAYER_OF(i) == MAX ? BLUE : YELLOW); }
+
+  if (DRAW_SELECTED_ROBOT) {
+    // shadow for selected robot
+    draw_robot(state.robots[*app_selected_robot], RED, -ROBOT_RADIUS / 2);
+  }
 
   // and the ball
   draw_ball(state.ball);
@@ -406,6 +409,20 @@ void draw_decision(const struct Decision &decision, const struct State &state, P
     default: {}
     }
   }
+}
+
+void draw_suggestion(const struct SuggestionTable &table) {
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glColor4ub(PINK[0], PINK[1], PINK[2], 192);
+  FOR_N(i, table.spots_count) {
+    glPushMatrix();
+    auto spot = table.spots[i];
+    glTranslatef(spot.x, spot.y, 0.f);
+    draw_circle(ROBOT_RADIUS);
+    glPopMatrix();
+  }
+  glDisable(GL_BLEND);
 }
 
 #if 0

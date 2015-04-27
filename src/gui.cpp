@@ -19,6 +19,8 @@
 #include "colors.h"
 #include "draw.h"
 #include "app.h"
+#include "utils.h"
+#include "suggestions.h"
 
 static GLFWwindow *window;
 static bool mouse_pressed[3] = {false, false, false};
@@ -42,7 +44,7 @@ static void key_callback(GLFWwindow *window, int key, int, int action, int mods)
   io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
   io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
 
-  if (!io.WantCaptureKeyboard && action == GLFW_PRESS) {
+  if (!io.WantCaptureKeyboard && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
     switch (key) {
 
     case GLFW_KEY_R: {
@@ -127,7 +129,20 @@ static void resize_callback(GLFWwindow *, int /*width*/, int /*height*/) {
   gui_render();
 }
 
-static double zoom;
+static bool is_drag = false;
+static bool is_down = false;
+static double zoom = 1.0;
+static double drag_x = 0.0;
+static double drag_y = 0.0;
+static double start_drag_x = 0.0;
+static double start_drag_y = 0.0;
+static double current_drag_x = 0.0;
+static double current_drag_y = 0.0;
+static double last_drag_x = 0.0;
+static double last_drag_y = 0.0;
+static double screen_xpos = 0.0;
+static double screen_ypos = 0.0;
+
 static void scroll_callback(GLFWwindow *, double xoffset, double yoffset) {
   static constexpr double zoom_speed = 0.01;
   static constexpr double zoom_min = 0.15;
@@ -141,24 +156,66 @@ static void scroll_callback(GLFWwindow *, double xoffset, double yoffset) {
     zoom += copysign(sqrt(std::abs(offset2)), offset2) * zoom_speed;
     // restrict zoom in [zoom_min, zoom_max] interval
     zoom = (zoom > zoom_max) ? zoom_max : (zoom < zoom_min) ? zoom_min : zoom;
-    // std::cout << zoom << std::endl;
+
+    // TODO: update drag_x and drag_y accordingly
   }
 
   mouse_wheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
 }
 
-static bool is_drag;
-// void drag_callback(GLFWwindow *window, double xpos, double ypos);
-static void drag_callback(GLFWwindow *window, double, double) {
+static void drag_callback(GLFWwindow *window, double xpos, double ypos) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
-  // TODO: dragging#
-  // std::cout << xpos - width / 2 << ' ' << ypos - height / 2 << std::endl;
+  double w = (double)width;
+  double h = (double)height;
+  current_drag_x = xpos - w / 2;
+  current_drag_y = ypos - h / 2;
+
+  double drag_x_min = -w * 0.9;
+  double drag_x_max = +w * 0.9;
+  double drag_y_min = -h * 0.9;
+  double drag_y_max = +h * 0.9;
+
+  drag_x = last_drag_x + current_drag_x - start_drag_x;
+  drag_y = last_drag_y + current_drag_y - start_drag_y;
+
+  drag_x = fmin(drag_x_max, fmax(drag_x_min, drag_x));
+  drag_y = fmin(drag_y_max, fmax(drag_y_min, drag_y));
+}
+
+static void no_drag_click_callback(GLFWwindow *window, double xpos, double ypos) {
+  int width, height;
+  glfwGetFramebufferSize(window, &width, &height);
+  double w = (double)width;
+  double h = (double)height;
+  float field_x = (xpos - w / 2 - drag_x) / w / zoom * 2 * w / h;
+  float field_y = (h / 2 - ypos + drag_y) / h / zoom * 2;
+  if (app_selected_suggestion >= 0 && app_selected_suggestion < app_suggestions->tables_count) {
+    auto &table = app_suggestions->tables[app_selected_suggestion];
+    int s = add_spot(table);
+    if (s >= 0) {
+      table.spots[s - 1] = {field_x, field_y};
+    }
+  }
 }
 
 static void cursorpos_callback(GLFWwindow *window, double xpos, double ypos) {
-  if (is_drag)
+  if (is_down && !is_drag) {
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    double w = (double)width;
+    double h = (double)height;
+    start_drag_x = xpos - w / 2;
+    start_drag_y = ypos - h / 2;
+  }
+
+  is_drag = is_down;
+
+  if (is_drag && !ImGui::IsMouseHoveringAnyWindow())
     drag_callback(window, xpos, ypos);
+
+  screen_xpos = xpos;
+  screen_ypos = ypos;
 }
 
 static void mousebutton_callback(GLFWwindow *, int button, int action, int /*mods*/) {
@@ -166,11 +223,20 @@ static void mousebutton_callback(GLFWwindow *, int button, int action, int /*mod
 
   if (action == GLFW_PRESS && button >= 0 && button < 3)
     mouse_pressed[button] = true;
+
   if (button == drag_button) {
-    if (action == GLFW_PRESS)
-      is_drag = true;
-    else if (action == GLFW_RELEASE)
-      is_drag = false;
+    if (action == GLFW_PRESS) {
+      is_down = true;
+    } else if (action == GLFW_RELEASE) {
+      is_down = false;
+      if (is_drag) {
+        is_drag = false;
+        last_drag_x = drag_x;
+        last_drag_y = drag_y;
+      } else if (!ImGui::IsMouseHoveringAnyWindow()) {
+        no_drag_click_callback(window, screen_xpos, screen_ypos);
+      }
+    }
   }
 }
 
@@ -182,7 +248,6 @@ static void refresh_callback(GLFWwindow *window) {
 }
 
 static bool is_active = false;
-// void focus_callback(GLFWwindow *window, int focus);
 static void focus_callback(GLFWwindow *, int focus) { is_active = focus == GL_TRUE; }
 
 void gui_sync(void) {
@@ -451,12 +516,15 @@ extern bool DRAW_DECISON;
 void gui_render(void) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
-  screen_zoom(width, height, zoom);
+  screen_zoom(width, height, zoom, drag_x, drag_y);
 
   draw_state(*app_state);
   if (DRAW_DECISON) {
     draw_decision(*app_decision_max, *app_state, MAX);
     draw_decision(*app_decision_min, *app_state, MIN);
+  }
+  if (app_selected_suggestion >= 0 && app_selected_suggestion < app_suggestions->tables_count) {
+    draw_suggestion(app_suggestions->tables[app_selected_suggestion]);
   }
 
   draw_options_window();
@@ -523,6 +591,33 @@ void gui_render(void) {
   ImGui::End();
 
   ImGui::Begin("Suggestions");
+  int *e = &app_selected_suggestion;
+  ImGui::RadioButton("(None)", e, -1);
+  FOR_N(i, app_suggestions->tables_count) {
+    auto &table = app_suggestions->tables[i];
+    int usage = table.usage_count;
+    ImGui::PushID(10000 + i);
+    ImGui::RadioButton(table.name, e, i);
+    ImGui::SameLine();
+    ImGui::Text("[%i]", usage);
+    ImGui::SameLine();
+    if (ImGui::Button("delete")) {
+      del_suggestion(*app_suggestions, i);
+    }
+    ImGui::PopID();
+  }
+  static char sname[256] = "";
+  ImGui::InputText("", sname, 256);
+  ImGui::SameLine();
+  if (ImGui::Button("add")) {
+    int i = add_suggestion(*app_suggestions) - 1;
+    strcpy(app_suggestions->tables[i].name, sname);
+    sname[0] = '\0';
+  }
+  double x, y;
+  x = screen_xpos;
+  y = screen_ypos;
+  ImGui::Text("screen pos: %f, %f", x, y);
   ImGui::End();
 
   ImGui::Render();

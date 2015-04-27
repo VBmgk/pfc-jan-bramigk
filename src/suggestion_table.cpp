@@ -31,7 +31,7 @@ Decision gen_decision(bool kick, const SuggestionTable &table, const State *stat
 
   FOR_TEAM_ROBOT(i, player) if (i != rwb) {
     auto pos = state->robots[i];
-    int best_j = 0;
+    int best_j = -1;
     Vector best_spot = {};
     float best_dist2 = std::numeric_limits<float>::infinity();
     FOR_N_IN(j, table.spots_count, filter) {
@@ -43,8 +43,12 @@ Decision gen_decision(bool kick, const SuggestionTable &table, const State *stat
         best_spot = spot;
       }
     }
-    filter[best_j] = true;
-    decision.action[i] = make_move_action(best_spot);
+    if (best_j >= 0) {
+      filter[best_j] = true;
+      decision.action[i] = make_move_action(best_spot);
+    } else {
+      decision.action[i] = gen_move_action(i, *state, dtable);
+    }
   }
 
   if (player == PLAYER_OF(rwb)) {

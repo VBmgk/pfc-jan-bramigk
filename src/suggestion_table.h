@@ -19,7 +19,6 @@ int add_spot(SuggestionTable &table);
 // delete given spot, return new size or -1 on failure
 int del_spot(SuggestionTable &table, int index);
 
-// it is assumed that the suggestion table has enough spots for every robot **will NOT work otherwise**
 Decision gen_decision(bool kick, const SuggestionTable &table, const struct State *state, struct DecisionTable &dtable,
                       Player player);
 

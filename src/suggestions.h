@@ -14,4 +14,8 @@ int add_suggestion(Suggestions &suggestions);
 // delete given suggestion, return new size or -1 on failure
 int del_suggestion(Suggestions &suggestions, int index);
 
+void save_suggestions(Suggestions &suggestions, const char *filename);
+
+void load_suggestions(Suggestions &suggestions, const char *filename);
+
 #endif

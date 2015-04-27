@@ -31,6 +31,7 @@ const State *app_state = &state;
 const struct Decision *app_decision_max = &decision_max;
 const struct Decision *app_decision_min = &decision_min;
 const struct DecisionTable *app_decision_table = &optimization.table;
+struct Suggestions *app_suggestions = &suggestions;
 
 static struct {
   int uptime = 0;
@@ -48,6 +49,7 @@ static bool play_minimax = false, play_decision_once = false, eval_state = false
 
 static int selected_robot = 0;
 const int *app_selected_robot = &selected_robot;
+int app_selected_suggestion = -1;
 
 // TODO: maybe persist these
 static constexpr int save_slots = 10;
