@@ -7,9 +7,10 @@
 #include "player.h"
 #include "vector.h"
 
-#define FOR_N(I, N) for (int I = 0; I < (int)(N); I++)
-#define FOR_EVERY_ROBOT(I) for (int I = 0; I < (int)(2 * N_ROBOTS); I++)
-#define FOR_TEAM_ROBOT(I, T) for (int I = T * N_ROBOTS; I < (int)((1 + T) * N_ROBOTS); I++)
+#define FOR_RANGE(I, F, T) for (int I = (F); I < (T); I++)
+#define FOR_N(I, N) FOR_RANGE(I, 0, N)
+#define FOR_EVERY_ROBOT(I) FOR_RANGE(I, 0, 2 * N_ROBOTS)
+#define FOR_TEAM_ROBOT(I, T) FOR_RANGE(I, T *N_ROBOTS, (1 + T) * N_ROBOTS)
 #define FOR_EVERY_ROBOT_IN(I, F) FOR_EVERY_ROBOT(I) if (!F[I])
 #define FOR_TEAM_ROBOT_IN(I, T, F) FOR_TEAM_ROBOT(I, T) if (!F[I])
 
