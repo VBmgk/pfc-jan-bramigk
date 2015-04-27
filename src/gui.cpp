@@ -436,7 +436,7 @@ void gui_render(void) {
     ImGui::Text(groups[*PARAM_GROUP]);
   } else {
     static int _PARAM_GROUP = 0;
-    ImGui::Combo("PARAM_GROUP", &_PARAM_GROUP, groups, 4);
+    ImGui::Combo("PARAM_GROUP", &_PARAM_GROUP, groups, PARAM_GROUP_CONQUER ? 4 : 2);
     set_param_group(_PARAM_GROUP);
   }
   ImGui::End();
