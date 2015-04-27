@@ -104,17 +104,39 @@ float time_to_obj(const State state, int r, Vector obj, Vector obj_v) {
   return time_to_pos(state.robots[r], state.robots_v[r], obj, obj_v);
 }
 
-int robot_with_ball(const State state) {
+int robot_with_ball(const State state, float *time_min, float *time_max) {
   int robot = 0;
-  float min_time = std::numeric_limits<float>::max();
+  int robot_max = 0;
+  int robot_min = 0;
+  float best_time = std::numeric_limits<float>::max();
+  float best_time_min = std::numeric_limits<float>::max();
+  float best_time_max = std::numeric_limits<float>::max();
+
+#define KEEP_BEST(BEST, ROBOT)                                                                                         \
+  do {                                                                                                                 \
+    if (t < BEST) {                                                                                                    \
+      ROBOT = i;                                                                                                       \
+      BEST = t;                                                                                                        \
+    }                                                                                                                  \
+  } while (0)
 
   FOR_EVERY_ROBOT(i) {
     float t = time_to_obj(state, i, state.ball, state.ball_v);
-    if (t < min_time) {
-      robot = i;
-      min_time = t;
-    }
+
+    KEEP_BEST(best_time, robot);
+    if (PLAYER_OF(i) == MIN)
+      KEEP_BEST(best_time_min, robot_min);
+    else
+      KEEP_BEST(best_time_max, robot_max);
   }
+
+#undef KEEP_BEST
+
+  if (time_min != nullptr)
+    *time_min = best_time_min;
+
+  if (time_max != nullptr)
+    *time_max = best_time_max;
 
   return robot;
 }

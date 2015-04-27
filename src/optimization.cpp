@@ -27,7 +27,7 @@ ValuedDecision decide(Optimization &opt, State state, Player player, int *ramifi
 
   int i = 0;
   while (true) {
-    //FOR_N(i, RAMIFICATION_NUMBER) {
+    // FOR_N(i, RAMIFICATION_NUMBER) {
     Decision decision;
 
     // always consider the previous decision (based on the decision table)

@@ -68,14 +68,39 @@ struct Timer {
   std::chrono::time_point<std::chrono::system_clock> start, end;
 };
 
+void _update_param_group_2(void) {
+  auto ball = state.ball;
+  if (ball.x < -PARAM_GROUP_THRESHOLD) {
+    set_param_group(MIN_ATTACK);
+  }
+  if (ball.x > +PARAM_GROUP_THRESHOLD) {
+    set_param_group(MAX_ATTACK);
+  }
+}
+
+void _update_param_group_4(void) {
+  auto ball = state.ball;
+  float time_min, time_max;
+  robot_with_ball(state, &time_min, &time_max);
+  if (*PARAM_GROUP == MAX_CONQUER || *PARAM_GROUP == MAX_ATTACK) {
+    if (time_min < PARAM_GROUP_CONQUER_TIME)
+      set_param_group(MIN_CONQUER);
+    if (ball.x < -PARAM_GROUP_THRESHOLD)
+      set_param_group(MIN_ATTACK);
+  } else {
+    if (time_max < PARAM_GROUP_CONQUER_TIME)
+      set_param_group(MAX_CONQUER);
+    if (ball.x > +PARAM_GROUP_THRESHOLD)
+      set_param_group(MAX_ATTACK);
+  }
+}
+
 void update_param_group(void) {
   if (PARAM_GROUP_AUTOSELECT) {
-    auto ball = state.ball;
-    // TODO: in the future test 4 groups
-    if (ball.x < -PARAM_GROUP_THRESHOLD && *PARAM_GROUP != MIN_ATTACK)
-      change_param_group(MIN_ATTACK);
-    if (ball.x > +PARAM_GROUP_THRESHOLD && *PARAM_GROUP != MAX_ATTACK)
-      change_param_group(MAX_ATTACK);
+    if (PARAM_GROUP_CONQUER)
+      _update_param_group_4();
+    else
+      _update_param_group_2();
   }
 }
 
@@ -314,6 +339,7 @@ void app_select_next_robot() {
   void app_move_##D() {                                                                                                \
     if (selected_robot >= 0)                                                                                           \
       state.robots[selected_robot] += V;                                                                               \
+    update_param_group();                                                                                              \
   }
 MOVE(up, Vector(0, move_step))
 MOVE(down, Vector(0, -move_step))

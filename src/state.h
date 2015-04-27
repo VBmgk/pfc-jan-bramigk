@@ -20,7 +20,7 @@ State uniform_rand_state();
 
 bool can_kick_directly(const State state, Player player);
 
-int robot_with_ball(const State state);
+int robot_with_ball(const State state, float *time_min = nullptr, float *time_max = nullptr);
 
 float total_gap_len_from_pos(const State state, Vector pos, Player player, int ignore_robot = -1);
 

@@ -26,7 +26,7 @@ bool DRAW_DECISON = true;
 bool DRAW_GAP = true;
 bool DRAW_POSSIBLE_RECEIVERS = true;
 bool DRAW_BALL_OWNER = true;
-int DRAW_BALL_SHADOW = 2; // 0: none, 1: time to ball, 2: time when kick to selected robot
+int DRAW_BALL_SHADOW = 1; // 0: none, 1: time to ball, 2: time when kick to selected robot
 bool DRAW_SELECTED_ROBOT = true;
 
 void draw_options_window(void) {

@@ -25,18 +25,14 @@ constexpr const char *PROGRAM_NAME = "AI for RoboIME"; // TODO: better name mayb
 constexpr int GUI_DEFAULT_WIDTH = 944;
 constexpr int GUI_DEFAULT_HEIGHT = 740;
 
-enum _ParamGroup {
-  MAX_ATTACK = 0,
-  MIN_ATTACK = 1,
-  // XXX: the following are for future use
-  MAX_CONQUER = 2,
-  MIN_CONQUER = 3
-};
+enum _ParamGroup { MAX_ATTACK = 0, MIN_ATTACK = 1, MAX_CONQUER = 2, MIN_CONQUER = 3 };
 
-extern const int * const PARAM_GROUP;
+extern const int *const PARAM_GROUP;
 extern bool PARAM_GROUP_AUTOSELECT;
+extern bool PARAM_GROUP_CONQUER;
 extern float PARAM_GROUP_THRESHOLD;
-void change_param_group(int new_param_group);
+extern float PARAM_GROUP_CONQUER_TIME;
+void set_param_group(int new_param_group);
 
 #ifdef _CONST_IMPL
 #define PARAM(TYPE, NAME, DEFAULT, ...) _CONST_IMPL(TYPE, NAME, DEFAULT)

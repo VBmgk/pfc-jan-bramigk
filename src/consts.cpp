@@ -1,15 +1,21 @@
-#define _CONST_IMPL(TYPE, NAME, DEFAULT) TYPE NAME = DEFAULT; TYPE _##NAME[] = {DEFAULT, DEFAULT, DEFAULT, DEFAULT};
+#define _CONST_IMPL(TYPE, NAME, DEFAULT)                                                                               \
+  TYPE NAME = DEFAULT;                                                                                                 \
+  TYPE _##NAME[] = {DEFAULT, DEFAULT, DEFAULT, DEFAULT};
 #include "consts.h"
 
 int param_group;
-const int * const PARAM_GROUP = &param_group;
+const int *const PARAM_GROUP = &param_group;
 bool PARAM_GROUP_AUTOSELECT = true;
-float PARAM_GROUP_THRESHOLD = 1.000; // 1m
+bool PARAM_GROUP_CONQUER = true;
+float PARAM_GROUP_THRESHOLD = 1.000;    // 1m
+float PARAM_GROUP_CONQUER_TIME = 0.100; // 0.1s
 
-void change_param_group(int new_param_group) {
+static void change_param_group(int new_param_group) {
   int oldp = param_group;
   int newp = new_param_group;
-#define PARAM_SWAP(NAME) _##NAME[oldp] = NAME; NAME = _##NAME[newp];
+#define PARAM_SWAP(NAME)                                                                                               \
+  _##NAME[oldp] = NAME;                                                                                                \
+  NAME = _##NAME[newp];
   PARAM_SWAP(CONSTANT_RATE);
   PARAM_SWAP(KICK_IF_NO_PASS);
   PARAM_SWAP(DECISION_RATE);
@@ -37,4 +43,10 @@ void change_param_group(int new_param_group) {
   PARAM_SWAP(MOVE_RADIUS_2);
 #undef PARAM_SWAP
   param_group = new_param_group;
+}
+
+void set_param_group(int new_param_group) {
+  // only change if needed
+  if (param_group != new_param_group)
+    change_param_group(new_param_group);
 }

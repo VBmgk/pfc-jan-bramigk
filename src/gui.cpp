@@ -420,16 +420,16 @@ void gui_render(void) {
     app_load_params(filename);
   }
   ImGui::Checkbox("PARAM_GROUP_AUTOSELECT", &PARAM_GROUP_AUTOSELECT);
+  ImGui::Checkbox("PARAM_GROUP_CONQUER", &PARAM_GROUP_CONQUER);
   ImGui::SliderFloat("PARAM_GROUP_THRESHOLD", &PARAM_GROUP_THRESHOLD, 0.0, 10.0);
+  ImGui::SliderFloat("PARAM_GROUP_CONQUER_TIME", &PARAM_GROUP_CONQUER_TIME, 0.0, 1.0);
   const char *groups[] = {"MAX_ATTACK", "MIN_ATTACK", "MAX_CONQUER", "MIN_CONQUER"};
   if (PARAM_GROUP_AUTOSELECT) {
     ImGui::Text(groups[*PARAM_GROUP]);
   } else {
     static int _PARAM_GROUP = 0;
-    // XXX: enable 4 groups in the future
-    ImGui::Combo("PARAM_GROUP", &_PARAM_GROUP, groups, 2);
-    if (*PARAM_GROUP != _PARAM_GROUP)
-      change_param_group(_PARAM_GROUP);
+    ImGui::Combo("PARAM_GROUP", &_PARAM_GROUP, groups, 4);
+    set_param_group(_PARAM_GROUP);
   }
   ImGui::End();
 
