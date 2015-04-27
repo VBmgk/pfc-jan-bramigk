@@ -1,38 +1,32 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-template <typename T> struct VectorT {
-  T x, y;
+struct Vector {
+  float x, y;
 
-  constexpr VectorT() : x(0), y(0) {}
-  constexpr VectorT(const T x, const T y) : x(x), y(y) {}
-  constexpr VectorT(const VectorT<T> &o) : x(o.x), y(o.y) {}
+  constexpr Vector() : x(0), y(0) {}
+  constexpr Vector(const float x, const float y) : x(x), y(y) {}
+  constexpr Vector(const Vector &o) : x(o.x), y(o.y) {}
 
-  constexpr VectorT<T> operator+(const VectorT<T> &o) const { return VectorT(x + o.x, y + o.y); }
-  constexpr VectorT<T> operator-(const VectorT<T> &o) const { return VectorT(x - o.x, y - o.y); }
-  constexpr VectorT<T> operator*(T k) const { return VectorT(x * k, y * k); }
-  constexpr VectorT<T> operator/(T k) const { return VectorT(x / k, y / k); }
-  constexpr T operator*(const VectorT<T> &o) const { return x * o.x + y * o.y; }
-  VectorT<T> operator+=(const VectorT<T> &o) {
+  constexpr Vector operator+(const Vector &o) const { return Vector(x + o.x, y + o.y); }
+  constexpr Vector operator-(const Vector &o) const { return Vector(x - o.x, y - o.y); }
+  constexpr Vector operator*(float k) const { return Vector(x * k, y * k); }
+  constexpr Vector operator/(float k) const { return Vector(x / k, y / k); }
+  constexpr float operator*(const Vector &o) const { return x * o.x + y * o.y; }
+  Vector operator+=(const Vector &o) {
     x += o.x;
     y += o.y;
     return *this;
   }
 };
 
-template <typename T> T norm2(const VectorT<T> v);
-template <typename T> T norm(const VectorT<T> v);
-template <typename T> VectorT<T> unit(const VectorT<T> v);
-template <typename T> VectorT<T> uniform_rand_vector(T rx, T ry);
-template <typename T> VectorT<T> normal_rand_vector(const VectorT<T> &v, T sigma = 1.0);
-template <typename T> VectorT<T> rand_vector_bounded(const VectorT<T> vec, T radius, T xbound, T ybound);
-template <typename T> bool line_segment_cross_circle(VectorT<T> p1, VectorT<T> p2, VectorT<T> c, T r);
-template <typename T> T dist(const VectorT<T> v1, const VectorT<T> v2);
-
-#ifdef DOUBLE_PRECISION
-using Vector = VectorT<double>;
-#else
-using Vector = VectorT<float>;
-#endif
+float norm2(const Vector v);
+float norm(const Vector v);
+Vector unit(const Vector v);
+Vector uniform_rand_vector(float rx, float ry);
+Vector normal_rand_vector(const Vector &v, float sigma = 1.0);
+Vector rand_vector_bounded(const Vector vec, float radius, float xbound, float ybound);
+bool line_segment_cross_circle(Vector p1, Vector p2, Vector c, float r);
+float dist(const Vector v1, const Vector v2);
 
 #endif
