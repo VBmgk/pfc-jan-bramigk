@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "vector.h"
 #include "decision_table.h"
+#include "decision.h"
 
 static void update(Action *a, const Action *b) {
   switch (b->type) {
@@ -142,6 +143,10 @@ Action gen_pass_action(int robot, const State &state, DecisionTable &table) {
     else
       return gen_move_action(robot, state, table);
   }
+}
+
+Action gen_primary_action(int robot, const State &state, DecisionTable &table, bool kick) {
+  return kick ? gen_kick_action(robot, state, table) : gen_pass_action(robot, state, table);
 }
 
 void apply_to_state(Action action, int robot, State *state) {

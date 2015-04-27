@@ -9,7 +9,7 @@
 #include "vector.h"
 #include "suggestions.h"
 
-ValuedDecision decide(Optimization &opt, State state, Player player, const Suggestions *suggestions,
+ValuedDecision decide(Optimization &opt, State state, Player player, Suggestions *suggestions,
                       int *ramification_count) {
 
   using namespace std::chrono;
@@ -28,16 +28,20 @@ ValuedDecision decide(Optimization &opt, State state, Player player, const Sugge
   const duration<double> max_delta{1.0 / DECISION_RATE};
   const auto start = steady_clock::now();
 
+  // this should point to a suggestion if one leads to the best decision
+  SuggestionTable *best_suggestion = nullptr;
+
   int i = 0;
   while (true) {
     // FOR_N(i, RAMIFICATION_NUMBER) {
     Decision decision;
+    SuggestionTable *local_suggestion = nullptr;
 
     // always consider the previous decision (based on the decision table)
     // unless it's a kick action, those can only happen if kick
     if (suggestions && i < suggestions->tables_count) {
-      // decision = from_decision_table(opt.suggestions[i]);
-      // TODO
+      local_suggestion = &suggestions->tables[i];
+      decision = gen_decision(kick, *local_suggestion, &state, opt.table, player);
     } else if (i == (suggestions ? suggestions->tables_count : 0) && (kick || opt.table.kick_robot == -1)) {
       decision = from_decision_table(opt.table);
       // on some cases try to move everyone at once, this may lead to better results
@@ -56,6 +60,8 @@ ValuedDecision decide(Optimization &opt, State state, Player player, const Sugge
     if (value > vd.value) {
       vd.value = value;
       vd.decision = decision;
+      // save suggestion or otherwise erase it
+      best_suggestion = local_suggestion;
     }
 
     // check stop condition
@@ -69,6 +75,10 @@ ValuedDecision decide(Optimization &opt, State state, Player player, const Sugge
     }
   }
   *ramification_count = i;
+
+  // increment the usage count if decision from a suggestion
+  if (best_suggestion)
+    best_suggestion->usage_count++;
 
   // update the decision table
   opt.table.kick_robot = -1;

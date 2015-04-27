@@ -133,14 +133,16 @@ static void scroll_callback(GLFWwindow *, double xoffset, double yoffset) {
   static constexpr double zoom_min = 0.15;
   static constexpr double zoom_max = 5.50;
 
-  double offset2 = xoffset * std::abs(xoffset) + yoffset * std::abs(yoffset);
-  // nonsqrt'd
-  // zoom += offset2 * zoom_speed;
-  // sqrt'd
-  zoom += copysign(sqrt(std::abs(offset2)), offset2) * zoom_speed;
-  // restrict zoom in [zoom_min, zoom_max] interval
-  zoom = (zoom > zoom_max) ? zoom_max : (zoom < zoom_min) ? zoom_min : zoom;
-  // std::cout << zoom << std::endl;
+  if (!ImGui::IsMouseHoveringAnyWindow()) {
+    double offset2 = xoffset * std::abs(xoffset) + yoffset * std::abs(yoffset);
+    // nonsqrt'd
+    // zoom += offset2 * zoom_speed;
+    // sqrt'd
+    zoom += copysign(sqrt(std::abs(offset2)), offset2) * zoom_speed;
+    // restrict zoom in [zoom_min, zoom_max] interval
+    zoom = (zoom > zoom_max) ? zoom_max : (zoom < zoom_min) ? zoom_min : zoom;
+    // std::cout << zoom << std::endl;
+  }
 
   mouse_wheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
 }
@@ -518,6 +520,9 @@ void gui_render(void) {
   SLIDER(MOVE_RADIUS_1, 0, 10)
   SLIDER(MOVE_RADIUS_2, 0, 10)
 #undef SLIDER
+  ImGui::End();
+
+  ImGui::Begin("Suggestions");
   ImGui::End();
 
   ImGui::Render();
