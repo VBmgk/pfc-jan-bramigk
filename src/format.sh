@@ -1,2 +1,2 @@
 #!/bin/sh
-exec clang-format -style=file -i src/*.{cpp,h}
+exec clang-format -style=file -i *.{cpp,h}
