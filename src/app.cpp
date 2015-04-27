@@ -18,12 +18,14 @@
 #include "draw.h"
 #include "utils.h"
 #include "id_table.h"
+#include "suggestions.h"
 
 static std::mutex state_mutex, decision_mutex, display_mutex;
 static Decision decision_min, decision_max;
 static State state, command_state;
 static Optimization optimization;
 static IdTable id_table;
+static Suggestions suggestions;
 
 const State *app_state = &state;
 const struct Decision *app_decision_max = &decision_max;
@@ -245,11 +247,11 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
         if (MAX_DEPTH == 0) {
           // optimization decision
           if (play_as_max) {
-            auto valued_decision = decide(optimization, local_state, MAX, &ram_count);
+            auto valued_decision = decide(optimization, local_state, MAX, &suggestions, &ram_count);
             local_decision_max = valued_decision.decision;
             val = valued_decision.value;
           } else {
-            auto valued_decision = decide(optimization, local_state, MIN, &ram_count);
+            auto valued_decision = decide(optimization, local_state, MIN, &suggestions, &ram_count);
             local_decision_min = valued_decision.decision;
             val = valued_decision.value;
           }
@@ -425,7 +427,9 @@ void app_load_params(const char *filename) {
   while (!feof(file)) {
     fgets(line, 256, file);
 #define SEP " = "
-#define LOAD_PARAM(MODE, NAME) if (!strncmp(line, #NAME, strlen(#NAME))) sscanf(line, "%*s" SEP MODE, &NAME)
+#define LOAD_PARAM(MODE, NAME)                                                                                         \
+  if (!strncmp(line, #NAME, strlen(#NAME)))                                                                            \
+  sscanf(line, "%*s" SEP MODE, &NAME)
     LOAD_PARAM("%i", CONSTANT_RATE);
     LOAD_PARAM("%i", KICK_IF_NO_PASS);
     LOAD_PARAM("%i", DECISION_RATE);

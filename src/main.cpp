@@ -19,12 +19,12 @@ int main(int argc, char **argv) {
             gui_init();
 
             while (!gui_should_close()) {
-              gui_update();
+              gui_new_frame();
               gui_sync();
               gui_render();
             }
 
-            gui_destroy();
+            gui_shutdown();
             printf("\rGood");
           },
           play_as_max);

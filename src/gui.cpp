@@ -4,7 +4,14 @@
 #include <thread>
 #include <cmath>
 #include <imgui.h>
+
 #include <GLFW/glfw3.h>
+#ifdef _MSC_VER
+#undef APIENTRY
+#define GLFW_EXPOSE_NATIVE_WIN32
+#define GLFW_EXPOSE_NATIVE_WGL
+#include <GLFW/glfw3native.h>
+#endif
 
 #include "gui.h"
 #include "app.h"
@@ -14,17 +21,28 @@
 #include "app.h"
 
 static GLFWwindow *window;
-static bool mousePressed[2] = {false, false};
+static bool mouse_pressed[3] = {false, false, false};
+static float mouse_wheel = 0.0f;
+static GLuint font_texture = 0;
 
-// void error_callback(int error, const char *description);
-static void error_callback(int, const char *description) { fputs(description, stderr); }
+static void error_callback(int /*error*/, const char *description) { fputs(description, stderr); }
 
-// void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
-static void key_callback(GLFWwindow *window, int key, int, int action, int) {
+static void key_callback(GLFWwindow *window, int key, int, int action, int mods) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     return glfwSetWindowShouldClose(window, GL_TRUE);
 
-  if (action == GLFW_PRESS) {
+  ImGuiIO &io = ImGui::GetIO();
+  if (action == GLFW_PRESS)
+    io.KeysDown[key] = true;
+  if (action == GLFW_RELEASE)
+    io.KeysDown[key] = false;
+
+  (void)mods; // Modifiers are not reliable across systems
+  io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+  io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+  io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+
+  if (!io.WantCaptureKeyboard && action == GLFW_PRESS) {
     switch (key) {
 
     case GLFW_KEY_R: {
@@ -104,18 +122,17 @@ static void key_callback(GLFWwindow *window, int key, int, int action, int) {
   }
 }
 
-// void resize_callback(GLFWwindow *window, int width, int height);
-static void resize_callback(GLFWwindow *, int, int) {
-  gui_update();
+static void resize_callback(GLFWwindow *, int /*width*/, int /*height*/) {
+  gui_new_frame();
   gui_render();
 }
 
 static double zoom;
-// void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 static void scroll_callback(GLFWwindow *, double xoffset, double yoffset) {
   static constexpr double zoom_speed = 0.01;
   static constexpr double zoom_min = 0.15;
   static constexpr double zoom_max = 5.50;
+
   double offset2 = xoffset * std::abs(xoffset) + yoffset * std::abs(yoffset);
   // nonsqrt'd
   // zoom += offset2 * zoom_speed;
@@ -124,6 +141,8 @@ static void scroll_callback(GLFWwindow *, double xoffset, double yoffset) {
   // restrict zoom in [zoom_min, zoom_max] interval
   zoom = (zoom > zoom_max) ? zoom_max : (zoom < zoom_min) ? zoom_min : zoom;
   // std::cout << zoom << std::endl;
+
+  mouse_wheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
 }
 
 static bool is_drag;
@@ -140,9 +159,11 @@ static void cursorpos_callback(GLFWwindow *window, double xpos, double ypos) {
     drag_callback(window, xpos, ypos);
 }
 
-// void mousebutton_callback(GLFWwindow *window, int button, int action, int mods);
-static void mousebutton_callback(GLFWwindow *, int button, int action, int) {
+static void mousebutton_callback(GLFWwindow *, int button, int action, int /*mods*/) {
   static constexpr int drag_button = GLFW_MOUSE_BUTTON_LEFT;
+
+  if (action == GLFW_PRESS && button >= 0 && button < 3)
+    mouse_pressed[button] = true;
   if (button == drag_button) {
     if (action == GLFW_PRESS)
       is_drag = true;
@@ -242,32 +263,36 @@ void imgui_renderdrawlists(struct ImDrawList **const cmd_lists, int cmd_lists_co
   glPushMatrix();
   glLoadIdentity();
 
-  // Render command lists
+// Render command lists
+#define OFFSETOF(TYPE, ELEMENT) ((size_t) & (((TYPE *)0)->ELEMENT))
   for (int n = 0; n < cmd_lists_count; n++) {
     const ImDrawList *cmd_list = cmd_lists[n];
     const unsigned char *vtx_buffer = (const unsigned char *)&cmd_list->vtx_buffer.front();
-
-#define OFFSETOF(TYPE, ELEMENT) ((size_t) & (((TYPE *)0)->ELEMENT))
     glVertexPointer(2, GL_FLOAT, sizeof(ImDrawVert), (void *)(vtx_buffer + OFFSETOF(ImDrawVert, pos)));
     glTexCoordPointer(2, GL_FLOAT, sizeof(ImDrawVert), (void *)(vtx_buffer + OFFSETOF(ImDrawVert, uv)));
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert), (void *)(vtx_buffer + OFFSETOF(ImDrawVert, col)));
-#undef OFFSETOF
 
     int vtx_offset = 0;
     for (size_t cmd_i = 0; cmd_i < cmd_list->commands.size(); cmd_i++) {
       const ImDrawCmd *pcmd = &cmd_list->commands[cmd_i];
-      glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t) pcmd->texture_id);
-      glScissor((int)pcmd->clip_rect.x, (int)(height - pcmd->clip_rect.w), (int)(pcmd->clip_rect.z - pcmd->clip_rect.x),
-                (int)(pcmd->clip_rect.w - pcmd->clip_rect.y));
-      glDrawArrays(GL_TRIANGLES, vtx_offset, pcmd->vtx_count);
+      if (pcmd->user_callback) {
+        pcmd->user_callback(cmd_list, pcmd);
+      } else {
+        glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t) pcmd->texture_id);
+        glScissor((int)pcmd->clip_rect.x, (int)(height - pcmd->clip_rect.w),
+                  (int)(pcmd->clip_rect.z - pcmd->clip_rect.x), (int)(pcmd->clip_rect.w - pcmd->clip_rect.y));
+        glDrawArrays(GL_TRIANGLES, vtx_offset, pcmd->vtx_count);
+      }
       vtx_offset += pcmd->vtx_count;
     }
   }
+#undef OFFSETOF
 
   // Restore modified state
   glDisableClientState(GL_COLOR_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
+  glBindTexture(GL_TEXTURE_2D, 0);
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
   glMatrixMode(GL_PROJECTION);
@@ -281,7 +306,7 @@ static const char *imgui_getclipboardtextfn() { return glfwGetClipboardString(wi
 
 static void imgui_setclipboardtextfn(const char *text) { glfwSetClipboardString(window, text); }
 
-void load_fonts_texture() {
+void load_font_texture(void) {
   ImGuiIO &io = ImGui::GetIO();
   // ImFont* my_font1 = io.Fonts->AddFontDefault();
   // ImFont* my_font2 = io.Fonts->AddFontFromFileTTF("extra_fonts/Karla-Regular.ttf", 15.0f);
@@ -294,19 +319,28 @@ void load_fonts_texture() {
 
   // ImFont* my_font2 = io.Fonts->AddFontFromFileTTF("../vendor/fonts/anonymous-pro.ttf", 12.0f);
 
+  // Build texture
   unsigned char *pixels;
   int width, height;
   io.Fonts->GetTexDataAsAlpha8(&pixels, &width, &height);
 
-  GLuint tex_id;
-  glGenTextures(1, &tex_id);
-  glBindTexture(GL_TEXTURE_2D, tex_id);
+  // Create texture
+  glGenTextures(1, &font_texture);
+  glBindTexture(GL_TEXTURE_2D, font_texture);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, pixels);
 
   // Store our identifier
-  io.Fonts->TexID = (void *)(intptr_t) tex_id;
+  io.Fonts->TexID = (void *)(intptr_t) font_texture;
+}
+
+void unload_font_texture(void) {
+  if (font_texture) {
+    glDeleteTextures(1, &font_texture);
+    ImGui::GetIO().Fonts->TexID = 0;
+    font_texture = 0;
+  }
 }
 
 void gui_init_imgui(void) {
@@ -339,20 +373,24 @@ void gui_init_imgui(void) {
   io.RenderDrawListsFn = imgui_renderdrawlists;
   io.SetClipboardTextFn = imgui_setclipboardtextfn;
   io.GetClipboardTextFn = imgui_getclipboardtextfn;
-
-  load_fonts_texture();
+#ifdef _MSC_VER
+  io.ImeWindowHandle = glfwGetWin32Window(window);
+#endif
 
   // Styling
   auto &style = ImGui::GetStyle();
-  style.Alpha = 0.6;
+  style.Alpha = 0.8;
   style.WindowRounding = 6.0;
   style.WindowPadding = {3.0, 3.0};
   style.FrameRounding = 2.0;
   style.FramePadding = {1.0, 1.0};
 }
 
-void gui_update(void) {
-  mousePressed[0] = mousePressed[1] = false;
+void gui_new_frame(void) {
+  if (!font_texture)
+    load_font_texture();
+
+  mouse_pressed[0] = mouse_pressed[1] = false;
   glfwPollEvents();
   ImGuiIO &io = ImGui::GetIO();
 
@@ -361,33 +399,41 @@ void gui_update(void) {
   int display_w, display_h;
   glfwGetWindowSize(window, &w, &h);
   glfwGetFramebufferSize(window, &display_w, &display_h);
-  io.DisplaySize =
-      ImVec2((float)display_w, (float)display_h); // Display size, in pixels. For clamping windows positions.
+  // Display size, in pixels. For clamping windows positions.
+  io.DisplaySize = ImVec2((float)display_w, (float)display_h);
 
   // Setup time step
   static double time = 0.0f;
   const double current_time = glfwGetTime();
-  io.DeltaTime = (float)(current_time - time);
+  io.DeltaTime = time > 0.0 ? (float)(current_time - time) : (float)(1.0f / 60.0f);
   time = current_time;
 
   // Setup inputs
-  // (we already got mouse wheel, keyboard keys & characters from glfw callbacks
-  // polled in glfwPollEvents())
-  double mouse_x, mouse_y;
-  glfwGetCursorPos(window, &mouse_x, &mouse_y);
-  mouse_x *= (float)display_w / w; // Convert mouse coordinates to pixels
-  mouse_y *= (float)display_h / h;
-  io.MousePos = ImVec2((float)mouse_x, (float)mouse_y); // Mouse position, in
-                                                        // pixels (set to -1,-1
-                                                        // if no mouse / on
-                                                        // another screen, etc.)
-  io.MouseDown[0] =
-      mousePressed[0] ||
-      glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) != 0; // If a mouse press event came, always pass it as
-                                                               // "mouse held this frame", so we don't miss
-                                                               // click-release events that are shorter than 1
-                                                               // frame.
-  io.MouseDown[1] = mousePressed[1] || glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) != 0;
+  // (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
+  if (glfwGetWindowAttrib(window, GLFW_FOCUSED)) {
+    double mouse_x, mouse_y;
+    glfwGetCursorPos(window, &mouse_x, &mouse_y);
+    mouse_x *= (float)display_w / w; // Convert mouse coordinates to pixels
+    mouse_y *= (float)display_h / h;
+    io.MousePos =
+        ImVec2((float)mouse_x,
+               (float)mouse_y); // Mouse position, in pixels (set to -1,-1 if no mouse / on another screen, etc.)
+  } else {
+    io.MousePos = ImVec2(-1, -1);
+  }
+  for (int i = 0; i < 3; i++) {
+    io.MouseDown[i] = mouse_pressed[i] || glfwGetMouseButton(window, i) != 0; // If a mouse press event came, always
+                                                                              // pass it as "mouse held this frame", so
+                                                                              // we don't miss click-release events
+                                                                              // that are shorter than 1 frame.
+    mouse_pressed[i] = false;
+  }
+
+  io.MouseWheel = mouse_wheel;
+  mouse_wheel = 0.0f;
+
+  // Hide/show hardware mouse cursor
+  glfwSetInputMode(window, GLFW_CURSOR, io.MouseDrawCursor ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
 
   // Start the frame
   ImGui::NewFrame();
@@ -447,7 +493,7 @@ void gui_render(void) {
   if (CONSTANT_RATE)
     ImGui::SliderInt("DECISION_RATE", &DECISION_RATE, 1, 1000);
   else
-    ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER, 10, 20000);
+    ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER, MAX_SUGGESTIONS + 2, 20000);
   ImGui::SliderInt("FULL_CHANGE_PERCENTAGE", &FULL_CHANGE_PERCENTAGE, 0, 100);
   ImGui::SliderInt("MAX_DEPTH", &MAX_DEPTH, 0, 3);
 
@@ -480,7 +526,8 @@ void gui_render(void) {
 
 bool gui_should_close(void) { return glfwWindowShouldClose(window); }
 
-void gui_destroy(void) {
+void gui_shutdown(void) {
+  unload_font_texture();
   glfwDestroyWindow(window);
   glfwTerminate();
 }
