@@ -231,6 +231,7 @@ void draw_field(void) {
   glEnd();
 
   // the goals
+  glColor3ubv(GREY);
   glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH, -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, -FIELD_WIDTH / 2,
           -GOAL_WIDTH / 2);
   glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH, GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, -FIELD_WIDTH / 2,
