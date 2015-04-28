@@ -86,15 +86,15 @@ void _update_param_group_4(void) {
   auto ball = state.ball;
   float time_min, time_max;
   robot_with_ball(state, &time_min, &time_max);
-  if (*PARAM_GROUP == MAX_CONQUER || *PARAM_GROUP == MAX_ATTACK) {
-    if (time_min < PARAM_GROUP_CONQUER_TIME)
-      set_param_group(MIN_CONQUER);
-    if (ball.x < -PARAM_GROUP_THRESHOLD)
-      set_param_group(MIN_ATTACK);
-  } else {
+  if (ball.x < 0) {
     if (time_max < PARAM_GROUP_CONQUER_TIME)
       set_param_group(MAX_CONQUER);
-    if (ball.x > +PARAM_GROUP_THRESHOLD)
+    else if (ball.x < -PARAM_GROUP_THRESHOLD)
+      set_param_group(MIN_ATTACK);
+  } else {
+    if (time_min < PARAM_GROUP_CONQUER_TIME)
+      set_param_group(MIN_CONQUER);
+    else if (ball.x > +PARAM_GROUP_THRESHOLD)
       set_param_group(MAX_ATTACK);
   }
 }
