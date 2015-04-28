@@ -17,7 +17,7 @@ void apply_to_state(const Decision decision, Player player, State *state);
 
 Decision gen_decision(bool kick, const State &state, Player player, DecisionTable &table, int robot_to_move = -1);
 
-Decision from_decision_table(const DecisionTable &table);
+Decision from_decision_table(DecisionTable &table, const State &state, Player player, bool kick);
 
 namespace roboime {
 class Command;

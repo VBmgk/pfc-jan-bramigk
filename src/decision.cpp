@@ -51,16 +51,26 @@ Decision gen_decision(bool kick, const State &state, Player player, DecisionTabl
   return decision;
 }
 
-Decision from_decision_table(const struct DecisionTable &table) {
+Decision from_decision_table(DecisionTable &table, const State &state, Player player, bool kick) {
   Decision decision;
+  int rwb = robot_with_ball(state);
+  if (PLAYER_OF(rwb) != player)
+    rwb = -1;
 
   FOR_N(i, N_ROBOTS) { decision.action[i] = table.move[i]; }
-  if (table.kick_robot >= 0) {
-    decision.action[table.kick_robot] = table.kick;
-  }
 
-  if (table.pass_robot >= 0) {
-    decision.action[table.pass_robot] = table.pass;
+  if (kick) {
+    if (table.kick_robot >= 0 && table.kick_robot == rwb) {
+      decision.action[rwb] = table.kick;
+    } else {
+      decision.action[rwb] = gen_kick_action(rwb, state, table);
+    }
+  } else {
+    if (table.pass_robot >= 0 && table.pass_robot == rwb) {
+      decision.action[table.pass_robot] = table.pass;
+    } else {
+      decision.action[rwb] = gen_pass_action(rwb, state, table);
+    }
   }
 
   return decision;

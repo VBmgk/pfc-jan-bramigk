@@ -542,25 +542,27 @@ float evaluate_with_decision(Player player, const State &state, const struct Dec
   Player enemy = ENEMY_FOR(player);
   float value = 0.0;
 
+  float time_min, time_max;
+
   // check wheter we have the ball
-  bool has_ball = PLAYER_OF(robot_with_ball(state)) == player;
+  bool has_ball = PLAYER_OF(robot_with_ball(state, &time_min, &time_max)) == player;
+
+  float time_player = player == MAX ? time_max : time_min;
+  float time_enemy = player == MIN ? time_max : time_min;
+
+  value += WEIGHT_CLOSE_TO_BALL / (1 + time_player);
+  value -= WEIGHT_ENEMY_CLOSE_TO_BALL / (1 + time_enemy);
+
+  value += WEIGHT_BALL_POS * state.ball.x;
 
   // bonus for having the ball
   if (has_ball)
-    value += WEIGHT_ATTACK * gap_value(state, enemy, state.ball);
+    value += WEIGHT_HAS_BALL;
+
+  value += WEIGHT_ATTACK * gap_value(state, enemy, state.ball);
   // or penalty for not having it
-  else
-    value -= WEIGHT_BLOCK_ATTACKER * gap_value(state, player, state.ball);
-
-  // bonus for seeing enemy goal
-  FOR_TEAM_ROBOT(i, player) {
-    value += WEIGHT_SEE_ENEMY_GOAL * gap_value(state, enemy, state.robots[i]);
-
-    // penalty for being too close to enemy goal
-    if (dist(state.robots[i], GOAL_POS(enemy)) < DIST_GOAL_TO_PENAL) {
-      value -= DIST_GOAL_PENAL;
-    }
-  }
+  //else
+  value -= WEIGHT_BLOCK_ATTACKER * gap_value(state, player, state.ball);
 
   // penalty for exposing own goal
   FOR_TEAM_ROBOT(i, enemy) { value -= WEIGHT_BLOCK_GOAL * gap_value(state, player, state.robots[i]); }
@@ -574,6 +576,21 @@ float evaluate_with_decision(Player player, const State &state, const struct Dec
   TeamFilter enemy_receivers;
   discover_possible_receivers(state, &table, enemy, enemy_receivers);
   value -= WEIGHT_ENEMY_RECEIVERS_NUM * enemy_receivers.count;
+
+  // bonus for seeing enemy goal
+  FOR_TEAM_ROBOT(i, player) {
+    float gap = gap_value(state, enemy, state.robots[i]);
+    value += WEIGHT_SEE_ENEMY_GOAL * gap;
+
+    if (!receivers[i]) {
+      value += WEIGHT_GOOD_RECEIVERS * gap;
+    }
+
+    // penalty for being too close to enemy goal
+    if (dist(state.robots[i], GOAL_POS(enemy)) < DIST_GOAL_TO_PENAL) {
+      value -= DIST_GOAL_PENAL;
+    }
+  }
 
   float move_dist_total = 0, move_dist_max = 0, move_change = 0, pass_change = 0, kick_change = 0;
 

@@ -6,6 +6,7 @@
 struct Suggestions {
   SuggestionTable tables[MAX_SUGGESTIONS];
   int tables_count = 0;
+  int last_used = -1;
 };
 
 // allocate new suggestion, return the index or -1 on failure

@@ -30,20 +30,23 @@ ValuedDecision decide(Optimization &opt, State state, Player player, Suggestions
 
   // this should point to a suggestion if one leads to the best decision
   SuggestionTable *best_suggestion = nullptr;
+  int best_suggestion_i = -1;
 
   int i = 0;
   while (true) {
     // FOR_N(i, RAMIFICATION_NUMBER) {
     Decision decision;
     SuggestionTable *local_suggestion = nullptr;
+    int local_suggestion_i = -1;
 
     // always consider the previous decision (based on the decision table)
     // unless it's a kick action, those can only happen if kick
     if (suggestions && i < suggestions->tables_count) {
       local_suggestion = &suggestions->tables[i];
+      local_suggestion_i = i;
       decision = gen_decision(kick, *local_suggestion, &state, opt.table, player);
-    } else if (i == (suggestions ? suggestions->tables_count : 0) && (kick || opt.table.kick_robot == -1)) {
-      decision = from_decision_table(opt.table);
+    } else if (i == (suggestions ? suggestions->tables_count : 0)) {
+      decision = from_decision_table(opt.table, state, player, kick);
       // on some cases try to move everyone at once, this may lead to better results
     } else if (100.0 * i / RAMIFICATION_NUMBER < FULL_CHANGE_PERCENTAGE) {
       decision = gen_decision(kick, state, player, opt.table);
@@ -62,6 +65,7 @@ ValuedDecision decide(Optimization &opt, State state, Player player, Suggestions
       vd.decision = decision;
       // save suggestion or otherwise erase it
       best_suggestion = local_suggestion;
+      best_suggestion_i = local_suggestion_i;
     }
 
     // check stop condition
@@ -77,8 +81,10 @@ ValuedDecision decide(Optimization &opt, State state, Player player, Suggestions
   *ramification_count = i;
 
   // increment the usage count if decision from a suggestion
-  if (best_suggestion)
+  if (best_suggestion) {
     best_suggestion->usage_count++;
+    suggestions->last_used = best_suggestion_i;
+  }
 
   // update the decision table
   opt.table.kick_robot = -1;
