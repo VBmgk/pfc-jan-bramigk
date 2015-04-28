@@ -20,8 +20,8 @@ constexpr float BOUNDARY_WIDTH = 0.500;
 constexpr float REFEREE_WIDTH = 0.250;
 constexpr float ROBOT_RADIUS = 0.180 / 2;
 constexpr float BALL_RADIUS = 0.043 / 2;
-constexpr float ROBOT_MAX_SPEED = 3.0;
-constexpr float ROBOT_KICK_SPEED = 6.0;
+constexpr float ROBOT_MAX_SPEED = 1.8;
+constexpr float ROBOT_KICK_SPEED = 5.0;
 
 constexpr const char *PROGRAM_NAME = "AI for RoboIME"; // TODO: better name maybe?
 constexpr int GUI_DEFAULT_WIDTH = 944;
