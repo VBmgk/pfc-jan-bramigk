@@ -604,7 +604,11 @@ void gui_render(void) {
     ImGui::PushID(10000 + i);
     ImGui::RadioButton(table.name, e, i);
     ImGui::SameLine();
-    ImGui::Text("[%i]", usage);
+    if (i == app_suggestions->last_used) {
+      ImGui::TextColored(ImColor(255, 0, 0, 255), "[%i]", usage);
+    } else {
+      ImGui::Text("[%i]", usage);
+    }
     ImGui::SameLine();
     if (ImGui::Button("delete")) {
       del_suggestion(*app_suggestions, i);
