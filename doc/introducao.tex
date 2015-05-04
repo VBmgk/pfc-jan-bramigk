@@ -86,20 +86,26 @@ econômica, quando comparado com o desempenho de um único robô.
 Devido a alta complexidade de sistemas multiagentes dinâmicos, torna-se
 necessário um modelo simplificado para que sejam executadas o maior número de
 simulações possível.  Caso seja possível uma discretização, ter-se-á um número
-finito de casos para serem avaliados. Com isso, pode-se aplicar algoritmos como
-o Minimax (discutido no capítulo~\ref{cap:minimax}) para encontrar
-soluções ao problema.
+finito de casos para serem avaliados. Com isso, pode-se desenvolver um sistema
+multi-agente baseado em utilidade. Assim, o computador passa a escolher parte
+da estratégia com base na função utilidade escolhida.
+%como o Minimax (discutido no capítulo~\ref{cap:minimax}) para encontrar
+%soluções ao problema.
 
 Isso é muito mais desejável que um modelo heurístico de IA, onde as soluções são
 criadas com base nos ambientes identificados pelos modeladores. Isso, pois a
 modelagem puramente heurística limita o número de jogadas que se pode executar e
 limita a capacidade que o computador tem de testar um grande número de possibilidades.
+O resultado é que a qualidade da jogadas se limita a capacidade de quem cria as
+heurísticas.
 
 \section{Objetivo}
 
-O objetivo deste trabalho é desenvolver um algoritmo de controle para o futebol
-de robôs que obtenha um desempenho melhor que o utilizado atualmente, de acordo
-com a performance em um conjunto de partidas.
+O objetivo deste trabalho é desenvolver uma ferramenta de representação
+comportamental baseado em otimização para futebol de robôs.
+%O objetivo deste trabalho é desenvolver um algoritmo de controle para o futebol
+%de robôs que obtenha um desempenho melhor que o utilizado atualmente, de acordo
+%com a performance em um conjunto de partidas.
 Como objetivos intermediário, este trabalho objetiva criar um modelo discreto
 sequencial para o problema do futebol de robôs, que é um jogo contínuo de soma
 zero.  A partir desta discretização, pretende-se desenvolver uma arquitetura de
@@ -110,9 +116,9 @@ controle com base no algoritmo minimax para se planejar jogadas.
 
 Uma arquitetura de controle que simule os diversos ambientes dinamicamente de
 maneira sequencial de um ambiente multiagente permite que várias jogadas sejam
-criadas dinamicamente, diferentemente de uma arquitetura estática baseada em uma
-heurística. Essa abordagem heurística é legada da maneira como estratégias são
-planejadas nos times de futebol humano.
+criadas dinamicamente, diferentemente de uma arquitetura estática baseada somente
+em heurística. Essa abordagem heurística é legada da maneira como estratégias
+são planejadas nos times de futebol humano.
 
 Com tal mecanismo é possível melhorar a IA em uso pela RoboIME para tomar
 decisões que levem a resultados melhores e, como consequência, ganhar mais
@@ -122,40 +128,36 @@ acreditam que essa é uma linha de pesquisa promissora.
 \section{Metodologia}
 
 Para atingir os objetivos propostos será seguida a seguinte metodologia.
-Inicialmente a arquitetura do futebol de robôs considerada neste trabalho é
+Inicialmente é criado um modelo sequêncial do problema do futebol de robôs. 
+Para isso, a arquitetura do futebol de robôs considerada neste trabalho é
 detalhada, juntamente com definições de termos relevantes para este trabalho.
+Um modelo abstrato do futebol de robôs é proposto para simplificar o problema
+e permitir que sejam feitas várias simulações durante o planejamento das
+jogadas. A função de avaliação, essecial para a seleção das jogas, é detalhada.
 
-A seguir, a teoria sobre jogos será revisada. São apresentados também
-alguns dados empíricos observados com testes informais realizados anteriormente.
+Posteriormente a arquitetura da ferramenta a ser construida é apresentada.
+Os diverços componentes do sistema são detalhados.
 
-Em sequência, um modelo abstrato do futebol de robôs é proposto para que seja
-aplicado o algoritmo minimax. A partir deste modelo uma arquitetura de controle
-é desenvolvida.
+Em seguida, os resultados experimentais obtidos com a ferramenta detalhada
+anteriormente são apresentados.
 
-Em seguida são definidas métricas para comparar a arquitetura anteriormente
-utilizada com a arquitetura atual.
-
-Finalmente são apresentadas as conclusões parciais do projeto.
+Finalmente são apresentadas as conclusões do projeto.
 
 \section{Estrutura}
 
-No capítulo~\ref{cap:minimax}, a arquitetura do futebol de robôs considerada é
-detalhada. A seguir são apresentadas definições de conceitos utilizados ao
-longo do trabalho. Posteriormente, a teoria dos jogos é revisada.
+%modelagem
+No capítulo~\ref{cap:modelagem}, um modelo do futebol de robôs é proposto.
+Também é apresentada a função de avaliação.
 
-No capítulo~\ref{cap:licoes_aprendidas} e são apresentados
-alguns dados empíricos observados anteriormente.
+%arch_sys   
+No capítulo~\ref{cap:arch_sys}, a ferramenta proposta é desenvolvida com
+base no modelo proposto anteriormente.
 
-No capítulo~\ref{cap:mapeamento}, um modelo abstrato do futebol de robôs é
-proposto.
+%resultados              
+No capítulo~\ref{cap:resultados}, são apresentados os resultados obtidos
+neste trabalho.
 
-No capítulo~\ref{cap:programa}, uma arquitetura de controle é desenvolvida com
-base no modelo proposto anteriormente. Também são criadas métricas para
-comparar os resultados obtidos com a nova arquitetura.
-
-No capítulo~\ref{cap:cronograma}, o planejamento das próximas atividades é
-apresentado.
-
+%conclusao
 No capítulo~\ref{cap:conclusao}, são apresentadas as principais conclusões
 atingidas neste trabalho.
 
