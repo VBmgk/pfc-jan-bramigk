@@ -534,15 +534,20 @@ void gui_render(void) {
               ImGui::GetIO().Framerate);
   draw_app_status();
 
-  static char filename[256] = "local.cfg";
-  ImGui::InputText("Params file", filename, 256);
-  if (ImGui::Button("Save params")) {
-    app_save_params(filename);
+  {
+    ImGui::PushID(101);
+    static char filename[256] = "local.cfg";
+    ImGui::InputText("Params file", filename, 256);
+    if (ImGui::Button("Save params")) {
+      app_save_params(filename);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Load params")) {
+      app_load_params(filename);
+    }
+    ImGui::PopID();
   }
-  ImGui::SameLine();
-  if (ImGui::Button("Load params")) {
-    app_load_params(filename);
-  }
+
   ImGui::Checkbox("PARAM_GROUP_AUTOSELECT", &PARAM_GROUP_AUTOSELECT);
   ImGui::Checkbox("PARAM_GROUP_CONQUER", &PARAM_GROUP_CONQUER);
   ImGui::SliderFloat("PARAM_GROUP_THRESHOLD", &PARAM_GROUP_THRESHOLD, 0.0, 10.0);
@@ -596,6 +601,21 @@ void gui_render(void) {
   ImGui::End();
 
   ImGui::Begin("Suggestions");
+
+  {
+    ImGui::PushID(102);
+    static char filename[256] = "suggestions.cfg";
+    ImGui::InputText("Suggestions file", filename, 256);
+    if (ImGui::Button("Save suggestions")) {
+      save_suggestions(*app_suggestions, filename);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Load suggestions")) {
+      load_suggestions(*app_suggestions, filename);
+    }
+    ImGui::PopID();
+  }
+
   int *e = &app_selected_suggestion;
   ImGui::RadioButton("(None)", e, -1);
   FOR_N(i, app_suggestions->tables_count) {
@@ -622,6 +642,7 @@ void gui_render(void) {
     int i = add_suggestion(*app_suggestions) - 1;
     strcpy(app_suggestions->tables[i].name, sname);
     sname[0] = '\0';
+    *e = i;
   }
   double x, y;
   x = screen_xpos;
