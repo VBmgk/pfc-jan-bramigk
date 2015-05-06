@@ -187,7 +187,7 @@ void to_proto_action(Action &action, roboime::Action *ptb_action, int robot_id) 
   case PASS: {
     ptb_action->set_type(roboime::Action::PASS);
     auto *pass = ptb_action->mutable_pass();
-    pass->set_robot_id(action.pass_receiver);
+    pass->set_robot_id(action.pass_receiver % N_ROBOTS);
   } break;
 
   case KICK: {
