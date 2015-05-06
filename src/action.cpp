@@ -127,7 +127,7 @@ Action gen_pass_action(int robot, const State &state, DecisionTable &table) {
     std::uniform_int_distribution<> dis(0, receivers.count - 1);
     int sel = dis(gen);
     int rcv = -1;
-    FOR_TEAM_ROBOT(i, player) {
+    FOR_TEAM_ROBOT_IN(i, player, receivers) {
       if (sel-- == 0) {
         rcv = i;
         break;
