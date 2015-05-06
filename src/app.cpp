@@ -19,6 +19,7 @@
 #include "utils.h"
 #include "id_table.h"
 #include "suggestions.h"
+#include "decision_source.h"
 
 static std::mutex state_mutex, decision_mutex, display_mutex;
 static Decision decision_min, decision_max;
@@ -32,6 +33,9 @@ const struct Decision *app_decision_max = &decision_max;
 const struct Decision *app_decision_min = &decision_min;
 const struct DecisionTable *app_decision_table = &optimization.table;
 struct Suggestions *app_suggestions = &suggestions;
+
+DecisionSource decision_source = NO_SOURCE;
+DecisionSource *app_decision_source = &decision_source;
 
 static struct {
   int uptime = 0;
@@ -364,6 +368,24 @@ void draw_app_status(void) {
   ImGui::Text("decided val: %f", display.decision_val);
   if (display.has_val)
     ImGui::Text("current val: %f", display.val);
+  switch (decision_source) {
+  case SUGGESTION:
+    ImGui::Text("decision from suggestion");
+    break;
+  case TABLE:
+    ImGui::Text("decision from table");
+    break;
+  case FULL_RANDOM:
+    ImGui::Text("decision from full random");
+    break;
+  case SINGLE_RANDOM:
+    ImGui::Text("decision from single random");
+    break;
+  default:
+  case NO_SOURCE:
+    ImGui::Text("no decision source");
+    break;
+  }
 }
 
 #define PARAMS_FILE_HEADER "[AI params version 1]"

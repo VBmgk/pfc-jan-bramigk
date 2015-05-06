@@ -31,4 +31,7 @@ extern const int *app_selected_robot;
 extern struct Suggestions *app_suggestions;
 extern int app_selected_suggestion;
 
+#include "decision_source.h"
+extern DecisionSource *app_decision_source;
+
 #endif
