@@ -1,16 +1,31 @@
-\section{Modelagem}\label{cap:modelagem}
+\chapter{Modelagem}\label{cap:modelagem}
 
-Neste capítulo é criado um modelo sequêncial do problema do futebol de robôs. 
-Para isso, a arquitetura do futebol de robôs considerada neste trabalho é
-detalhada, juntamente com definições de termos relevantes para este trabalho.
-Um modelo abstrato do futebol de robôs é proposto para simplificar o problema
-e permitir que sejam feitas várias simulações durante o planejamento das
-jogadas. A função de avaliação, utilizada para converter as jogadas em números,
+Neste capítulo é criado um modelo sequêncial do problema do futebol
+de robôs. Para isso, a arquitetura do futebol de robôs considerada
+neste trabalho é detalhada. 
+
+Em seguida, são apresentadas definições de termos utilizados nas
+secções seguintes, juntamente com um estudo das consequências da
+arquitetura do jogo descrita anteriormente.
+
+Um modelo abstrato discreto do futebol de robôs é proposto para simplificar
+o problema e permitir que sejam feitas várias simulações durante o
+planejamento das jogadas. 
+
+Em seguida, a \textit{move table} é apresentada. Ela é necessária para
+permitir que o melhor planejamento seja armazenado, bem como incorporar
+a mudança de planejamento na função de avaliação.
+
+Posteriormente a função de avaliação utilizada para avaliar as jogadas
 é especificada.
 
-\input{doc/arquitetura}
+Devido a complexidade do problema, também foi desenvolvida uma maneira de
+incorporar sugestões ao planejamento. Essas sugestões são chamadas de
+\textit{posições chave}, descritas no final deste capítulo.
+
+\input{doc/arch_ssl}
 \input{doc/definicoes}
-
-\subsection{}
-
+\input{doc/discretizacao}
+\input{doc/mov_table}
 \input{doc/funcao_objetivo}
+\input{doc/posicoes_chave}

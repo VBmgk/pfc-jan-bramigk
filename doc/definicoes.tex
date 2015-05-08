@@ -1,4 +1,8 @@
-\subsection{Definições}
+\section{Definições}
+
+Este capítulo visa definir os termos utilizados ao longo do
+trabalho. A medida que são definidos os termos do jogo do
+futebol de robôs, as problemáticas presentes são evidenciadas.
 
 \begin{defi}[Corpo Rígido]
   Um corpo rígido $r$ é definido por dois subconjuntos disjuntos
@@ -108,7 +112,8 @@
     \item $A_c = A_{rob 1} \cup \dots \cup A_{rob n_c}$ o conjunto das ações possíveis de $Rob_c$;
     \item $A_i = A_{rob 1} \cup \dots \cup A_{rob n_i}$ o conjunto das ações possíveis de $Rob_i$;
     \item $A = A_c \cup A_i$ o conjunto das ações possíveis de $Rob_c \cup Rob_i$;
-    \item $e: \langle x,a \rangle \longrightarrow x^{'}$ a função de transição de estado que pode aplicar uma ação $a\in A$ em um estado particular
+    \item $e: \langle x,a \rangle \longrightarrow x^{'}$ a função de transição de estado que pode
+          aplicar uma ação $a\in A$ em um estado particular
           $x \in X$ e computar o estado seguinte $x^{'} \in X$;
     \item $f_{U}: X \longrightarrow \mathbb{R^{+}} \cup\lbrace 0\rbrace$ uma função utilidade tal que
           $f_{U}(x)$ mede a utilidade do estado $x \in X$ um entre estados do mundo dado os estados;
@@ -128,6 +133,7 @@
   Assim, utilizando-se de $e$, $T$ simula várias sequência de ações $a_c$ dado $X_{ob}^{i}$
   a partir de $f_{U}$ e $e_b$.
 
+% TODO: describe more the notation
 \begin{defi}[Partida]
   Dado dois times $T_1$ e $T_2$. Uma partida $p$ é definida por:
 
