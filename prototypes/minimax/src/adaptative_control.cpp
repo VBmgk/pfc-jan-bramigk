@@ -120,3 +120,22 @@ void AdaptativeControl::AdaptativeControlEval::
     PREV_VALS[i] = *CONST_ADDRS[i];
   }
 }
+
+void AdaptativeControl::AdaptativeControlEval::
+ loadInitialConsts(void) {
+  if(VAR_NUM < 13) return;
+
+  PREV_VALS[0]  = 0.151;  // Board::KICK_POS_VARIATION;
+  PREV_VALS[1]  = 9.0;    // Board::MIN_GAP_TO_KICK;
+  PREV_VALS[2]  = 18.0;   // Board::WEIGHT_MOVE_DIST_TOTAL;
+  PREV_VALS[3]  = 2.0;    // Board::WEIGHT_MOVE_DIST_MAX;
+  PREV_VALS[4]  = 2.0;    // Board::WEIGHT_MOVE_CHANGE;
+  PREV_VALS[5]  = 0.5;    // Board::TOTAL_MAX_GAP_RATIO;
+  PREV_VALS[6]  = 1000.0; // Board::WEIGHT_ATTACK;
+  PREV_VALS[7]  = 10.0;   // Board::WEIGHT_SEE_ENEMY_GOAL;
+  PREV_VALS[8]  = 180.0;  // Board::WEIGHT_BLOCK_GOAL;
+  PREV_VALS[9]  = 5000.0; // Board::WEIGHT_BLOCK_ATTACKER;
+  PREV_VALS[10] = 20.0;   // Board::WEIGHT_RECEIVERS_NUM;
+  PREV_VALS[11] = 2000.0; // Board::DIST_GOAL_PENAL;
+  PREV_VALS[12] = 1.0;    // Board::DIST_GOAL_TO_PENAL;
+}

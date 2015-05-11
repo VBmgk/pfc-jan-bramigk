@@ -1,9 +1,9 @@
-\chapter{Mapeamento de jogo contínuo para um jogo discreto}\label{cap:mapeamento}
+\section{Discretização do jogo}\label{sec:mapeamento}
 
-\section{Introdução}
 % TODO[improvement]: add pictures for better understanding
+% TODO: Add concept of having the ball
 Uma das dificuldades de se discretizar um sistema é a necessidade de criar uma
-abstração válida para o jogo, de modo que o que ocorra na simulação acontessa na
+abstração válida para o jogo, de modo que o que ocorra na simulação aconteça na
 prática caso a mesma situação simulada seja observada no mundo físico.
 
 Essa modelagem pode ser separada em duas etapas:
@@ -13,13 +13,15 @@ Essa modelagem pode ser separada em duas etapas:
   \item Execução do planejamento
 \end{itemize}
 
-\section{Representação do jogo}
+Essas etapas são descritas a seguir.
+
+\subsection{Representação do jogo}
 
 Cada um dos robôs em campo será modelado com as seguintes ações possíveis:
 \begin{itemize}
   \item Time com a bola
   \begin{itemize}
-    \item robô sem a bola
+    \item robôs sem a bola
     \begin{itemize}
        \item Move
     \end{itemize}
@@ -39,28 +41,30 @@ Cada um dos robôs em campo será modelado com as seguintes ações possíveis:
 O nível de complexidade das ações possíveis influi diretamente no número de
 ações que poderão ser consideradas a tempo de serem úteis para o jogo real. Por
 exemplo, caso não fosse considerada a ação de passe, esta ação ainda sim poderia
-acontecer na prática. Entretanto, seriam necessários mais níveis de
-planejamento, uma vez que ela seria a composição de chutes e passes. Isso tem a
+acontecer na prática pela composição de outras ações. Entretanto, seriam
+necessários mais níveis de
+planejamento, uma vez que ela seria a composição de chutes e movimentações. Isso tem a
 contrapartida de reduzir o número de estados que podem ser simulados, uma vez
-que o tabuleiro é dinâmico e de o jogo real ser simultâneo, e não sequencial.
+que o tabuleiro é dinâmico e o jogo real ser simultâneo, e não sequencial.
 Isso fica mais evidente se fossem utilizadas somente as \textit{skills} para o
 planejamento. A principal desvantagem disso é que o planejador teria que
 considerar aspectos como colisões e a orientação dos robôs no planejamento
 final. Além de ser ineficiente, coisas como posicionamento global dos robôs no
 campo não teriam estados suficientes na árvore do jogo para serem úteis.
 
+% TODO: Add reference
 Outra questão que se deve ter em mente ao se modelar as ações básicas dos robôs
 é definir ações muito complexas. Passando para a linguagem da arquitetura STP
 (\textit{Skill, Tactic Play}), as \textit{plays}, e não \textit{tactics}, o
 espaço de jogadas seria muito limitado se fossem utilizadas táticas muito
-complexa.
+complexas.
 
-Como a complexidade é uma exponencial cuja base é o número de jogadas, isso não
-é um problema que pode ser tratado simplesmente com o aumento da velocidade de
-processamento.  Deve-se ajustar o nível de abstração de acordo com os resultados
-obtidos nos teste práticos.
+Como a complexidade cresce exponencialmente, onde o número de ações básicas é
+a base, isso não é um problema que pode ser tratado simplesmente com o aumento
+da velocidade de processamento. Deve-se ajustar o nível de abstração de acordo
+com os resultados obtidos nos teste práticos.
 
-\section{Execução do planejamento}
+\subsection{Execução do planejamento}
 % TODO[improvement]: specify add images
 
 Esta etapa do modelo é responsável por converter o resultado do planejamento em
@@ -69,6 +73,6 @@ que o planejamento de trajetória deve ser levado em consideração. Esta parte 
 leva em consideração o modelo dinâmico do robô.
 Como isso é um problema complexo, com o objetivo de focar o escopo da pesquisa
 no planejamento de alto nível, será utilizada a arquitetura de controle do
-pyroboime.
+pyroboime. Essa parte do sistema será detalhada no capítulo~\ref{cap:arch_sys}.
 
 % vim: tw=80 et ts=2 sw=2 sts=2

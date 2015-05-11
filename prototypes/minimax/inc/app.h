@@ -135,7 +135,7 @@ struct App {
     adptv_cntrl_eval->go_back_var();
 
     // save table values
-    adptv_cntrl_eval->load();
+    adptv_cntrl_eval->save();
   }
 };
 

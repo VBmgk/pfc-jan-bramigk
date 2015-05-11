@@ -205,13 +205,13 @@ void render(GLFWwindow *window, int width, int height, bool text) {
       ImGui::Text("%i minimax/s", app->display.mps);
       ImGui::Text("%i ramifications/s", Minimax::RAMIFICATION_NUMBER * app->display.mps);
       ImGui::Text("minimax: %f",           app->display.minimax_val);
+      // TODO: do it on a better place
+      app->change_vars();
       ImGui::Text("adaptative eval: %lf, eval_n: %lf, curr_n: %i",
         app->adpt_eval_brd(), app->adpt_eval_n_brd(), app->adpt_num());
       if (app->display.has_val)
         ImGui::Text("value: %f", app->display.val);
     }
-    // TODO: do it on a better place
-    app->change_vars();
 
     ImGui::PlotLines(
          /* outside lable   */"",

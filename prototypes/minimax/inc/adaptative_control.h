@@ -1,6 +1,6 @@
 #ifndef ADAPTATIVE_CONTROL
 #define ADAPTATIVE_CONTROL
-#define NUM_BOARD_EVALS 5
+#define NUM_BOARD_EVALS 130
 #define VAR_NUM 13
 #define NUM_BOARD_EVALS_N 10000
 #define DELTA 0.1
@@ -31,7 +31,10 @@ struct AdaptativeControlEval {
 
   // functions
   // Saving address of variables to enable further modification
-  AdaptativeControlEval(void) { save_addrs(); }
+  AdaptativeControlEval(void) {
+    save_addrs();
+    loadInitialConsts();
+  }
 
   float eval(const Board& board); 
   float get_eval_n (void) { return evals_n[curr_n]; }
@@ -42,6 +45,7 @@ struct AdaptativeControlEval {
   void add_eval(float); 
   void add_eval_n(float); 
   void load(void);
+  void loadInitialConsts(void);
   void save(void);
 };
 }
