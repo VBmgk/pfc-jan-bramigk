@@ -1,5 +1,4 @@
 \section{Função Objetivo}
-
 A função objetivo $f_U$ é definida pela seguinte
 expressão:
 
@@ -20,7 +19,7 @@ por custos e penalizações. São eles:
   \item Custo dos gaps vistos pelos robôs adversários
   \item Custo da Defesa
   \item Número de Receptores
-  \item Penalização por próximidade do gol do inimigo
+  \item Penalização por próximidade do gol do adversário
   \item Penalização por proximidade
 \end{enumerate}
 
@@ -34,7 +33,6 @@ afetam o comportamento do time:
 Esses parâmetros serão detalhados a seguir.
 
 \subsection{Custo do gap} 
-
 O objetivos deste parâmetro é valorizar \textit{gaps} maiores
 de acordo com a soma total dos \textit{gaps} e com o maior \textit{gap}.
 O cálculo do \textit{gap} é feito da seguinte maneira:
@@ -49,7 +47,6 @@ e a posição atual da bola. Isso gera um conjunto de segmentos de reta
 $\lbrace gap_i \rbrace$.
 
 \subsection{Correção do Gap devido a movimentação do atacante} 
-
 O objetivo deste parâmetro é incorporar a movimentação
 do atacante no cálculo do \textit{gap} do gol. Isso pois defensores mais
 próximos são mais facilmente driblados que defensores mais distantes. Isso
@@ -73,7 +70,6 @@ variação de 0cm na posição da bola. Essa variação é medida na linha norma
 
 
 \subsection{Distância Total dos Moves} 
-
 O objetivo deste parâmetro é valorizar o custo da
 mudança de estado na função objetivo. Ele é formado pela soma dos
 \textit{moves} de todos os robôs do time em questão.
@@ -86,7 +82,6 @@ mudança de estado na função objetivo. Ele é formado pela soma dos
 Onde $r_i \in T$.
 
 \subsection{Distância Máxima dos Moves} 
-
 O objetivo deste parâmetro é incorporar o custo da
 mudança de estado na função objetivo. Ele é formado pelo \textit{move}
 maior do planejamento atual.
@@ -120,7 +115,7 @@ possue o domínio da bola (descrito na secção~\ref{sec:has_ball}).
  attack{\_}cost = weight_{ATTACK} . enemy{\_}gap
 \end{dmath} 
 
-Onde $enemy{\_}gap_{value}$ é o valor do gap do goal inimigo visto
+Onde $enemy{\_}gap_{value}$ é o valor do gap do goal adversário visto
 pelo robô que tem domínio da bola.
 
 \subsection{Custo dos gap vistos pelos robôs do time}
@@ -169,7 +164,7 @@ vários robôs que possam receber passe.
    num \lbrace recever_i \rbrace
 \end{dmath}
 
-\subsection{Penalização por próximidade do gol do inimigo}
+\subsection{Penalização por próximidade do gol do adversário}
 Esta penalização visa evitar que os robôs que estão no ataque
 se concentrem dentro da área do time adversário. Caso este
 parâmetro não seja adicionado, é esse o comportamento resultante
