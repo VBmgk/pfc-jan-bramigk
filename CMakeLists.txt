@@ -33,7 +33,7 @@ set(SRC
 
 set(INC
   src/action.h
-  src/adaptive_control.h
+  #src/adaptive_control.h
   src/app.h
   src/array.h
   src/colors.h
@@ -55,7 +55,7 @@ set(INC
   src/utils.h
   src/valued_decision.h
   src/vector.h
-  src/weight.h
+  #src/weight.h
 )
 
 set(DOC
@@ -106,6 +106,9 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 #find_package(PkgConfig REQUIRED)
 #pkg_search_module(GLFW REQUIRED glfw3)
 #include_directories(${GLFW_INCLUDE_DIRS})
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "")
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "")
+set(GLFW_INSTALL OFF CACHE BOOL "")
 add_subdirectory(vendor/glfw)
 include_directories(vendor/glfw/include)
 
@@ -196,13 +199,14 @@ if(BUILD_REPORT)
     IMAGE_DIRS img
     USE_INDEX
     #DEFAULT_PDF
-    DEFAULT_SAFEPDF
+    #DEFAULT_SAFEPDF
+    NO_DEFAULT
   )
 
   find_program(OPEN NAMES gnome-open xdg-open open)
   add_custom_target(open
     COMMAND ${OPEN} relatorio.pdf
-    DEPENDS relatorio.pdf
+    DEPENDS pdf
     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
   )
 endif()
