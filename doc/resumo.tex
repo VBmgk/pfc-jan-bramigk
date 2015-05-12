@@ -3,29 +3,28 @@
 \begin{resumo}
 
   Este trabalho apresenta uma ferramenta de representação comportamental baseado
-  em otimizacao para futebol de robôs de um time da \textit{Small
+  em otimização para futebol de robôs de um time da \textit{Small
   Size League} (SSL) de futebol de robôs para a equipe RoboIME (que representa o
   IME nessa competição). Os times da SSL normalmente são comandados por
   heurísticas puras. Isso restringe o movimento dos robôs a um determinado
-  conjunto fixo de comportamentos, restringindo as jogadas possíveis.
+  conjunto fixo de comportamentos, limitando as jogadas possíveis.
 
   O objetivo deste trabalho é desenvolver uma ferramenta de representação
   comportamental baseado em otimização para futebol de robôs.
 
-  Para permitir que várias jogadas sejam simuladas é necessário abstrair
-  o jogo de modo que se possa simular mais situações e permitir que várias
-  sequências de jogadas possam ser consideradas em tempo real. Isso é importante
-  pois o sistema varia continuamente devido a presença dos robôs time adversário.
-  Assim, um jogo contínuo é abstraído em um discreto e sequencial,
-  semelhante a um jogo de xadrez. Partindo-se desta abstração, é construida
-  uma função utilidade, permitido assim que o problema seja tratado como um problema
+  Para permitir que várias jogadas sejam simuladas o jogo foi abstraido. Isso é
+  importante, pois o sistema varia continuamente devido a presença dos robôs do
+  time adversário. Assim, um jogo contínuo foi abstraído em um discreto e sequencial,
+  semelhante a um jogo de xadrez. Partindo-se desta abstração foi definida
+  uma função utilidade, permitido que o problema seja tratado como um problema
   de otimização.
 
-  A arquitetura de controle baseada em um modelo discreto sequencial do jogo foi
-  implementada. Como plataforma de testes, é utilizada parte da \textit{pyroboime}, que
-  resolve o problema de controle físico dos robôs. Com resultados futuros, será
-  desenvolvido um algoritmo de planejamento superior ao utilizado atualmente no
-  \textit{pyroboime}.
+  Foi implementada uma arquitetura de controle baseada na abstração criada.
+  Como plataforma de testes, é utilizada parte da \textit{pyroboime}, que
+  resolve o problema de controle físico dos robôs implementa as máquinas de estados
+  das táticas das ações considerados. A ferramenta é capaz de controlar um time com
+  comportamentos que bloqueiam chutes diretos, que avançam ao campo do adversário e
+  que se posicionam para ataques diretos e por meio de passe.
 
   \textbf{Palavras-chaves}: inteligência artificial, discretização, otimização, robótica, robocup.
 \end{resumo}

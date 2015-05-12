@@ -1,12 +1,11 @@
 \section{Discretização do jogo}\label{sec:mapeamento}
 
 % TODO[improvement]: add pictures for better understanding
-% TODO: Add concept of having the ball
 Uma das dificuldades de se discretizar um sistema é a necessidade de criar uma
 abstração válida para o jogo, de modo que o que ocorra na simulação aconteça na
 prática caso a mesma situação simulada seja observada no mundo físico.
 
-Essa modelagem pode ser separada em duas etapas:
+Essa abstração pode ser separada em duas etapas:
 
 \begin{itemize}
   \item Representação do jogo
@@ -17,40 +16,89 @@ Essas etapas são descritas a seguir.
 
 \subsection{Representação do jogo}
 
+\subsubsection{Posse de bola}
+
+Para simplificar o modelo, foi introduzido o conceito de posse
+de bola. O robô que possue a bola é aquele que consegue intercepta-la
+no menor tempo possível. Como introduzir um modelo que considere
+a dinâmica do robô iria introduzir um custo computacional muito alto,
+foi utilizado um modelo simplificado. As simplificações são as
+seguintes (somente para o calculo do tempo da interceptação):
+
+\begin{itemize}
+  \item A bola se move a velocidade constante
+  \item Os robôs conseguem se mover em uma velocidade máxima
+        $r.vel_{max}$ em qualquer direção a qualquer momento
+\end{itemize}
+
+Dadas essas simplificações, o tempo para atingir o ponto de
+encontro pode ser calculado da seguinte maneira: 
+%  vb.t + pb = vr.t + pr
+%  => 0 = (vr^2 - vb^2)t^2 - |pr - pb|^2 - 2.vb.(pb - pr).t
+%  => delta = 4.[ (vb.(pb - pr))^2 + (vr^2 - vb^2).|pr - pb|^2]
+%  b = -2.vb.(pb - pr) = 2.vb.(pr - pb)
+%  b_div_2 = vb.(pr - pb)
+%  a = (vr^2 - vb^2)
+%  c = -|pr - pb|^2
+%  t = -b_div_2 +- sqrt(delta_div_4)
+%     -----------------
+%            a
+
+\begin{gather}  
+  b.vel \cdot t_{encontro} + b.pos = r.vel_{max} \cdot t_{encontro} + r.pos\\
+  0 = (r.vel^2_{max}-b.vel^2) \cdot t^2 - \parallel r.pos - b.pos \parallel ^2
+     - 2 \cdot b.vel \cdot (b.pos - r.pos) \cdot t_{encontro}\\
+  \Delta = 4 \cdot [ ( b.vel \cdot (b.pos - r.pos)) ^2 +
+           (r.vel_{max}^2 - b.vel^2) \cdot \parallel r.pos - b.pos \parallel ^2]\\
+  \boxed{t_{encontro} = \frac{ - b.vel \cdot (r.pos - b.pos) \pm \sqrt {\frac{\Delta}{4}}}
+                 {(r.vel^2_{max} - b.vel^2)}}
+\end{gather} 
+
+\subsubsection{Ações Consideradas}
+% TODO: Citar imagem \ref{fig:robo}
 Cada um dos robôs em campo será modelado com as seguintes ações possíveis:
 \begin{itemize}
-  \item Time com a bola
-  \begin{itemize}
-    \item robôs sem a bola
-    \begin{itemize}
-       \item Move
-    \end{itemize}
-    \item robô com a bola
-    \begin{itemize}
-       \item Move
-       \item Chute
-       \item Passe
-    \end{itemize}
-  \end{itemize}
-  \item Time sem a bola:
-  \begin{itemize}
-    \item Move
-  \end{itemize}
+  \item Time no ataque (i.e., com a bola):\\
+        $A_{atq} = \lbrace Mover(r_i), Chutar(r_{com{\ }bola}), Passar(r_j,r_{com{\ }bola}):
+                    r_i, r_j, r_{com{\ }a{\ }bola} \in Rob_{atq}\rbrace$
+
+  \item Time na defesa (i.e., sem a bola):
+        $A_{def} = \lbrace Mover(r_i): r_i \in Rob_{def}\rbrace$
 \end{itemize}
+
+A figura~\ref{fig:plan_pass} mostra um planejamento com ações de mover e
+passar. Já a figura~\ref{fig:plan_kick} mostra um planejamento com uma
+ação de chutar no lugar de passar.
+
+% TODO: include images of plan kick and pass
+%\begin{figure}
+%  \centering
+%  \includegraphics[width=0.8\linewidth]{plan_pass}
+%  \caption{Planejamento com ações de mover (linha preta cheia) e
+%           passar (linha preta tracejada)}\label{fig:plan_pass}}
+%  \includegraphics[width=0.8\linewidth]{plan_kick}
+%  \caption{Planejamento com ações de mover (linha preta cheia) e
+%           passar (linha preta tracejada)}\label{fig:plan_kick}}
+%\end{figure}
+
+Note que o robô com a bola pode se mover. Entretanto isso é indesejável, já que
+a velocidade do passe é maior que a movimentação do robô. Também existe uma
+restrição quanto à distância máxima que se pode conduzir a bola que, se não
+for respeitada, resulta em penalidade para o time do robô infrator.
 
 O nível de complexidade das ações possíveis influi diretamente no número de
 ações que poderão ser consideradas a tempo de serem úteis para o jogo real. Por
 exemplo, caso não fosse considerada a ação de passe, esta ação ainda sim poderia
 acontecer na prática pela composição de outras ações. Entretanto, seriam
-necessários mais níveis de
-planejamento, uma vez que ela seria a composição de chutes e movimentações. Isso tem a
-contrapartida de reduzir o número de estados que podem ser simulados, uma vez
-que o tabuleiro é dinâmico e o jogo real ser simultâneo, e não sequencial.
-Isso fica mais evidente se fossem utilizadas somente as \textit{skills} para o
-planejamento. A principal desvantagem disso é que o planejador teria que
-considerar aspectos como colisões e a orientação dos robôs no planejamento
-final. Além de ser ineficiente, coisas como posicionamento global dos robôs no
-campo não teriam estados suficientes na árvore do jogo para serem úteis.
+necessários mais níveis de planejamento, uma vez que ela seria a composição de
+chutes e movimentações. Isso tem a contrapartida de reduzir o número de estados
+que podem ser simulados, uma vez que o tabuleiro é dinâmico e o jogo real ser
+simultâneo, e não sequencial. Isso fica mais evidente se fossem utilizadas
+somente as \textit{skills} para o planejamento. A principal desvantagem disso
+é que o planejador teria que considerar aspectos como colisões e a orientação
+dos robôs no planejamento final. Além de ser ineficiente, coisas como
+posicionamento global dos robôs no campo não teriam estados suficientes na
+árvore do jogo para serem úteis.
 
 % TODO: Add reference
 Outra questão que se deve ter em mente ao se modelar as ações básicas dos robôs

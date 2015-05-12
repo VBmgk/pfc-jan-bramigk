@@ -71,7 +71,7 @@ set(DOC
   doc/licoes_aprendidas.tex
   doc/minimax.tex
   doc/modelagem.tex
-  doc/mov_table.tex
+  doc/dec_table.tex
   doc/posicoes_chave.tex
   doc/programa.tex
   doc/resultados.tex

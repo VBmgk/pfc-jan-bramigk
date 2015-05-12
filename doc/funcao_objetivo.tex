@@ -1,5 +1,4 @@
 \section{Função Objetivo}
-
 A função objetivo $f_U$ é definida pela seguinte
 expressão:
 
@@ -11,7 +10,7 @@ Onde $\lbrace c_i \rbrace$ é o conjunto formado
 por custos e penalizações. São eles:
 \begin{enumerate}
   \item Custo do gap
-  \item Correção do Gap devido a movimentação do atacante
+  \item Correção do Gap devido a movimentação da bola
   \item Distância Total dos Moves
   \item Distância Máxima dos Moves 
   \item Mudança do Planejamento da Move Table
@@ -20,7 +19,7 @@ por custos e penalizações. São eles:
   \item Custo dos gaps vistos pelos robôs adversários
   \item Custo da Defesa
   \item Número de Receptores
-  \item Penalização por próximidade do gol do inimigo
+  \item Penalização por próximidade do gol do adversário
   \item Penalização por proximidade
 \end{enumerate}
 
@@ -34,7 +33,6 @@ afetam o comportamento do time:
 Esses parâmetros serão detalhados a seguir.
 
 \subsection{Custo do gap} 
-
 O objetivos deste parâmetro é valorizar \textit{gaps} maiores
 de acordo com a soma total dos \textit{gaps} e com o maior \textit{gap}.
 O cálculo do \textit{gap} é feito da seguinte maneira:
@@ -48,10 +46,10 @@ Os gaps são calculados de acordo com a posição de um determinado robô
 e a posição atual da bola. Isso gera um conjunto de segmentos de reta
 $\lbrace gap_i \rbrace$.
 
-\subsection{Correção do Gap devido a movimentação do atacante} 
-
+\subsection{Correção do Gap devido a movimentação da bola} 
 O objetivo deste parâmetro é incorporar a movimentação
-do atacante no cálculo do \textit{gap} do gol. Isso pois defensores mais
+da bola pelo atacante no cálculo do \textit{gap} do gol. Isso é importante,
+pois defensores mais
 próximos são mais facilmente driblados que defensores mais distantes. Isso
 pode ser visualizado na figura \ref{fig:kick_pos_1}, onde foi considerada
 uma variação de 15cm. Já na figura \ref{fig:kick_pos_2} foi considerada uma
@@ -73,7 +71,6 @@ variação de 0cm na posição da bola. Essa variação é medida na linha norma
 
 
 \subsection{Distância Total dos Moves} 
-
 O objetivo deste parâmetro é valorizar o custo da
 mudança de estado na função objetivo. Ele é formado pela soma dos
 \textit{moves} de todos os robôs do time em questão.
@@ -86,7 +83,6 @@ mudança de estado na função objetivo. Ele é formado pela soma dos
 Onde $r_i \in T$.
 
 \subsection{Distância Máxima dos Moves} 
-
 O objetivo deste parâmetro é incorporar o custo da
 mudança de estado na função objetivo. Ele é formado pelo \textit{move}
 maior do planejamento atual.
@@ -96,7 +92,7 @@ maior do planejamento atual.
  max \lbrace r_i \in T : \lVert pos_{r_i} - move_{r_i}\rVert \rbrace
 \end{dmath} 
 
-\subsection{Mudança do Planejamento da Move Table}
+\subsection{Mudança do Planejamento da Move Table}\label{subsec:change_cost}
 O objetivo deste parâmetro é evitar mudanças grandes no
 planejamento do move. Uma das razões para isso é evitar um mode dinâmico
 exato neste nível de planejamento, já que isso aumentaria muito o custo
@@ -120,10 +116,10 @@ possue o domínio da bola (descrito na secção~\ref{sec:has_ball}).
  attack{\_}cost = weight_{ATTACK} . enemy{\_}gap
 \end{dmath} 
 
-Onde $enemy{\_}gap_{value}$ é o valor do gap do goal inimigo visto
+Onde $enemy{\_}gap_{value}$ é o valor do gap do goal adversário visto
 pelo robô que tem domínio da bola.
 
-\subsection{Custo dos gap vistos pelos robôs do time}
+\subsection{Custo dos gaps vistos pelos robôs do time}
 
 Este custo tem o objetivo de valorizar configurações nas quais
 os robôs que não tem a bola possuam visada para o gol do time
@@ -133,7 +129,7 @@ que esta com a posse de bola execute um passe para um robô
 em questão.
 
 \begin{dmath}
-   goal gap of attacker cost = weight_{SEE_ENEMY_GOAL}
+   goal gap of attacker cost = weight_{SEE{\_}ENEMY{\_}GOAL}
     \sum_{r_i \in T_player} enemy{\_}gap_{robot}
 \end{dmath}
 
@@ -169,7 +165,7 @@ vários robôs que possam receber passe.
    num \lbrace recever_i \rbrace
 \end{dmath}
 
-\subsection{Penalização por próximidade do gol do inimigo}
+\subsection{Penalização por próximidade do gol do adversário}
 Esta penalização visa evitar que os robôs que estão no ataque
 se concentrem dentro da área do time adversário. Caso este
 parâmetro não seja adicionado, é esse o comportamento resultante
