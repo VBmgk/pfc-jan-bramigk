@@ -43,6 +43,7 @@
 \usepackage{caption}                  % dependencia de subcaption
 %\usepackage{subcaption}               % Para usar \begin{subfigure} e colocar figuras (a) e (b) lado a lado
 \usepackage{listings}                 % Para usar \lstinputlisting e incluir código
+\usepackage[chapter]{minted}          % Para incluir código com highlight do pygments
 \usepackage{breqn}                    % Para quebrar equações grandes em duas linhas
 \newtheorem{teo}{Teorema}[section]    % Renomear o comando
 \newtheorem{defi}[teo]{Definição}
@@ -70,14 +71,26 @@
 % ----
 \def\lstlistingname{Arquivo}
 \lstset{                      % general command to set parameter(s)
-  basicstyle=\footnotesize,   % print whole listing small. Possible values:
-                              %   \footnotesize, \small, \itshape, \ttfamily
-  keywordstyle=\color{black}\bfseries\underbar,
-                              % underlined bold black keywords
+  %basicstyle=\footnotesize,   % print whole listing small. Possible values:
+  %                            %   \footnotesize, \small, \itshape, \ttfamily
   identifierstyle=,           % nothing happens
   commentstyle=\color{white}, % white comments
   stringstyle=\ttfamily,      % typewriter type for strings
   showstringspaces=false      % no special string spaces
+}
+
+%\lstset{
+%  breaklines=true,
+%  breakatwhitespace=false,
+%  xleftmargin=1em,
+%  frame=single,
+%  numbers=left,
+%  numbersep=5pt,
+%}
+
+\newcommand{\includecode}[2][cpp]{%
+  \par Arquivo #2%
+  \inputminted[frame=single]{#1}{#2}%
 }
 
 % Defines utilizados na table do cronograma
@@ -467,16 +480,17 @@ para futebol de robôs}
 % ---
 % Inicia os anexos
 % ---
-%\begin{anexosenv}
+\begin{anexosenv}
 
 % Imprime uma página indicando o início dos anexos
-%\partanexos
+\partanexos
 
 % ---
 %\chapter{Morbi ultrices rutrum lorem.}
+\input{doc/anexos}
 % ---
 
-%\end{anexosenv}
+\end{anexosenv}
 
 %---------------------------------------------------------------------
 % INDICE REMISSIVO
@@ -485,4 +499,4 @@ para futebol de robôs}
 \printindex
 
 \end{document}
-% vim: tw=80 et ts=2 sw=2 sts=2
+% vim: tw=80 et ts=2 sw=2 sts=2 ft=tex

@@ -26,6 +26,5 @@ message CommandMessage {
     optional Pass pass = 4;
     optional Kick kick = 5;
   }
-
   repeated Action action = 1;
 }
