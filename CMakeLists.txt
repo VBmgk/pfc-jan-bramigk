@@ -145,43 +145,6 @@ add_custom_target(run
   WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
 )
 
-#
-# DOCS
-#
-
-find_package(Sphinx)
-if(SPHINX_FOUND)
-  option(BUILD_DOCS "Build documentations?" OFF)
-endif()
-if(BUILD_DOCS)
-  if(NOT DEFINED SPHINX_THEME)
-    set(SPHINX_THEME default)
-  endif()
-
-  # configured documentation tools and intermediate build results
-  set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build")
-
-  # Sphinx cache with pickled ReST documents
-  set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_doctrees")
-
-  # HTML output directory
-  set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/html")
-
-  #configure_file(
-  #  "${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in"
-  #  "${BINARY_BUILD_DIR}/conf.py"
-  #  @ONLY)
-
-  add_custom_target(ai_docs ALL
-    ${SPHINX_EXECUTABLE}
-    -q -b html
-    -c "${CMAKE_CURRENT_SOURCE_DIR}/docs"
-    -d "${SPHINX_CACHE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/docs"
-    "${SPHINX_HTML_DIR}"
-    COMMENT "Building HTML documentation with Sphinx")
-endif()
-
 find_package(LATEX)
 if (PDFLATEX_COMPILER)
   option(BUILD_REPORT "Build report?" ON)
