@@ -44,11 +44,13 @@ static struct {
   int mps = 0;
   float rpd = 0.0;
   float val = 0.0;
+  float vals[W_SIZE] = {};
   bool has_val = false;
   float decision_val = 0.0;
 } display;
 
-static bool play_minimax = false, play_decision_once = false, eval_state = false, eval_state_once = false,
+static bool play_minimax = false, play_decision_once = false,
+            eval_state = true, eval_state_once = false,
             use_experimental = false;
 
 static int selected_robot = 0;
@@ -160,7 +162,8 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
     zmq::socket_t socket(context, ZMQ_REP);
 
     // we will listen on any interface at port 5555
-    static const char *addr = play_as_max ? "tcp://*:5555" : "tcp://*:5556";
+    static const char *addr =
+        play_as_max ? "tcp://*:5555" : "tcp://*:5556";
     socket.bind(addr);
 
     // this is importante to avoid blocking the whole process
@@ -188,7 +191,7 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
           req_count++;
 
           // ok, time to parse that data
-          ::roboime::Update update;
+          UpdateMessage update;
           update.ParseFromString(buffer_str);
 
           {
@@ -196,7 +199,7 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
             std::lock_guard<std::mutex> _(state_mutex);
             update_from_proto(state, update, id_table);
             update_param_group();
-            display.has_val = false;
+            // display.has_val = false;
           }
 
           // update done, time to reply that request, remember?
@@ -212,14 +215,17 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
               local_decision = decision_min;
           }
 
-          // another important part, we'll assemble the protobuf command packet
-          ::roboime::Command command;
-          to_proto_command(local_decision, play_as_max ? MAX : MIN, command, id_table);
+          // another important part, we'll assemble the protobuf command
+          // packet
+          CommandMessage command;
+          to_proto_command(local_decision, play_as_max ? MAX : MIN,
+                           command, id_table);
 
           // now let's serialize and shove it on our message buffer
           command.SerializeToString(&data);
           zmq::message_t command_message(data.length());
-          memcpy((void *)command_message.data(), data.c_str(), data.length());
+          memcpy((void *)command_message.data(), data.c_str(),
+                 data.length());
 
           // finally, reply:
           socket.send(command_message);
@@ -253,11 +259,15 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
         if (MAX_DEPTH == 0) {
           // optimization decision
           if (play_as_max) {
-            auto valued_decision = decide(optimization, local_state, MAX, &suggestions, &ram_count);
+            auto valued_decision =
+                decide(optimization, local_state, MAX, &suggestions,
+                       &ram_count);
             local_decision_max = valued_decision.decision;
             val = valued_decision.value;
           } else {
-            auto valued_decision = decide(optimization, local_state, MIN, &suggestions, &ram_count);
+            auto valued_decision =
+                decide(optimization, local_state, MIN, &suggestions,
+                       &ram_count);
             local_decision_min = valued_decision.decision;
             val = valued_decision.value;
           }
@@ -272,11 +282,14 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
         display.decision_val = val;
       }
 
-      if (eval_state || eval_state_once) {
+      if (true || eval_state || eval_state_once) {
         eval_state_once = false;
         if (MAX_DEPTH == 0) {
-          display.val =
-              evaluate_with_decision(play_as_max ? MAX : MIN, local_state, local_decision_max, optimization.table);
+          FOR_N(i, W_SIZE) display.vals[i] = 0.0;
+          display.val = evaluate_with_decision(
+              play_as_max ? MAX : MIN, local_state,
+              play_as_max ? local_decision_max : local_decision_min,
+              optimization.table, display.vals);
         } else {
           // TODO: use minimax decision table
         }
@@ -337,18 +350,20 @@ void app_load_state() {
 void app_save_state() { save_states[save_slot] = state; }
 
 void app_toggle_selected_player() {
-  selected_robot = (selected_robot / N_ROBOTS + 1) % 2 * N_ROBOTS + (selected_robot + 1) % N_ROBOTS;
+  selected_robot = (selected_robot / N_ROBOTS + 1) % 2 * N_ROBOTS +
+                   (selected_robot + 1) % N_ROBOTS;
 }
 
 void app_select_next_robot() {
-  selected_robot = (selected_robot / N_ROBOTS) * N_ROBOTS + (selected_robot + 1) % N_ROBOTS;
+  selected_robot = (selected_robot / N_ROBOTS) * N_ROBOTS +
+                   (selected_robot + 1) % N_ROBOTS;
 }
 
-#define MOVE(D, V)                                                                                                     \
-  void app_move_##D() {                                                                                                \
-    if (selected_robot >= 0)                                                                                           \
-      state.robots[selected_robot] += V;                                                                               \
-    update_param_group();                                                                                              \
+#define MOVE(D, V)                                                     \
+  void app_move_##D() {                                                \
+    if (selected_robot >= 0)                                           \
+      state.robots[selected_robot] += V;                               \
+    update_param_group();                                              \
   }
 MOVE(up, Vector(0, move_step))
 MOVE(down, Vector(0, -move_step))
@@ -386,6 +401,25 @@ void draw_app_status(void) {
     ImGui::Text("no decision source");
     break;
   }
+#define SHOW_VAR(NAME) ImGui::Text(#NAME ": %f", display.vals[_##NAME]);
+  SHOW_VAR(WEIGHT_BALL_POS);
+  SHOW_VAR(WEIGHT_MOVE_DIST_MAX);
+  SHOW_VAR(WEIGHT_MOVE_DIST_TOTAL);
+  SHOW_VAR(WEIGHT_MOVE_CHANGE);
+  SHOW_VAR(WEIGHT_PASS_CHANGE);
+  SHOW_VAR(WEIGHT_KICK_CHANGE);
+  SHOW_VAR(WEIGHT_CLOSE_TO_BALL);
+  SHOW_VAR(WEIGHT_ENEMY_CLOSE_TO_BALL);
+  SHOW_VAR(WEIGHT_HAS_BALL);
+  SHOW_VAR(WEIGHT_ATTACK);
+  SHOW_VAR(WEIGHT_SEE_ENEMY_GOAL);
+  SHOW_VAR(WEIGHT_BLOCK_GOAL);
+  SHOW_VAR(WEIGHT_BLOCK_ATTACKER);
+  SHOW_VAR(WEIGHT_GOOD_RECEIVERS);
+  SHOW_VAR(WEIGHT_RECEIVERS_NUM);
+  SHOW_VAR(WEIGHT_ENEMY_RECEIVERS_NUM);
+  SHOW_VAR(WEIGHT_PENALS);
+#undef SHOW_VAR
 }
 
 #define PARAMS_FILE_HEADER "[AI params version 1]"
@@ -408,6 +442,7 @@ void app_save_params(const char *filename) {
   SAVE_PARAM("%i", MAX_DEPTH);
   SAVE_PARAM("%f", KICK_POS_VARIATION);
   SAVE_PARAM("%f", MIN_GAP_TO_KICK);
+  SAVE_PARAM("%f", DESIRED_PASS_DIST);
   SAVE_PARAM("%f", WEIGHT_BALL_POS);
   SAVE_PARAM("%f", WEIGHT_MOVE_DIST_MAX);
   SAVE_PARAM("%f", WEIGHT_MOVE_DIST_TOTAL);
@@ -447,7 +482,8 @@ void app_load_params(const char *filename) {
   char line[256];
   fgets(line, 256, file);
   if (strcmp(line, PARAMS_FILE_HEADER "\n")) {
-    fprintf(stderr, "Incompatible header detected, maybe newer or invalid.\n");
+    fprintf(stderr,
+            "Incompatible header detected, maybe newer or invalid.\n");
     goto out;
   }
 
@@ -456,8 +492,8 @@ void app_load_params(const char *filename) {
   while (!feof(file)) {
     fgets(line, 256, file);
 #define SEP " = "
-#define LOAD_PARAM(MODE, NAME)                                                                                         \
-  if (!strncmp(line, #NAME, strlen(#NAME)))                                                                            \
+#define LOAD_PARAM(MODE, NAME)                                         \
+  if (!strncmp(line, #NAME, strlen(#NAME)))                            \
   sscanf(line, "%*s" SEP MODE, &NAME)
     LOAD_PARAM("%i", CONSTANT_RATE);
     LOAD_PARAM("%i", KICK_IF_NO_PASS);
@@ -467,6 +503,7 @@ void app_load_params(const char *filename) {
     LOAD_PARAM("%i", MAX_DEPTH);
     LOAD_PARAM("%f", KICK_POS_VARIATION);
     LOAD_PARAM("%f", MIN_GAP_TO_KICK);
+    LOAD_PARAM("%f", DESIRED_PASS_DIST);
     LOAD_PARAM("%f", WEIGHT_BALL_POS);
     LOAD_PARAM("%f", WEIGHT_MOVE_DIST_MAX);
     LOAD_PARAM("%f", WEIGHT_MOVE_DIST_TOTAL);

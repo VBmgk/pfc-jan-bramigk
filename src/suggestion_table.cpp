@@ -21,9 +21,12 @@ int del_spot(SuggestionTable & /*table*/, int /*index*/) {
   return -1;
 }
 
-Decision gen_decision(bool kick, const SuggestionTable &table, const State *state, DecisionTable &dtable,
+Decision gen_decision(bool kick, const SuggestionTable &table,
+                      const State *state, DecisionTable &dtable,
                       Player player) {
-  // TODO: improve this algorithm, currently it gets a reasonable solutions but not the best
+  // TODO: improve this algorithm, currently it gets a reasonable
+  // solutions but
+  // not the best
   Decision decision;
   bool filter[MAX_SUGGESTION_SPOTS] = {};
 
@@ -52,7 +55,8 @@ Decision gen_decision(bool kick, const SuggestionTable &table, const State *stat
   }
 
   if (player == PLAYER_OF(rwb)) {
-    decision.action[rwb] = gen_primary_action(rwb, *state, dtable, kick);
+    decision.action[rwb] =
+        gen_primary_action(rwb, *state, dtable, kick);
   }
 
   return decision;

@@ -11,7 +11,8 @@ static std::random_device _rd;
 static std::mt19937_64 generator(_rd());
 
 Vector uniform_rand_vector(float rx, float ry) {
-  std::uniform_real_distribution<float> xdistribution(-rx / 2, rx / 2), ydistribution(-ry / 2, ry / 2);
+  std::uniform_real_distribution<float> xdistribution(-rx / 2, rx / 2),
+      ydistribution(-ry / 2, ry / 2);
   return Vector(xdistribution(generator), ydistribution(generator));
 }
 
@@ -20,7 +21,8 @@ Vector normal_rand_vector(const Vector &v, float s) {
   return v + Vector(distribution(generator), distribution(generator));
 }
 
-Vector rand_vector_bounded(const Vector vec, float radius, float xb, float yb) {
+Vector rand_vector_bounded(const Vector vec, float radius, float xb,
+                           float yb) {
   Vector pos;
 
   if (std::abs(vec.x) > xb || std::abs(vec.y) > yb) {
@@ -40,7 +42,8 @@ Vector rand_vector_bounded(const Vector vec, float radius, float xb, float yb) {
   return pos;
 }
 
-bool line_segment_cross_circle(Vector p1, Vector p2, Vector c, float r) {
+bool line_segment_cross_circle(Vector p1, Vector p2, Vector c,
+                               float r) {
   // Note: this only works because the robot is not a point
   Vector v_u = unit(p1 - p2);
   Vector u = p1 - c;

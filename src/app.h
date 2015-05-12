@@ -3,7 +3,8 @@
 
 #include <functional>
 
-void app_run(std::function<void(void)> loop_func, bool play_as_max = true);
+void app_run(std::function<void(void)> loop_func,
+             bool play_as_max = true);
 void app_random();
 void app_decide_once();
 void app_decide_toggle();

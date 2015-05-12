@@ -2,6 +2,7 @@
 #include "utils.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <utility>
 
 int add_suggestion(Suggestions &suggestions) {
@@ -15,7 +16,9 @@ int add_suggestion(Suggestions &suggestions) {
 }
 
 int del_suggestion(Suggestions &suggestions, int index) {
-  FOR_RANGE(i, index, suggestions.tables_count - 1) { suggestions.tables[i] = std::move(suggestions.tables[i + 1]); }
+  FOR_RANGE(i, index, suggestions.tables_count - 1) {
+    suggestions.tables[i] = std::move(suggestions.tables[i + 1]);
+  }
   suggestions.tables_count--;
   return suggestions.tables_count;
 }
@@ -57,14 +60,16 @@ void load_suggestions(Suggestions &suggestions, const char *filename) {
   char line[256];
   fgets(line, 256, file);
   if (strcmp(line, SUGGS_FILE_HEADER "\n")) {
-    fprintf(stderr, "Incompatible header detected, maybe newer or invalid.\n");
+    fprintf(stderr,
+            "Incompatible header detected, maybe newer or invalid.\n");
   }
 
   int &tables_count = suggestions.tables_count;
   fgets(line, 256, file);
   sscanf(line, "tables_count = %i", &tables_count);
   if (tables_count > MAX_SUGGESTIONS) {
-    fprintf(stderr, "Warning: too many suggestions (%i), truncating.", tables_count);
+    fprintf(stderr, "Warning: too many suggestions (%i), truncating.",
+            tables_count);
     tables_count = MAX_SUGGESTIONS;
   }
 
@@ -80,7 +85,8 @@ void load_suggestions(Suggestions &suggestions, const char *filename) {
 
     int exceeding_spots = 0;
     if (spots_count > MAX_SUGGESTION_SPOTS) {
-      fprintf(stderr, "Warning: too many spots (%i), truncating.", spots_count);
+      fprintf(stderr, "Warning: too many spots (%i), truncating.",
+              spots_count);
       exceeding_spots = spots_count - MAX_SUGGESTION_SPOTS;
       spots_count = MAX_SUGGESTION_SPOTS;
     }

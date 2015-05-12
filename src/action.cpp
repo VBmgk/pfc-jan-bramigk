@@ -51,7 +51,8 @@ Action make_pass_action(int pass_receiver) {
   return a;
 }
 
-Action gen_move_action(int robot, const State &state, struct DecisionTable &table) {
+Action gen_move_action(int robot, const State &state,
+                       struct DecisionTable &table) {
   Vector pos;
   float r_radius;
   Player p = PLAYER_OF(robot);
@@ -69,10 +70,13 @@ again:
     r_radius = MOVE_RADIUS_2;
     break;
   }
-  pos = rand_vector_bounded(state.robots[robot], r_radius, FIELD_WIDTH / 2, FIELD_HEIGHT / 2);
+  pos = rand_vector_bounded(state.robots[robot], r_radius,
+                            FIELD_WIDTH / 2, FIELD_HEIGHT / 2);
 
   // XXX: do not allow __ANYONE__ (temporary) to enter the defense area
-  if (norm(GOAL_POS(p) - pos) <= DEFENSE_RADIUS)
+  if (robot % N_ROBOTS != 0 &&
+      norm(GOAL_POS(p) - pos) <= DEFENSE_RADIUS)
+    // if (norm(GOAL_POS(p) - pos) <= DEFENSE_RADIUS)
     goto again;
 
   // too close to the ball
@@ -92,15 +96,19 @@ again:
 }
 
 // XXX: how should the table me used here??
-// Action gen_kick_action(int robot, const State &state, struct DecisionTable &table);
-Action gen_kick_action(int robot, const State &state, struct DecisionTable &) {
+// Action gen_kick_action(int robot, const State &state, struct
+// DecisionTable
+// &table);
+Action gen_kick_action(int robot, const State &state,
+                       struct DecisionTable &) {
   // XXX: can table help in any way? avoid maybe?
 
   float ky, kx = GOAL_X(ENEMY_OF(robot));
 
   int gaps_count;
   Segment gaps[N_ROBOTS * 2]; // this should be enough
-  discover_gaps_from_pos(state, state.ball, ENEMY_OF(robot), gaps, &gaps_count, robot);
+  discover_gaps_from_pos(state, state.ball, ENEMY_OF(robot), gaps,
+                         &gaps_count, robot);
 
   float max_len = 0.0;
   FOR_N(i, gaps_count) {
@@ -114,11 +122,12 @@ Action gen_kick_action(int robot, const State &state, struct DecisionTable &) {
   return make_kick_action({kx, ky});
 }
 
-Action gen_pass_action(int robot, const State &state, DecisionTable &table) {
+Action gen_pass_action(int robot, const State &state,
+                       DecisionTable &table) {
   Player player = PLAYER_OF(robot);
   TeamFilter receivers;
   filter_out(receivers, robot);
-  discover_possible_receivers(state, &table, player, receivers);
+  discover_possible_receivers(state, &table, player, receivers, robot);
   if (receivers.count > 0) {
 
     // select a random receiver
@@ -145,8 +154,10 @@ Action gen_pass_action(int robot, const State &state, DecisionTable &table) {
   }
 }
 
-Action gen_primary_action(int robot, const State &state, DecisionTable &table, bool kick) {
-  return kick ? gen_kick_action(robot, state, table) : gen_pass_action(robot, state, table);
+Action gen_primary_action(int robot, const State &state,
+                          DecisionTable &table, bool kick) {
+  return kick ? gen_kick_action(robot, state, table)
+              : gen_pass_action(robot, state, table);
 }
 
 void apply_to_state(Action action, int robot, State *state) {
@@ -165,39 +176,11 @@ void apply_to_state(Action action, int robot, State *state) {
     auto ball = state->ball;
     auto recv = state->robots[action.pass_receiver];
     state->robots[robot] = ball;
-    state->ball = recv - unit(recv - ball) * (ROBOT_RADIUS + BALL_RADIUS);
+    state->ball =
+        recv - unit(recv - ball) * (ROBOT_RADIUS + BALL_RADIUS);
   } break;
 
   case NONE:
     break;
-  }
-}
-
-void to_proto_action(Action &action, roboime::Action *ptb_action, int robot_id) {
-  ptb_action->set_robot_id(robot_id);
-  switch (action.type) {
-
-  case MOVE: {
-    ptb_action->set_type(roboime::Action::MOVE);
-    auto *move = ptb_action->mutable_move();
-    move->set_x(action.move_pos.x);
-    move->set_y(action.move_pos.y);
-  } break;
-
-  case PASS: {
-    ptb_action->set_type(roboime::Action::PASS);
-    auto *pass = ptb_action->mutable_pass();
-    pass->set_robot_id(action.pass_receiver % N_ROBOTS);
-  } break;
-
-  case KICK: {
-    ptb_action->set_type(roboime::Action::KICK);
-    auto *kick = ptb_action->mutable_kick();
-    kick->set_x(action.kick_pos.x);
-    kick->set_y(action.kick_pos.y);
-  } break;
-
-  case NONE:
-    fprintf(stderr, "WARNING: tried to dispatch NONE action for robot %i, ignored\n", robot_id);
   }
 }

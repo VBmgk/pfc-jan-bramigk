@@ -85,6 +85,12 @@ add_executable(ai src/main.cpp $<TARGET_OBJECTS:core>)
 #target_link_libraries(ai ${COMMON_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
 target_link_libraries(ai ${COMMON_LIBRARIES} glfw ${GLFW_LIBRARIES})
 
+add_custom_target(run
+  COMMAND ai
+  DEPENDS ai
+  WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+)
+
 #
 # DOCS
 #

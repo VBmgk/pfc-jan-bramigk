@@ -20,24 +20,34 @@ State uniform_rand_state();
 
 bool can_kick_directly(const State state, Player player);
 
-int robot_with_ball(const State state, float *time_min = nullptr, float *time_max = nullptr);
+int robot_with_ball(const State state, float *time_min = nullptr,
+                    float *time_max = nullptr, int *robot_min = nullptr,
+                    int *robot_max = nullptr);
 
-float total_gap_len_from_pos(const State state, Vector pos, Player player, int ignore_robot = -1);
+float total_gap_len_from_pos(const State state, Vector pos,
+                             Player player, int ignore_robot = -1);
 
-float max_gap_len_from_pos(const State state, Vector pos, Player player, int ignore_robot = -1);
+float max_gap_len_from_pos(const State state, Vector pos, Player player,
+                           int ignore_robot = -1);
 
-float time_to_pos(Vector robot_p, Vector robot_v, Vector pos, Vector pos_v, float max_speed = ROBOT_MAX_SPEED);
+float time_to_pos(Vector robot_p, Vector robot_v, Vector pos,
+                  Vector pos_v, float max_speed = ROBOT_MAX_SPEED);
 
-void discover_gaps_from_pos(const State state, Vector pos, Player player, Segment *gaps, int *gaps_count,
-                            int ignore_robot = -1);
+void discover_gaps_from_pos(const State state, Vector pos,
+                            Player player, Segment *gaps,
+                            int *gaps_count, int ignore_robot = -1);
 
-float evaluate_with_decision(Player player, const State &state, const Decision &decision, const DecisionTable &table);
+float evaluate_with_decision(Player player, const State &state,
+                             const Decision &decision,
+                             const DecisionTable &table,
+                             float *values = nullptr);
 
-void discover_possible_receivers(const State state, const DecisionTable *table, Player player, TeamFilter &result);
+void discover_possible_receivers(const State state,
+                                 const DecisionTable *table,
+                                 Player player, TeamFilter &result,
+                                 int passer);
 
-namespace roboime {
-class Update;
-}
-void update_from_proto(State &state, roboime::Update &ptb_update, struct IdTable &table);
+void update_from_proto(State &state, class UpdateMessage &ptb_update,
+                       struct IdTable &table);
 
 #endif

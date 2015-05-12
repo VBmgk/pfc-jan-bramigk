@@ -1,6 +1,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
+#include <imgui.h>
 
 #include "utils.h"
 #include "state.h"
@@ -28,7 +29,8 @@ bool can_kick_directly(State state, Player player) {
     return false;
 
   Player enemy = ENEMY_FOR(player);
-  float linear_gap = total_gap_len_from_pos(state, state.ball, enemy, rwb);
+  float linear_gap =
+      total_gap_len_from_pos(state, state.ball, enemy, rwb);
   float dist_to_goal = dist(state.ball, GOAL_POS(enemy));
   float angular_gap = DEGREES(2 * atan2f(linear_gap / 2, dist_to_goal));
 
@@ -38,15 +40,20 @@ bool can_kick_directly(State state, Player player) {
   return false;
 }
 
-// Function to check which robot has the ball considering only the receiver robot and the enemy robots
+// Function to check which robot has the ball considering only the
+// receiver
+// robot and the enemy robots
 #if 0
 std::pair<const Robot *, Player>
 Board::getRobotWithVirtualBall(const Ball &virt_ball,
                                std::pair<const Robot *, Player> r_rcv) const;
 #endif
 
-// float time_to_pos(Vector rpos, Vector rpos_v, Vector pos, Vector pos_v, float max_speed);
-float time_to_pos(Vector rpos, Vector, Vector pos, Vector pos_v, float max_speed) {
+// float time_to_pos(Vector rpos, Vector rpos_v, Vector pos, Vector
+// pos_v, float
+// max_speed);
+float time_to_pos(Vector rpos, Vector, Vector pos, Vector pos_v,
+                  float max_speed) {
   // TODO: take into account rpos_v
 
   /*
@@ -81,7 +88,8 @@ float time_to_pos(Vector rpos, Vector, Vector pos, Vector pos_v, float max_speed
         return std::numeric_limits<float>::max();
     } else {
       // delta_div_4 > 0
-      float t1 = (-b_div_2 - sqrt(delta_div_4)) / a, t2 = (-b_div_2 + sqrt(delta_div_4)) / a;
+      float t1 = (-b_div_2 - sqrt(delta_div_4)) / a,
+            t2 = (-b_div_2 + sqrt(delta_div_4)) / a;
 
       float t_min = std::min(t1, t2);
       float t_max = std::max(t1, t2);
@@ -105,20 +113,21 @@ float time_to_obj(const State state, int r, Vector obj, Vector obj_v) {
   return time_to_pos(state.robots[r], state.robots_v[r], obj, obj_v);
 }
 
-int robot_with_ball(const State state, float *time_min, float *time_max) {
+int robot_with_ball(const State state, float *time_min, float *time_max,
+                    int *robot_min, int *robot_max) {
   int robot = 0;
-  int robot_max = 0;
-  int robot_min = 0;
-  float best_time = std::numeric_limits<float>::max();
-  float best_time_min = std::numeric_limits<float>::max();
-  float best_time_max = std::numeric_limits<float>::max();
+  int best_robot_max = 0;
+  int best_robot_min = 0;
+  float best_time = std::numeric_limits<float>::infinity();
+  float best_time_min = std::numeric_limits<float>::infinity();
+  float best_time_max = std::numeric_limits<float>::infinity();
 
-#define KEEP_BEST(BEST, ROBOT)                                                                                         \
-  do {                                                                                                                 \
-    if (t < BEST) {                                                                                                    \
-      ROBOT = i;                                                                                                       \
-      BEST = t;                                                                                                        \
-    }                                                                                                                  \
+#define KEEP_BEST(BEST, ROBOT)                                         \
+  do {                                                                 \
+    if (t < BEST) {                                                    \
+      ROBOT = i;                                                       \
+      BEST = t;                                                        \
+    }                                                                  \
   } while (0)
 
   FOR_EVERY_ROBOT(i) {
@@ -126,9 +135,9 @@ int robot_with_ball(const State state, float *time_min, float *time_max) {
 
     KEEP_BEST(best_time, robot);
     if (PLAYER_OF(i) == MIN)
-      KEEP_BEST(best_time_min, robot_min);
+      KEEP_BEST(best_time_min, best_robot_min);
     else
-      KEEP_BEST(best_time_max, robot_max);
+      KEEP_BEST(best_time_max, best_robot_max);
   }
 
 #undef KEEP_BEST
@@ -139,16 +148,25 @@ int robot_with_ball(const State state, float *time_min, float *time_max) {
   if (time_max != nullptr)
     *time_max = best_time_max;
 
+  if (robot_min != nullptr)
+    *robot_min = best_robot_min;
+
+  if (robot_max != nullptr)
+    *robot_max = best_robot_max;
+
   return robot;
 }
 
-int can_receive_pass(const State state, int vrobot, Player player, Vector vpos, Vector vball, Vector vball_v) {
+int can_receive_pass(const State state, int vrobot, Player player,
+                     Vector vpos, Vector vball, Vector vball_v) {
   int robot = vrobot;
   // XXX: speed 0 for us maybe?
-  float min_time = time_to_pos(vpos, {}, vball, vball_v, ROBOT_MAX_SPEED);
+  float min_time =
+      time_to_pos(vpos, {}, vball, vball_v, ROBOT_MAX_SPEED);
 
   FOR_TEAM_ROBOT(i, ENEMY_OF(player)) {
-    float t = time_to_pos(state.robots[i], {}, vball, vball_v, ROBOT_MAX_SPEED);
+    float t = time_to_pos(state.robots[i], {}, vball, vball_v,
+                          ROBOT_MAX_SPEED);
     if (t < min_time) {
       robot = i;
       min_time = t;
@@ -163,7 +181,9 @@ std::vector<std::pair<float, float>>
 Board::getGoalGaps(Player player, const Body &body) const {
 #endif
 
-// returns false if there is no shadow, otherwise return true and write on the given pointer
+// returns false if there is no shadow, otherwise return true and write
+// on the
+// given pointer
 #if 0
 bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shadow) {
   auto d = rpos - pos;
@@ -224,8 +244,10 @@ bool solve_lineq(float a, float b, Sol &x, float c) {
   }
 }
 
-bool linear_dependency(float a1, float a2, float &x, float b1, float b2) {
-  float norm_a = sqrt(a1 * a1 + a2 * a2), norm_b = sqrt(b1 * b1 + b2 * b2),
+bool linear_dependency(float a1, float a2, float &x, float b1,
+                       float b2) {
+  float norm_a = sqrt(a1 * a1 + a2 * a2),
+        norm_b = sqrt(b1 * b1 + b2 * b2),
         norm_ab = sqrt((a1 + b1) * (a1 + b1) + (a2 + b2) * (a2 + b2));
 
   if (norm_ab == norm_a + norm_b) {
@@ -246,7 +268,8 @@ bool linear_dependency(float a1, float a2, float &x, float b1, float b2) {
   }
 }
 
-bool solve_Ax_b(float a11, float a12, float a21, float a22, Sol &x, float b1, float b2) {
+bool solve_Ax_b(float a11, float a12, float a21, float a22, Sol &x,
+                float b1, float b2) {
   // x1 = (b1 . a22 - a12 . b2) / det
   // x2 = (b2 . a11 - a21 . b1) / det
   float det = a11 * a22 - a12 * a21;
@@ -293,7 +316,8 @@ bool solve_Ax_b(float a11, float a12, float a21, float a22, Sol &x, float b1, fl
   return true;
 }
 
-bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shadow) {
+bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx,
+                               Segment *shadow) {
   auto d = rpos - pos;
   auto k = norm2(d) - SQ(ROBOT_RADIUS);
 
@@ -304,13 +328,18 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shado
     return false;
 
   // --------------------------------------------------------------------------
-  // Old way to compute the gap, consider the ball as a point light source
+  // Old way to compute the gap, consider the ball as a point light
+  // source
   // float tan_alpha = Robot::radius() / std::sqrt(k);
   // float tan_theta = d[1] / std::fabs(d[0]);
-  // float tan_1 = (tan_theta + tan_alpha) / (1 - tan_theta * tan_alpha);
-  // float tan_2 = (tan_theta - tan_alpha) / (1 + tan_theta * tan_alpha);
-  float y_shadow_1; // = tan_1 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
-  float y_shadow_2; // = tan_2 * std::fabs(ball.pos()[0] - gx) + ball.pos()[1];
+  // float tan_1 = (tan_theta + tan_alpha) / (1 - tan_theta *
+  // tan_alpha);
+  // float tan_2 = (tan_theta - tan_alpha) / (1 + tan_theta *
+  // tan_alpha);
+  float y_shadow_1; // = tan_1 * std::fabs(ball.pos()[0] - gx) +
+                    // ball.pos()[1];
+  float y_shadow_2; // = tan_2 * std::fabs(ball.pos()[0] - gx) +
+                    // ball.pos()[1];
   // New
   // n: vector normal to the line that join
   //    ball and the robot
@@ -340,7 +369,8 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shado
   // to eliminate robots with no shadow
   Sol aux = {0.0, 0.0};
 
-  if (solve_Ax_b(nu.x, nd.x, nu.y, nd.y, aux, (rd - ru).x, (rd - ru).y)) {
+  if (solve_Ax_b(nu.x, nd.x, nu.y, nd.y, aux, (rd - ru).x,
+                 (rd - ru).y)) {
     // system has solution
     // p = intersection of lu = { aux . nu + ru} and
     //                     ld = { aux . nd + rd}
@@ -405,10 +435,13 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx, Segment *shado
 }
 #endif
 
-bool cmp_segments(Segment a, Segment b) { return a.u == b.u ? a.d > b.d : a.u > b.u; }
+bool cmp_segments(Segment a, Segment b) {
+  return a.u == b.u ? a.d > b.d : a.u > b.u;
+}
 
-void discover_gaps_from_pos(const State state, Vector pos, Player player, Segment *gaps, int *gaps_count_ptr,
-                            int ignore_robot) {
+void discover_gaps_from_pos(const State state, Vector pos,
+                            Player player, Segment *gaps,
+                            int *gaps_count_ptr, int ignore_robot) {
 
   float gx = GOAL_X(player);
 
@@ -422,8 +455,15 @@ void discover_gaps_from_pos(const State state, Vector pos, Player player, Segmen
     if (i == ignore_robot)
       continue;
 
+    auto r = state.robots[i];
+
+    // constexpr auto MARG = ROBOT_RADIUS + BALL_RADIUS;
+    // if (norm2(r - pos) < SQ(MARG) && norm2(GOAL_POS(player) - r) >
+    // SQ(DEFENSE_RADIUS + MARG))
+    //  continue;
+
     Segment shadow;
-    if (shadow_for_robot_from_pos(state.robots[i], pos, gx, &shadow))
+    if (shadow_for_robot_from_pos(r, pos, gx, &shadow))
       shadows[shadows_count++] = shadow;
   }
 
@@ -490,10 +530,12 @@ void discover_gaps_from_pos(const State state, Vector pos, Player player, Segmen
   *gaps_count_ptr = gaps_count;
 }
 
-float total_gap_len_from_pos(const State state, Vector pos, Player player, int ignore_robot) {
+float total_gap_len_from_pos(const State state, Vector pos,
+                             Player player, int ignore_robot) {
   int gaps_count;
   Segment gaps[N_ROBOTS * 2]; // this should be enough
-  discover_gaps_from_pos(state, pos, player, gaps, &gaps_count, ignore_robot);
+  discover_gaps_from_pos(state, pos, player, gaps, &gaps_count,
+                         ignore_robot);
 
   float total_len = 0.0;
   FOR_N(i, gaps_count) { total_len += gaps[i].u - gaps[i].d; }
@@ -501,10 +543,12 @@ float total_gap_len_from_pos(const State state, Vector pos, Player player, int i
   return total_len;
 }
 
-float max_gap_len_from_pos(const State state, Vector pos, Player player, int ignore_robot) {
+float max_gap_len_from_pos(const State state, Vector pos, Player player,
+                           int ignore_robot) {
   int gaps_count;
   Segment gaps[N_ROBOTS * 2]; // this should be enough
-  discover_gaps_from_pos(state, pos, player, gaps, &gaps_count, ignore_robot);
+  discover_gaps_from_pos(state, pos, player, gaps, &gaps_count,
+                         ignore_robot);
 
   float max_len = 0.0;
   FOR_N(i, gaps_count) {
@@ -521,7 +565,8 @@ float gap_value(const State state, Player player, Vector pos) {
   float dist_to_goal = dist(pos, goal);
 
   float total_gap_linear = total_gap_len_from_pos(state, pos, player);
-  float total_gap = DEGREES(2 * atan2f(total_gap_linear / 2, dist_to_goal));
+  float total_gap =
+      DEGREES(2 * atan2f(total_gap_linear / 2, dist_to_goal));
   while (total_gap < 0)
     total_gap += 360;
   while (total_gap > 360)
@@ -534,65 +579,100 @@ float gap_value(const State state, Player player, Vector pos) {
   while (max_gap > 360)
     max_gap -= 360;
 
-  return TOTAL_MAX_GAP_RATIO * total_gap + (1 - TOTAL_MAX_GAP_RATIO) * max_gap;
+  return TOTAL_MAX_GAP_RATIO * total_gap +
+         (1 - TOTAL_MAX_GAP_RATIO) * max_gap;
 }
 
-float evaluate_with_decision(Player player, const State &state, const struct Decision &decision,
-                             const struct DecisionTable &table) {
+float evaluate_with_decision(Player player, const State &state,
+                             const struct Decision &decision,
+                             const struct DecisionTable &table,
+                             float *values) {
+  float dumb_values[W_SIZE];
+  if (values == nullptr)
+    values = dumb_values;
+
   Player enemy = ENEMY_FOR(player);
-  float value = 0.0;
 
   float time_min, time_max;
+  int rwb_min, rwb_max;
 
   // check wheter we have the ball
-  bool has_ball = PLAYER_OF(robot_with_ball(state, &time_min, &time_max)) == player;
+  int rwb =
+      robot_with_ball(state, &time_min, &time_max, &rwb_min, &rwb_max);
+  bool has_ball = PLAYER_OF(rwb) == player;
 
   float time_player = player == MAX ? time_max : time_min;
   float time_enemy = player == MIN ? time_max : time_min;
+  int rwb_player = player == MAX ? rwb_max : rwb_min;
+  // int rwb_enemy = player == MIN ? rwb_max : rwb_min;
 
-  value += WEIGHT_CLOSE_TO_BALL / (1 + time_player);
-  value -= WEIGHT_ENEMY_CLOSE_TO_BALL / (1 + time_enemy);
+  float value = 0.0;
+#define W(NAME, VAL)                                                   \
+  do {                                                                 \
+    float v = NAME * VAL;                                              \
+    values[_##NAME] += v;                                              \
+    value += v;                                                        \
+  } while (false)
 
-  value += WEIGHT_BALL_POS * state.ball.x;
+  W(WEIGHT_CLOSE_TO_BALL, 1 / (1 + time_player));
+  W(WEIGHT_ENEMY_CLOSE_TO_BALL, -1 / (1 + time_enemy));
+  W(WEIGHT_BALL_POS, state.ball.x);
 
   // bonus for having the ball
-  if (has_ball)
-    value += WEIGHT_HAS_BALL;
+  if (has_ball) {
+    W(WEIGHT_HAS_BALL, 1);
+  }
 
-  value += WEIGHT_ATTACK * gap_value(state, enemy, state.ball);
+  W(WEIGHT_ATTACK, gap_value(state, enemy, state.ball));
   // or penalty for not having it
-  //else
-  value -= WEIGHT_BLOCK_ATTACKER * gap_value(state, player, state.ball);
+  // else
+  W(WEIGHT_BLOCK_ATTACKER, -gap_value(state, player, state.ball));
 
   // penalty for exposing own goal
-  FOR_TEAM_ROBOT(i, enemy) { value -= WEIGHT_BLOCK_GOAL * gap_value(state, player, state.robots[i]); }
+  FOR_TEAM_ROBOT(i, enemy) {
+    W(WEIGHT_BLOCK_GOAL, -gap_value(state, player, state.robots[i]));
+  }
 
   // bonus for having more robots able to receive a pass
   TeamFilter receivers;
-  discover_possible_receivers(state, &table, player, receivers);
-  value += WEIGHT_RECEIVERS_NUM * receivers.count;
+  discover_possible_receivers(state, &table, player, receivers,
+                              has_ball ? rwb : -1);
+  W(WEIGHT_RECEIVERS_NUM, receivers.count);
 
   // onus for having enemies able to receive a pass
   TeamFilter enemy_receivers;
-  discover_possible_receivers(state, &table, enemy, enemy_receivers);
-  value -= WEIGHT_ENEMY_RECEIVERS_NUM * enemy_receivers.count;
+  discover_possible_receivers(state, &table, enemy, enemy_receivers,
+                              has_ball ? -1 : rwb);
+  W(WEIGHT_ENEMY_RECEIVERS_NUM, -enemy_receivers.count);
 
   // bonus for seeing enemy goal
+  float best_receiver = 0;
   FOR_TEAM_ROBOT(i, player) {
     float gap = gap_value(state, enemy, state.robots[i]);
-    value += WEIGHT_SEE_ENEMY_GOAL * gap;
+    auto robot = state.robots[i];
+    W(WEIGHT_SEE_ENEMY_GOAL, gap);
 
-    if (!receivers[i]) {
-      value += WEIGHT_GOOD_RECEIVERS * gap;
+    if (rwb_player != i && !receivers[i] &&
+        norm2(robot - GOAL_POS(enemy)) > SQ(DEFENSE_RADIUS)) {
+      float this_gap = fmin(0.1, gap);
+      float good_receiver =
+          this_gap /
+          (1 + SQ(DESIRED_PASS_DIST - norm(state.ball - robot)));
+      good_receiver += robot.x + FIELD_WIDTH / 2;
+      if (best_receiver < good_receiver)
+        best_receiver = good_receiver;
     }
 
     // penalty for being too close to enemy goal
     if (dist(state.robots[i], GOAL_POS(enemy)) < DIST_GOAL_TO_PENAL) {
       value -= DIST_GOAL_PENAL;
+      values[_WEIGHT_PENALS] -= DIST_GOAL_PENAL;
     }
   }
+  W(WEIGHT_GOOD_RECEIVERS, best_receiver);
 
-  float move_dist_total = 0, move_dist_max = 0, move_change = 0, pass_change = 0, kick_change = 0;
+  float move_dist_total = 0, move_dist_max = 0, move_change = 0,
+        pass_change = 0, kick_change = 0;
 
   FOR_TEAM_ROBOT(i, player) {
     auto action = decision.action[i];
@@ -602,13 +682,26 @@ float evaluate_with_decision(Player player, const State &state, const struct Dec
       float move_dist = norm(action.move_pos - rpos);
       move_dist_max = std::max(move_dist_max, move_dist);
       move_dist_total += move_dist;
-      move_change += norm(action.move_pos - table.move[i].move_pos);
+
+      auto mvec = table.move[i].move_pos - rpos;
+      auto nvec = action.move_pos - rpos;
+      auto mnd = sqrt(norm2(mvec) * norm2(nvec));
+      if (move_dist > ROBOT_RADIUS && mnd > SQ(ROBOT_RADIUS)) {
+        // move_change += norm(action.move_pos -
+        // table.move[i].move_pos);
+        float c = mvec * nvec / mnd;
+        if (c - 1.0 < 0.00001)
+          c = 1.0;
+        move_change += acos(c);
+      }
     } break;
     case PASS:
       if (table.pass_robot >= 0) {
-        // XXX: assuming everything is ok and the receiver has a move action
+        // XXX: assuming everything is ok and the receiver has a move
+        // action
         pass_change +=
-            norm(decision.action[action.pass_receiver].move_pos - table.move[table.pass.pass_receiver].move_pos);
+            norm(decision.action[action.pass_receiver].move_pos -
+                 table.move[table.pass.pass_receiver].move_pos);
       }
       break;
     case KICK:
@@ -621,17 +714,22 @@ float evaluate_with_decision(Player player, const State &state, const struct Dec
     }
   }
 
-  value -= WEIGHT_MOVE_DIST_TOTAL * move_dist_total;
-  value -= WEIGHT_MOVE_DIST_MAX * move_dist_max;
-  value -= WEIGHT_MOVE_CHANGE * move_change;
-  value -= WEIGHT_PASS_CHANGE * pass_change;
-  value -= WEIGHT_KICK_CHANGE * kick_change;
+  // ImGui::Text("move_change: %f", move_change);
+  W(WEIGHT_MOVE_DIST_TOTAL, -move_dist_total);
+  W(WEIGHT_MOVE_DIST_MAX, -move_dist_max);
+  W(WEIGHT_MOVE_CHANGE, -move_change);
+  W(WEIGHT_PASS_CHANGE, -pass_change);
+  W(WEIGHT_KICK_CHANGE, -kick_change);
 
+#undef W
   return value;
 }
 
-void update_from_proto(State &state, roboime::Update &ptb_update, IdTable &table) {
-  // TODO: more reliable mapping, what may happen now is that the mapping {0:4, 1:5} may change to {0:5, 1:4} simply
+void update_from_proto(State &state, UpdateMessage &ptb_update,
+                       IdTable &table) {
+  // TODO: more reliable mapping, what may happen now is that the
+  // mapping {0:4,
+  // 1:5} may change to {0:5, 1:4} simply
   // because of ordering
 
   auto ball = ptb_update.ball();
@@ -655,11 +753,16 @@ void update_from_proto(State &state, roboime::Update &ptb_update, IdTable &table
   }
 }
 
-void discover_possible_receivers(const State state, const DecisionTable *table, Player player, TeamFilter &result) {
+void discover_possible_receivers(const State state,
+                                 const DecisionTable *table,
+                                 Player player, TeamFilter &result,
+                                 int passer) {
   // int rwb = robot_with_ball(state);
 
   // if (PLAYER_OF(rwb) != player)
   //  return;
+
+  // printf("player %i\n", player);
 
   // filter_out(result, rwb);
   FOR_TEAM_ROBOT_IN(i, player, result) {
@@ -667,8 +770,37 @@ void discover_possible_receivers(const State state, const DecisionTable *table, 
     // TODO: think of edge cases, make this more realistic
 
     Vector move_pos = table ? table->move[i].move_pos : state.robots[i];
-    int vrobot =
-        can_receive_pass(state, i, player, move_pos, state.ball, unit(move_pos - state.ball) * ROBOT_KICK_SPEED);
+
+    // filter out too far locations
+    if (norm2(move_pos - state.ball) > SQ(MAX_PASS_DISTANCE)) {
+      filter_out(result, i);
+      continue;
+    }
+
+    // check if the receiver can get there before the ball
+    float robot_to_pos_time =
+        norm2(move_pos - state.robots[i]) / SQ(ROBOT_MAX_SPEED);
+    float ball_to_pos_time =
+        norm2(move_pos - state.ball) / SQ(ROBOT_KICK_SPEED);
+    float passer_to_ball_time =
+        passer >= 0
+            ? norm2(state.robots[passer] - state.ball) /
+                  SQ(ROBOT_MAX_SPEED)
+            : 0.0;
+    if (passer_to_ball_time + ball_to_pos_time < robot_to_pos_time) {
+      filter_out(result, i);
+      // printf("will not get there (%f, %f) before the ball (%f, %f):
+      // %i\n",
+      // move_pos.x, move_pos.y, state.ball.x,
+      // state.ball.y, i);
+      continue;
+    }
+
+    int vrobot = can_receive_pass(
+        state, i, player, move_pos, state.ball,
+        unit(move_pos - state.ball) * ROBOT_KICK_SPEED);
+    // can_receive_pass(state, i, player, state.robots[i], state.ball,
+    // unit(move_pos - state.ball) * ROBOT_KICK_SPEED);
 
     if (vrobot != i)
       filter_out(result, i);

@@ -4,7 +4,8 @@
 #include "array.h"
 
 // this is a exclusion filter, true means out
-// (rationale behind it is that default initialization goes to no filter)
+// (rationale behind it is that default initialization goes to no
+// filter)
 struct TeamFilter : TeamArray<bool> {
   int count = N_ROBOTS;
 };

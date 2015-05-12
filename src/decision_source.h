@@ -1,6 +1,12 @@
 #ifndef DECISION_SOURCE_H
 #define DECISION_SOURCE_H
 
-enum DecisionSource { NO_SOURCE, SUGGESTION, TABLE, FULL_RANDOM, SINGLE_RANDOM };
+enum DecisionSource {
+  NO_SOURCE,
+  SUGGESTION,
+  TABLE,
+  FULL_RANDOM,
+  SINGLE_RANDOM
+};
 
 #endif

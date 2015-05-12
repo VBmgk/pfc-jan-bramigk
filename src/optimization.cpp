@@ -11,18 +11,21 @@
 #include "decision_source.h"
 #include "app.h"
 
-
-ValuedDecision decide(Optimization &opt, State state, Player player, Suggestions *suggestions,
+ValuedDecision decide(Optimization &opt, State state, Player player,
+                      Suggestions *suggestions,
                       int *ramification_count) {
 
   using namespace std::chrono;
 
   if (!opt.table_initialized) {
     opt.table_initialized = true;
-    FOR_EVERY_ROBOT(i) { opt.table.move[i] = make_move_action(state.robots[i]); }
+    FOR_EVERY_ROBOT(i) {
+      opt.table.move[i] = make_move_action(state.robots[i]);
+    }
   }
 
-  opt.robot_to_move = ROBOT_WITH_PLAYER((opt.robot_to_move + 1) % N_ROBOTS, player);
+  opt.robot_to_move =
+      ROBOT_WITH_PLAYER((opt.robot_to_move + 1) % N_ROBOTS, player);
   bool kick = can_kick_directly(state, player);
 
   ValuedDecision vd;
@@ -44,33 +47,43 @@ ValuedDecision decide(Optimization &opt, State state, Player player, Suggestions
     SuggestionTable *local_suggestion = nullptr;
     int local_suggestion_i = -1;
 
-    // always consider the previous decision (based on the decision table)
+    // always consider the previous decision (based on the decision
+    // table)
     // unless it's a kick action, those can only happen if kick
     if (suggestions && i < suggestions->tables_count) {
       local_suggestion = &suggestions->tables[i];
       local_suggestion_i = i;
-      decision = gen_decision(kick, *local_suggestion, &state, opt.table, player);
+      decision = gen_decision(kick, *local_suggestion, &state,
+                              opt.table, player);
       source = SUGGESTION;
     } else if (i == (suggestions ? suggestions->tables_count : 0)) {
       decision = from_decision_table(opt.table, state, player, kick);
       source = TABLE;
-      // on some cases try to move everyone at once, this may lead to better results
-    } else if (100.0 * i / RAMIFICATION_NUMBER < FULL_CHANGE_PERCENTAGE) {
+      // on some cases try to move everyone at once, this may lead to
+      // better
+      // results
+    } else if (100.0 * i / RAMIFICATION_NUMBER <
+               FULL_CHANGE_PERCENTAGE) {
       decision = gen_decision(kick, state, player, opt.table);
       source = FULL_RANDOM;
       // on everything else roun-robin between trying to move each robot
     } else {
-      decision = gen_decision(kick, state, player, opt.table, opt.robot_to_move);
+      decision = gen_decision(kick, state, player, opt.table,
+                              opt.robot_to_move);
       source = SINGLE_RANDOM;
     }
 
     State next_state = state;
     apply_to_state(decision, player, &next_state);
 
-    float value = evaluate_with_decision(player, next_state, decision, opt.table);
+    float values[W_SIZE];
+    float value = evaluate_with_decision(player, next_state, decision,
+                                         opt.table, values);
 
     if (value > vd.value) {
       vd.value = value;
+      // FOR_N(i, W_SIZE) vd.values[i] = values[i];
+      memcpy(vd.values, values, W_SIZE * sizeof(*values));
       vd.decision = decision;
       // save suggestion or otherwise erase it
       best_suggestion = local_suggestion;

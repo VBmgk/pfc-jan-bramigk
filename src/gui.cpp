@@ -27,9 +27,12 @@ static bool mouse_pressed[3] = {false, false, false};
 static float mouse_wheel = 0.0f;
 static GLuint font_texture = 0;
 
-static void error_callback(int /*error*/, const char *description) { fputs(description, stderr); }
+static void error_callback(int /*error*/, const char *description) {
+  fputs(description, stderr);
+}
 
-static void key_callback(GLFWwindow *window, int key, int, int action, int mods) {
+static void key_callback(GLFWwindow *window, int key, int, int action,
+                         int mods) {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     return glfwSetWindowShouldClose(window, GL_TRUE);
 
@@ -40,11 +43,15 @@ static void key_callback(GLFWwindow *window, int key, int, int action, int mods)
     io.KeysDown[key] = false;
 
   (void)mods; // Modifiers are not reliable across systems
-  io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
-  io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
-  io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+  io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] ||
+               io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+  io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] ||
+                io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+  io.KeyAlt =
+      io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
 
-  if (!io.WantCaptureKeyboard && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+  if (!io.WantCaptureKeyboard &&
+      (action == GLFW_PRESS || action == GLFW_REPEAT)) {
     switch (key) {
 
     case GLFW_KEY_R: {
@@ -75,9 +82,9 @@ static void key_callback(GLFWwindow *window, int key, int, int action, int mods)
       app_toggle_experimental();
     } break;
 
-#define SELECT_SLOT(I)                                                                                                 \
-  case GLFW_KEY_##I: {                                                                                                 \
-    app_select_save_slot(I);                                                                                           \
+#define SELECT_SLOT(I)                                                 \
+  case GLFW_KEY_##I: {                                                 \
+    app_select_save_slot(I);                                           \
   } break;
       SELECT_SLOT(1)
       SELECT_SLOT(2)
@@ -124,7 +131,8 @@ static void key_callback(GLFWwindow *window, int key, int, int action, int mods)
   }
 }
 
-static void resize_callback(GLFWwindow *, int /*width*/, int /*height*/) {
+static void resize_callback(GLFWwindow *, int /*width*/,
+                            int /*height*/) {
   gui_new_frame();
   gui_render();
 }
@@ -143,27 +151,32 @@ static double last_drag_y = 0.0;
 static double screen_xpos = 0.0;
 static double screen_ypos = 0.0;
 
-static void scroll_callback(GLFWwindow *, double xoffset, double yoffset) {
+static void scroll_callback(GLFWwindow *, double xoffset,
+                            double yoffset) {
   static constexpr double zoom_speed = 0.01;
   static constexpr double zoom_min = 0.15;
   static constexpr double zoom_max = 5.50;
 
   if (!ImGui::IsMouseHoveringAnyWindow()) {
-    double offset2 = xoffset * std::abs(xoffset) + yoffset * std::abs(yoffset);
+    double offset2 =
+        xoffset * std::abs(xoffset) + yoffset * std::abs(yoffset);
     // nonsqrt'd
     // zoom += offset2 * zoom_speed;
     // sqrt'd
     zoom += copysign(sqrt(std::abs(offset2)), offset2) * zoom_speed;
     // restrict zoom in [zoom_min, zoom_max] interval
-    zoom = (zoom > zoom_max) ? zoom_max : (zoom < zoom_min) ? zoom_min : zoom;
+    zoom = (zoom > zoom_max) ? zoom_max : (zoom < zoom_min) ? zoom_min
+                                                            : zoom;
 
     // TODO: update drag_x and drag_y accordingly
   }
 
-  mouse_wheel += (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
+  mouse_wheel +=
+      (float)yoffset; // Use fractional mouse wheel, 1.0 unit 5 lines.
 }
 
-static void drag_callback(GLFWwindow *window, double xpos, double ypos) {
+static void drag_callback(GLFWwindow *window, double xpos,
+                          double ypos) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
   double w = (double)width;
@@ -183,14 +196,16 @@ static void drag_callback(GLFWwindow *window, double xpos, double ypos) {
   drag_y = fmin(drag_y_max, fmax(drag_y_min, drag_y));
 }
 
-static void no_drag_click_callback(GLFWwindow *window, double xpos, double ypos) {
+static void no_drag_click_callback(GLFWwindow *window, double xpos,
+                                   double ypos) {
   int width, height;
   glfwGetFramebufferSize(window, &width, &height);
   double w = (double)width;
   double h = (double)height;
   float field_x = (xpos - w / 2 - drag_x) / w / zoom * 2 * w / h;
   float field_y = (h / 2 - ypos + drag_y) / h / zoom * 2;
-  if (app_selected_suggestion >= 0 && app_selected_suggestion < app_suggestions->tables_count) {
+  if (app_selected_suggestion >= 0 &&
+      app_selected_suggestion < app_suggestions->tables_count) {
     auto &table = app_suggestions->tables[app_selected_suggestion];
     int s = add_spot(table);
     if (s >= 0) {
@@ -199,7 +214,8 @@ static void no_drag_click_callback(GLFWwindow *window, double xpos, double ypos)
   }
 }
 
-static void cursorpos_callback(GLFWwindow *window, double xpos, double ypos) {
+static void cursorpos_callback(GLFWwindow *window, double xpos,
+                               double ypos) {
   if (is_down && !is_drag) {
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
@@ -209,16 +225,21 @@ static void cursorpos_callback(GLFWwindow *window, double xpos, double ypos) {
     start_drag_y = ypos - h / 2;
   }
 
-  is_drag = is_down;
+  if (!ImGui::IsMouseHoveringAnyWindow()) {
 
-  if (is_drag && !ImGui::IsMouseHoveringAnyWindow())
-    drag_callback(window, xpos, ypos);
+    if (!ImGui::IsMouseDragging())
+      is_drag = is_down;
+
+    if (is_drag)
+      drag_callback(window, xpos, ypos);
+  }
 
   screen_xpos = xpos;
   screen_ypos = ypos;
 }
 
-static void mousebutton_callback(GLFWwindow *, int button, int action, int /*mods*/) {
+static void mousebutton_callback(GLFWwindow *, int button, int action,
+                                 int /*mods*/) {
   static constexpr int drag_button = GLFW_MOUSE_BUTTON_LEFT;
 
   if (action == GLFW_PRESS && button >= 0 && button < 3)
@@ -248,7 +269,9 @@ static void refresh_callback(GLFWwindow *window) {
 }
 
 static bool is_active = false;
-static void focus_callback(GLFWwindow *, int focus) { is_active = focus == GL_TRUE; }
+static void focus_callback(GLFWwindow *, int focus) {
+  is_active = focus == GL_TRUE;
+}
 
 void gui_sync(void) {
   if (!is_active) // if running in background idle avoid high cpu usage,
@@ -257,8 +280,11 @@ void gui_sync(void) {
     std::this_thread::sleep_for(std::chrono::milliseconds(16));
 }
 
-// void chars_mod_callback(GLFWwindow *window, unsigned int codepoint, int mods);
-static void chars_mod_callback(GLFWwindow *, unsigned int codepoint, int) {
+// void chars_mod_callback(GLFWwindow *window, unsigned int codepoint,
+// int
+// mods);
+static void chars_mod_callback(GLFWwindow *, unsigned int codepoint,
+                               int) {
   if (codepoint > 0 && codepoint < 0x10000)
     ImGui::GetIO().AddInputCharacter((unsigned short)codepoint);
 }
@@ -272,7 +298,8 @@ void gui_init_glfw(void) {
   glfwSetErrorCallback(error_callback);
   glfwWindowHint(GLFW_SAMPLES, 4);
 
-  window = glfwCreateWindow(GUI_DEFAULT_WIDTH, GUI_DEFAULT_HEIGHT, PROGRAM_NAME, NULL, NULL);
+  window = glfwCreateWindow(GUI_DEFAULT_WIDTH, GUI_DEFAULT_HEIGHT,
+                            PROGRAM_NAME, NULL, NULL);
   if (!window) {
     glfwTerminate();
     fprintf(stderr, "Failed to create window.");
@@ -293,20 +320,25 @@ void gui_init_glfw(void) {
   glfwSwapInterval(2);
 }
 
-// This is the main rendering function that you have to implement and provide to
+// This is the main rendering function that you have to implement and
+// provide to
 // ImGui (via setting up 'RenderDrawListsFn' in the ImGuiIO structure)
 // If text or lines are blurry when integrating ImGui in your engine:
 // - in your Render function, try translating your projection matrix by
 // (0.5f,0.5f) or (0.375f,0.375f)
-void imgui_renderdrawlists(struct ImDrawList **const cmd_lists, int cmd_lists_count) {
+void imgui_renderdrawlists(struct ImDrawList **const cmd_lists,
+                           int cmd_lists_count) {
   if (cmd_lists_count == 0)
     return;
 
-  // We are using the OpenGL fixed pipeline to make the example code simpler to
+  // We are using the OpenGL fixed pipeline to make the example code
+  // simpler to
   // read!
-  // A probable faster way to render would be to collate all vertices from all
+  // A probable faster way to render would be to collate all vertices
+  // from all
   // cmd_lists into a single vertex buffer.
-  // Setup render state: alpha-blending enabled, no face culling, no depth
+  // Setup render state: alpha-blending enabled, no face culling, no
+  // depth
   // testing, scissor enabled, vertex/texcoord/color pointers.
   glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
   glEnable(GL_BLEND);
@@ -334,10 +366,14 @@ void imgui_renderdrawlists(struct ImDrawList **const cmd_lists, int cmd_lists_co
 #define OFFSETOF(TYPE, ELEMENT) ((size_t) & (((TYPE *)0)->ELEMENT))
   for (int n = 0; n < cmd_lists_count; n++) {
     const ImDrawList *cmd_list = cmd_lists[n];
-    const unsigned char *vtx_buffer = (const unsigned char *)&cmd_list->vtx_buffer.front();
-    glVertexPointer(2, GL_FLOAT, sizeof(ImDrawVert), (void *)(vtx_buffer + OFFSETOF(ImDrawVert, pos)));
-    glTexCoordPointer(2, GL_FLOAT, sizeof(ImDrawVert), (void *)(vtx_buffer + OFFSETOF(ImDrawVert, uv)));
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert), (void *)(vtx_buffer + OFFSETOF(ImDrawVert, col)));
+    const unsigned char *vtx_buffer =
+        (const unsigned char *)&cmd_list->vtx_buffer.front();
+    glVertexPointer(2, GL_FLOAT, sizeof(ImDrawVert),
+                    (void *)(vtx_buffer + OFFSETOF(ImDrawVert, pos)));
+    glTexCoordPointer(2, GL_FLOAT, sizeof(ImDrawVert),
+                      (void *)(vtx_buffer + OFFSETOF(ImDrawVert, uv)));
+    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ImDrawVert),
+                   (void *)(vtx_buffer + OFFSETOF(ImDrawVert, col)));
 
     int vtx_offset = 0;
     for (size_t cmd_i = 0; cmd_i < cmd_list->commands.size(); cmd_i++) {
@@ -345,9 +381,12 @@ void imgui_renderdrawlists(struct ImDrawList **const cmd_lists, int cmd_lists_co
       if (pcmd->user_callback) {
         pcmd->user_callback(cmd_list, pcmd);
       } else {
-        glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t) pcmd->texture_id);
-        glScissor((int)pcmd->clip_rect.x, (int)(height - pcmd->clip_rect.w),
-                  (int)(pcmd->clip_rect.z - pcmd->clip_rect.x), (int)(pcmd->clip_rect.w - pcmd->clip_rect.y));
+        glBindTexture(GL_TEXTURE_2D,
+                      (GLuint)(intptr_t) pcmd->texture_id);
+        glScissor((int)pcmd->clip_rect.x,
+                  (int)(height - pcmd->clip_rect.w),
+                  (int)(pcmd->clip_rect.z - pcmd->clip_rect.x),
+                  (int)(pcmd->clip_rect.w - pcmd->clip_rect.y));
         glDrawArrays(GL_TRIANGLES, vtx_offset, pcmd->vtx_count);
       }
       vtx_offset += pcmd->vtx_count;
@@ -367,24 +406,37 @@ void imgui_renderdrawlists(struct ImDrawList **const cmd_lists, int cmd_lists_co
   glPopAttrib();
 }
 
-// NB: ImGui already provide OS clipboard support for Windows so this isn't
+// NB: ImGui already provide OS clipboard support for Windows so this
+// isn't
 // needed if you are using Windows only.
-static const char *imgui_getclipboardtextfn() { return glfwGetClipboardString(window); }
+static const char *imgui_getclipboardtextfn() {
+  return glfwGetClipboardString(window);
+}
 
-static void imgui_setclipboardtextfn(const char *text) { glfwSetClipboardString(window, text); }
+static void imgui_setclipboardtextfn(const char *text) {
+  glfwSetClipboardString(window, text);
+}
 
 void load_font_texture(void) {
   ImGuiIO &io = ImGui::GetIO();
   // ImFont* my_font1 = io.Fonts->AddFontDefault();
-  // ImFont* my_font2 = io.Fonts->AddFontFromFileTTF("extra_fonts/Karla-Regular.ttf", 15.0f);
-  // ImFont* my_font3 = io.Fonts->AddFontFromFileTTF("extra_fonts/ProggyClean.ttf", 13.0f);
+  // ImFont* my_font2 =
+  // io.Fonts->AddFontFromFileTTF("extra_fonts/Karla-Regular.ttf",
+  // 15.0f);
+  // ImFont* my_font3 =
+  // io.Fonts->AddFontFromFileTTF("extra_fonts/ProggyClean.ttf", 13.0f);
   // my_font3->DisplayOffset.y += 1;
-  // ImFont* my_font4 = io.Fonts->AddFontFromFileTTF("extra_fonts/ProggyTiny.ttf", 10.0f);
+  // ImFont* my_font4 =
+  // io.Fonts->AddFontFromFileTTF("extra_fonts/ProggyTiny.ttf", 10.0f);
   // my_font4->DisplayOffset.y += 1;
-  // ImFont* my_font5 = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 20.0f,
+  // ImFont* my_font5 =
+  // io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf",
+  // 20.0f,
   // io.Fonts->GetGlyphRangesJapanese());
 
-  // ImFont* my_font2 = io.Fonts->AddFontFromFileTTF("../vendor/fonts/anonymous-pro.ttf", 12.0f);
+  // ImFont* my_font2 =
+  // io.Fonts->AddFontFromFileTTF("../vendor/fonts/anonymous-pro.ttf",
+  // 12.0f);
 
   // Build texture
   unsigned char *pixels;
@@ -396,7 +448,8 @@ void load_font_texture(void) {
   glBindTexture(GL_TEXTURE_2D, font_texture);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width, height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, pixels);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, width, height, 0, GL_ALPHA,
+               GL_UNSIGNED_BYTE, pixels);
 
   // Store our identifier
   io.Fonts->TexID = (void *)(intptr_t) font_texture;
@@ -414,12 +467,14 @@ void gui_init_imgui(void) {
   auto &io = ImGui::GetIO();
   io.IniFilename = "minimax_gui.ini";
   io.LogFilename = "minimax_gui.log";
-  io.DeltaTime = 1.0f / 60.0f;            // Time elapsed since last frame, in seconds (in
-                                          // this sample app we'll override this every
-                                          // frame because our time step is variable)
-  io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB; // Keyboard mapping. ImGui will use
-                                          // those indices to peek into the
-                                          // io.KeyDown[] array.
+  io.DeltaTime =
+      1.0f / 60.0f; // Time elapsed since last frame, in seconds (in
+                    // this sample app we'll override this every
+                    // frame because our time step is variable)
+  io.KeyMap[ImGuiKey_Tab] =
+      GLFW_KEY_TAB; // Keyboard mapping. ImGui will use
+                    // those indices to peek into the
+                    // io.KeyDown[] array.
   io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
   io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
   io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
@@ -472,27 +527,35 @@ void gui_new_frame(void) {
   // Setup time step
   static double time = 0.0f;
   const double current_time = glfwGetTime();
-  io.DeltaTime = time > 0.0 ? (float)(current_time - time) : (float)(1.0f / 60.0f);
+  io.DeltaTime =
+      time > 0.0 ? (float)(current_time - time) : (float)(1.0f / 60.0f);
   time = current_time;
 
   // Setup inputs
-  // (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
+  // (we already got mouse wheel, keyboard keys & characters from glfw
+  // callbacks
+  // polled in glfwPollEvents())
   if (glfwGetWindowAttrib(window, GLFW_FOCUSED)) {
     double mouse_x, mouse_y;
     glfwGetCursorPos(window, &mouse_x, &mouse_y);
-    mouse_x *= (float)display_w / w; // Convert mouse coordinates to pixels
+    mouse_x *=
+        (float)display_w / w; // Convert mouse coordinates to pixels
     mouse_y *= (float)display_h / h;
     io.MousePos =
         ImVec2((float)mouse_x,
-               (float)mouse_y); // Mouse position, in pixels (set to -1,-1 if no mouse / on another screen, etc.)
+               (float)mouse_y); // Mouse position, in pixels (set to
+                                // -1,-1 if no mouse / on another
+                                // screen, etc.)
   } else {
     io.MousePos = ImVec2(-1, -1);
   }
   for (int i = 0; i < 3; i++) {
-    io.MouseDown[i] = mouse_pressed[i] || glfwGetMouseButton(window, i) != 0; // If a mouse press event came, always
-                                                                              // pass it as "mouse held this frame", so
-                                                                              // we don't miss click-release events
-                                                                              // that are shorter than 1 frame.
+    io.MouseDown[i] = mouse_pressed[i] ||
+                      glfwGetMouseButton(window, i) !=
+                          0; // If a mouse press event came, always
+                             // pass it as "mouse held this frame", so
+                             // we don't miss click-release events
+                             // that are shorter than 1 frame.
     mouse_pressed[i] = false;
   }
 
@@ -500,7 +563,9 @@ void gui_new_frame(void) {
   mouse_wheel = 0.0f;
 
   // Hide/show hardware mouse cursor
-  glfwSetInputMode(window, GLFW_CURSOR, io.MouseDrawCursor ? GLFW_CURSOR_HIDDEN : GLFW_CURSOR_NORMAL);
+  glfwSetInputMode(window, GLFW_CURSOR, io.MouseDrawCursor
+                                            ? GLFW_CURSOR_HIDDEN
+                                            : GLFW_CURSOR_NORMAL);
 
   // Start the frame
   ImGui::NewFrame();
@@ -523,14 +588,20 @@ void gui_render(void) {
     draw_decision(*app_decision_max, *app_state, MAX);
     draw_decision(*app_decision_min, *app_state, MIN);
   }
-  if (app_selected_suggestion >= 0 && app_selected_suggestion < app_suggestions->tables_count) {
+  if (app_selected_suggestion >= 0 &&
+      app_selected_suggestion < app_suggestions->tables_count) {
     draw_suggestion(app_suggestions->tables[app_selected_suggestion]);
   }
 
   draw_options_window();
 
   ImGui::Begin("Main");
-  ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
+  // bool opened = true;
+  // ImGui::Begin("Main", &opened, ImVec2(0,0), 0.3f,
+  // ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoMove|ImGuiWindowFlags_NoSavedSettings);
+
+  ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+              1000.0f / ImGui::GetIO().Framerate,
               ImGui::GetIO().Framerate);
   draw_app_status();
 
@@ -550,14 +621,18 @@ void gui_render(void) {
 
   ImGui::Checkbox("PARAM_GROUP_AUTOSELECT", &PARAM_GROUP_AUTOSELECT);
   ImGui::Checkbox("PARAM_GROUP_CONQUER", &PARAM_GROUP_CONQUER);
-  ImGui::SliderFloat("PARAM_GROUP_THRESHOLD", &PARAM_GROUP_THRESHOLD, 0.0, 10.0);
-  ImGui::SliderFloat("PARAM_GROUP_CONQUER_TIME", &PARAM_GROUP_CONQUER_TIME, 0.0, 1.0);
-  const char *groups[] = {"MAX_ATTACK", "MIN_ATTACK", "MAX_CONQUER", "MIN_CONQUER"};
+  ImGui::SliderFloat("PARAM_GROUP_THRESHOLD", &PARAM_GROUP_THRESHOLD,
+                     0.0, 10.0);
+  ImGui::SliderFloat("PARAM_GROUP_CONQUER_TIME",
+                     &PARAM_GROUP_CONQUER_TIME, 0.0, 1.0);
+  const char *groups[] = {"MAX_ATTACK", "MIN_ATTACK", "MAX_CONQUER",
+                          "MIN_CONQUER"};
   if (PARAM_GROUP_AUTOSELECT) {
     ImGui::Text(groups[*PARAM_GROUP]);
   } else {
     static int _PARAM_GROUP = 0;
-    ImGui::Combo("PARAM_GROUP", &_PARAM_GROUP, groups, PARAM_GROUP_CONQUER ? 4 : 2);
+    ImGui::Combo("PARAM_GROUP", &_PARAM_GROUP, groups,
+                 PARAM_GROUP_CONQUER ? 4 : 2);
     set_param_group(_PARAM_GROUP);
   }
   ImGui::End();
@@ -568,13 +643,16 @@ void gui_render(void) {
   if (CONSTANT_RATE)
     ImGui::SliderInt("DECISION_RATE", &DECISION_RATE, 1, 1000);
   else
-    ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER, MAX_SUGGESTIONS + 2, 20000);
-  ImGui::SliderInt("FULL_CHANGE_PERCENTAGE", &FULL_CHANGE_PERCENTAGE, 0, 100);
+    ImGui::SliderInt("RAMIFICATION_NUMBER", &RAMIFICATION_NUMBER,
+                     MAX_SUGGESTIONS + 2, 20000);
+  ImGui::SliderInt("FULL_CHANGE_PERCENTAGE", &FULL_CHANGE_PERCENTAGE, 0,
+                   100);
   ImGui::SliderInt("MAX_DEPTH", &MAX_DEPTH, 0, 3);
 
 #define SLIDER(V, S, A, B) ImGui::DragFloat(#V, &V, S, A, B)
   SLIDER(KICK_POS_VARIATION, 0.01, 0.0, 1.0);
   SLIDER(MIN_GAP_TO_KICK, 1.00, 0, 180);
+  SLIDER(DESIRED_PASS_DIST, 0.1, 0, 10);
   SLIDER(WEIGHT_BALL_POS, 1.0, 0, 5000);
   SLIDER(WEIGHT_MOVE_DIST_TOTAL, 1.0, 0, 10);
   SLIDER(WEIGHT_MOVE_DIST_MAX, 1.0, 0, 10);

@@ -13,7 +13,8 @@ struct Optimization {
   bool table_initialized = false;
 };
 
-ValuedDecision decide(Optimization &opt, State state, Player player, struct Suggestions *suggestions,
+ValuedDecision decide(Optimization &opt, State state, Player player,
+                      struct Suggestions *suggestions,
                       int *ramification_count);
 
 #endif
