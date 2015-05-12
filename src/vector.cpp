@@ -21,12 +21,16 @@ Vector normal_rand_vector(const Vector &v, float s) {
   return v + Vector(distribution(generator), distribution(generator));
 }
 
-Vector rand_vector_bounded(const Vector vec, float radius, float xb,
+Vector rand_vector_bounded(const Vector _vec, float radius, float xb,
                            float yb) {
   Vector pos;
+  Vector vec(_vec);
 
-  if (std::abs(vec.x) > xb || std::abs(vec.y) > yb) {
-    radius = norm(vec);
+  if (std::abs(vec.x) > xb) {
+    vec *= xb / vec.x;
+  }
+  if (std::abs(vec.y) > yb) {
+    vec *= yb / vec.y;
   }
 
   static std::uniform_real_distribution<float> angle_dice(-M_PI, M_PI);
