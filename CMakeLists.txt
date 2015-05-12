@@ -33,7 +33,7 @@ set(SRC
 
 set(INC
   src/action.h
-  src/adaptive_control.h
+  #src/adaptive_control.h
   src/app.h
   src/array.h
   src/colors.h
@@ -55,7 +55,7 @@ set(INC
   src/utils.h
   src/valued_decision.h
   src/vector.h
-  src/weight.h
+  #src/weight.h
 )
 
 set(DOC
