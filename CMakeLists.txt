@@ -31,16 +31,67 @@ set(SRC
   vendor/imgui/imgui.cpp
 )
 
+set(INC
+  src/action.h
+  src/adaptive_control.h
+  src/app.h
+  src/array.h
+  src/colors.h
+  src/consts.h
+  src/decision.h
+  src/decision_source.h
+  src/decision_table.h
+  src/draw.h
+  src/filter.h
+  src/gui.h
+  src/id_table.h
+  src/minimax.h
+  src/optimization.h
+  src/player.h
+  src/segment.h
+  src/state.h
+  src/suggestion_table.h
+  src/suggestions.h
+  src/utils.h
+  src/valued_decision.h
+  src/vector.h
+  src/weight.h
+)
+
+set(DOC
+  doc/anexos.tex
+  doc/arch_ssl.tex
+  doc/arch_sys.tex
+  doc/conclusao.tex
+  doc/cronograma.tex
+  doc/definicoes.tex
+  doc/discretizacao.tex
+  doc/funcao_objetivo.tex
+  doc/introducao.tex
+  doc/licoes_aprendidas.tex
+  doc/minimax.tex
+  doc/modelagem.tex
+  doc/mov_table.tex
+  doc/posicoes_chave.tex
+  doc/programa.tex
+  doc/resultados.tex
+  doc/resumo.tex
+  doc/table.tex
+  doc/table_config.tex
+)
+
+set(PROTO
+  proto/update.proto
+  proto/discrete.proto
+)
+
 #
 # DEPS
 #
 
 find_package(Protobuf REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIRS})
-protobuf_generate_cpp(PROTO_SRC PROTO_HDR
-  proto/update.proto
-  proto/discrete.proto
-)
+protobuf_generate_cpp(PROTO_SRC PROTO_HDR ${PROTO})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 #find_package(Armadillo REQUIRED)
@@ -126,6 +177,34 @@ if(BUILD_DOCS)
     "${CMAKE_CURRENT_SOURCE_DIR}/docs"
     "${SPHINX_HTML_DIR}"
     COMMENT "Building HTML documentation with Sphinx")
+endif()
+
+find_package(LATEX)
+if (PDFLATEX_COMPILER)
+  option(BUILD_REPORT "Build report?" ON)
+endif()
+if(BUILD_REPORT)
+  SET(LATEX_COMPILER_FLAGS
+    -interaction=batchmode --enable-write18 -file-line-error -shell-escape
+    CACHE STRING "Flags passed to latex."
+  )
+  include(${CMAKE_SOURCE_DIR}/.cmake/UseLATEX.cmake)
+  add_latex_document(relatorio.tex
+    INPUTS ${DOC} ${INC} ${PROTO}
+    CONFIGURE relatorio.tex
+    BIBFILES referencias.bib
+    IMAGE_DIRS img
+    USE_INDEX
+    #DEFAULT_PDF
+    DEFAULT_SAFEPDF
+  )
+
+  find_program(OPEN NAMES gnome-open xdg-open open)
+  add_custom_target(open
+    COMMAND ${OPEN} relatorio.pdf
+    DEPENDS relatorio.pdf
+    WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+  )
 endif()
 
 # vim: et sw=2 ts=2 sts=2
