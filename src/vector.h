@@ -28,6 +28,16 @@ struct Vector {
     y += o.y;
     return *this;
   }
+  Vector operator*=(float k) {
+    x *= k;
+    y *= k;
+    return *this;
+  }
+  Vector operator/=(float k) {
+    x /= k;
+    y /= k;
+    return *this;
+  }
 };
 
 float norm2(const Vector v);
