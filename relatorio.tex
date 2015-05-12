@@ -43,6 +43,7 @@
 \usepackage{caption}                  % dependencia de subcaption
 %\usepackage{subcaption}               % Para usar \begin{subfigure} e colocar figuras (a) e (b) lado a lado
 \usepackage{listings}                 % Para usar \lstinputlisting e incluir código
+\usepackage{breqn}                    % Para quebrar equações grandes em duas linhas
 \newtheorem{teo}{Teorema}[section]    % Renomear o comando
 \newtheorem{defi}[teo]{Definição}
 % o seguinte é necessário para corrigir um bug no algorithm2e
@@ -106,8 +107,10 @@
 % ---
 % Informações de dados para CAPA e FOLHA DE ROSTO
 % ---
-\titulo{Técnicas de IA Aplicadas a Sistemas Multiagentes Cooperativos e
-Competitivos}
+\titulo{Uma ferramenta de representação comportamental baseado em otimizacao
+para futebol de robôs
+%Técnicas de IA Aplicadas a Sistemas Multiagentes Cooperativos e Competitivos
+}
 \autor{Jan Segre\\Victor Bramigk}
 \local{Rio de Janeiro}
 \data{Julho de 2014}
@@ -221,15 +224,18 @@ Instituto Militar de Engenharia.}
 {%
   1. Curso de engenharia da computação - Projeto Final de Curso.
   2. Robótica.
-  3. Minimax.
+%  3. Minimax.
+  3. Otimização.
   I. Bramigk, Victor.
   II. Rosa, Paulo Fernando Ferreira.
   III. Bruno Eduardo Madeira.
   IV. \@title.
   V. Instituto Militar de Engenharia.
 }
-{Técnicas de IA aplicadas a sistemas multiagentes cooperativos e
-competitivos}
+{Uma ferramenta de representação comportamental baseado em otimizacao
+para futebol de robôs}
+%{Técnicas de IA aplicadas a sistemas multiagentes cooperativos e
+%competitivos}
 % ---
 
 % ---
@@ -397,13 +403,15 @@ competitivos}
 % ---------------
 % intro
 
-\input{doc/minimax}
-\input{doc/licoes_aprendidas}
-\input{doc/mapeamento}
-\input{doc/programa}
-\input{doc/cronograma}
+% \input{doc/minimax}
+% \input{doc/licoes_aprendidas}
+% \input{doc/mapeamento}
+% \input{doc/programa}
+% \input{doc/cronograma}
+\input{doc/modelagem}
+\input{doc/arch_sys}   
+\input{doc/resultados}              
 \input{doc/conclusao}
-
 % ---
 % Finaliza a parte no bookmark do PDF, para que se inicie o bookmark na raiz
 % ---
