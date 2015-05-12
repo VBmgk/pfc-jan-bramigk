@@ -15,6 +15,7 @@ neverclean := *.pdf
 
 .PHONY: open
 open:
+	@$(MAKE) relatorio
 	$(OPEN) relatorio.pdf
 
 .PHONY: todos
