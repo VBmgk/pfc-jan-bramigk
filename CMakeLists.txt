@@ -155,21 +155,34 @@ if(BUILD_REPORT)
     CACHE STRING "Flags passed to latex."
   )
   include(${CMAKE_SOURCE_DIR}/.cmake/UseLATEX.cmake)
+
   add_latex_document(relatorio.tex
     INPUTS ${DOC} ${INC} ${PROTO}
     CONFIGURE relatorio.tex
     BIBFILES referencias.bib
     IMAGE_DIRS img
     USE_INDEX
-    #DEFAULT_PDF
-    #DEFAULT_SAFEPDF
     NO_DEFAULT
+    MANGLE_TARGET_NAMES
+  )
+
+  add_latex_document(apresentacao.tex
+    IMAGE_DIRS img
+    NO_DEFAULT
+    MANGLE_TARGET_NAMES
   )
 
   find_program(OPEN NAMES gnome-open xdg-open open)
+
   add_custom_target(open
     COMMAND ${OPEN} relatorio.pdf
-    DEPENDS pdf
+    DEPENDS relatorio_pdf
+    WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+  )
+
+  add_custom_target(pres
+    COMMAND ${OPEN} apresentacao.pdf
+    DEPENDS apresentacao_pdf
     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
   )
 endif()
