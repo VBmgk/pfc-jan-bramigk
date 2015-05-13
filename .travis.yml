@@ -6,12 +6,15 @@ compiler:
 
 # Dependencies
 before_install:
-  - 'sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test'
-  - 'sudo add-apt-repository -y ppa:kalakris/cmake'
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo add-apt-repository -y ppa:kalakris/cmake
+  - sudo add-apt-repository -y "deb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.6 main"
+  - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
   - sudo apt-get update -qq
 install:
-  # Force newer libstdc++
-  - sudo apt-get install -qq g++-4.9
+  # Modern compilers please
+  - sudo apt-get install -qq g++-4.9 clang-3.6
+  - if [ $CC = clang ]; then export CC=clang-3.6 CXX=clang++-3.6; fi
   # CMake
   - sudo apt-get install -qq cmake
   # Google Protobuf
