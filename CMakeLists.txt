@@ -145,43 +145,6 @@ add_custom_target(run
   WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
 )
 
-#
-# DOCS
-#
-
-find_package(Sphinx)
-if(SPHINX_FOUND)
-  option(BUILD_DOCS "Build documentations?" OFF)
-endif()
-if(BUILD_DOCS)
-  if(NOT DEFINED SPHINX_THEME)
-    set(SPHINX_THEME default)
-  endif()
-
-  # configured documentation tools and intermediate build results
-  set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build")
-
-  # Sphinx cache with pickled ReST documents
-  set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_doctrees")
-
-  # HTML output directory
-  set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/html")
-
-  #configure_file(
-  #  "${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in"
-  #  "${BINARY_BUILD_DIR}/conf.py"
-  #  @ONLY)
-
-  add_custom_target(ai_docs ALL
-    ${SPHINX_EXECUTABLE}
-    -q -b html
-    -c "${CMAKE_CURRENT_SOURCE_DIR}/docs"
-    -d "${SPHINX_CACHE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/docs"
-    "${SPHINX_HTML_DIR}"
-    COMMENT "Building HTML documentation with Sphinx")
-endif()
-
 find_package(LATEX)
 if (PDFLATEX_COMPILER)
   option(BUILD_REPORT "Build report?" ON)
@@ -192,21 +155,34 @@ if(BUILD_REPORT)
     CACHE STRING "Flags passed to latex."
   )
   include(${CMAKE_SOURCE_DIR}/.cmake/UseLATEX.cmake)
+
   add_latex_document(relatorio.tex
     INPUTS ${DOC} ${INC} ${PROTO}
     CONFIGURE relatorio.tex
     BIBFILES referencias.bib
     IMAGE_DIRS img
     USE_INDEX
-    #DEFAULT_PDF
-    #DEFAULT_SAFEPDF
     NO_DEFAULT
+    MANGLE_TARGET_NAMES
+  )
+
+  add_latex_document(apresentacao.tex
+    IMAGE_DIRS img
+    NO_DEFAULT
+    MANGLE_TARGET_NAMES
   )
 
   find_program(OPEN NAMES gnome-open xdg-open open)
+
   add_custom_target(open
     COMMAND ${OPEN} relatorio.pdf
-    DEPENDS pdf
+    DEPENDS relatorio_pdf
+    WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+  )
+
+  add_custom_target(pres
+    COMMAND ${OPEN} apresentacao.pdf
+    DEPENDS apresentacao_pdf
     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
   )
 endif()
