@@ -151,7 +151,7 @@ if (PDFLATEX_COMPILER)
 endif()
 if(BUILD_REPORT)
   SET(LATEX_COMPILER_FLAGS
-    -interaction=batchmode --enable-write18 -file-line-error -shell-escape
+    --enable-write18 -file-line-error -shell-escape
     CACHE STRING "Flags passed to latex."
   )
   include(${CMAKE_SOURCE_DIR}/.cmake/UseLATEX.cmake)
