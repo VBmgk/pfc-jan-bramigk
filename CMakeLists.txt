@@ -66,12 +66,40 @@ set(DOC
   doc/definicoes.tex
   doc/discretizacao.tex
   doc/funcao_objetivo.tex
+  doc/gui.tex
   doc/introducao.tex
   doc/modelagem.tex
   doc/dec_table.tex
   doc/posicoes_chave.tex
   doc/resultados.tex
   doc/resumo.tex
+)
+
+set(IMG
+  img/arq_geral_prog.eps
+  img/arquitetura_ssl.png
+  img/communication.eps
+  img/ex_tatica.eps
+  img/gui.eps
+  img/gui_field.png
+  img/gui_params.png
+  img/gui_widgets.png
+  img/gui_zoom_in.png
+  img/gui_zoom_out.png
+  img/gui_ball_move.png
+  img/gui_ball_stop.png
+  img/gui_pass.png
+  img/gui_kick.png
+  img/gui_move.png
+  img/kick_pos_var_1.png
+  img/kick_pos_var_2.png
+  img/pos_chave_barreira.png
+  img/pos_chave_lateral.png
+  img/robo.png
+  img/robocup2013.jpg
+  img/tab_dec.png
+  img/threads.eps
+  img/xadrez.jpg
 )
 
 set(PROTO
@@ -154,7 +182,7 @@ if(BUILD_REPORT)
     INPUTS ${DOC} ${INC} ${PROTO}
     CONFIGURE relatorio.tex
     BIBFILES referencias.bib
-    IMAGE_DIRS img
+    IMAGES ${IMG}
     USE_INDEX
     NO_DEFAULT
   )
