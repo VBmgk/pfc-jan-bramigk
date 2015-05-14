@@ -4,7 +4,7 @@
   %openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
   %twoside,			% para impressão em verso e anverso. Oposto a oneside
   oneside,			% para impressão em verso e anverso. Oposto a oneside
-  a4paper,			% tamanho do papel. 
+  a4paper,			% tamanho do papel.
   % -- opções da classe abntex2 --
   %chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
   %section=TITLE,		% títulos de seções convertidos em letras maiúsculas
@@ -62,9 +62,9 @@
 % \usepackage[brazilian,hyperpageref]{backref}	 % Paginas com as citações na bibl
 \usepackage[alf]{abntex2cite}	% Citações padrão ABNT
 
-% --- 
+% ---
 % CONFIGURAÇÕES DE PACOTES
-% --- 
+% ---
 
 % ----
 % Configuração LISTING
@@ -92,9 +92,6 @@
   \par Arquivo #2%
   \inputminted[frame=single]{#1}{#2}%
 }
-
-% Defines utilizados na table do cronograma
-\input{doc/table_config}
 
 % ---
 % Configurações do pacote backref
@@ -138,7 +135,7 @@ para futebol de robôs
 }
 \tipotrabalho{Iniciação à Pesquisa}
 % O preambulo deve conter o tipo do trabalho, o objetivo,
-% o nome da instituição e a área de concentração 
+% o nome da instituição e a área de concentração
 \preambulo{Projeto Final de Curso de Graduação em Engenharia de Computação do
 Instituto Militar de Engenharia.}
 % ---
@@ -171,7 +168,7 @@ Instituto Militar de Engenharia.}
 % ---
 
 % ---
-% Espaçamentos entre linhas e parágrafos 
+% Espaçamentos entre linhas e parágrafos
 % ---
 
 % O tamanho do parágrafo é dado por:
@@ -220,7 +217,7 @@ Instituto Militar de Engenharia.}
 % ---
 
 % Isto é um exemplo de Ficha Catalográfica, ou ``Dados internacionais de
-% catalogação-na-publicação''. Você pode utilizar este modelo como referência. 
+% catalogação-na-publicação''. Você pode utilizar este modelo como referência.
 % Porém, provavelmente a biblioteca da sua universidade lhe fornecerá um PDF
 % com a ficha catalográfica definitiva após a defesa do trabalho. Quando estiver
 % com o documento, salve-o como PDF no diretório do seu projeto e substitua todo
@@ -415,25 +412,19 @@ para futebol de robôs}
 
 % Desenvolvimento
 % ---------------
-% intro
 
-% \input{doc/minimax}
-% \input{doc/licoes_aprendidas}
-% \input{doc/mapeamento}
-% \input{doc/programa}
-% \input{doc/cronograma}
 \input{doc/modelagem}
-\input{doc/arch_sys}   
-\input{doc/resultados}              
-\input{doc/conclusao}
+\input{doc/arquitetura}
+\input{doc/resultados}
+
 % ---
 % Finaliza a parte no bookmark do PDF, para que se inicie o bookmark na raiz
 % ---
 \bookmarksetup{startatroot}%
 % ---
 
-%\addcontentsline{toc}{chapter}{Conclusão}
-%\input{partes/conclusao}
+\addcontentsline{toc}{chapter}{Conclusão}
+\input{doc/conclusao}
 
 % ----------------------------------------------------------
 % ELEMENTOS PÓS-TEXTUAIS

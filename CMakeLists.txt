@@ -60,24 +60,18 @@ set(INC
 
 set(DOC
   doc/anexos.tex
-  doc/arch_ssl.tex
-  doc/arch_sys.tex
+  doc/ssl.tex
+  doc/arquitetura.tex
   doc/conclusao.tex
-  doc/cronograma.tex
   doc/definicoes.tex
   doc/discretizacao.tex
   doc/funcao_objetivo.tex
   doc/introducao.tex
-  doc/licoes_aprendidas.tex
-  doc/minimax.tex
   doc/modelagem.tex
   doc/dec_table.tex
   doc/posicoes_chave.tex
-  doc/programa.tex
   doc/resultados.tex
   doc/resumo.tex
-  doc/table.tex
-  doc/table_config.tex
 )
 
 set(PROTO
@@ -163,7 +157,6 @@ if(BUILD_REPORT)
     IMAGE_DIRS img
     USE_INDEX
     NO_DEFAULT
-    MANGLE_TARGET_NAMES
   )
 
   add_latex_document(apresentacao.tex
@@ -176,7 +169,7 @@ if(BUILD_REPORT)
 
   add_custom_target(open
     COMMAND ${OPEN} relatorio.pdf
-    DEPENDS relatorio_pdf
+    DEPENDS pdf
     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
   )
 
