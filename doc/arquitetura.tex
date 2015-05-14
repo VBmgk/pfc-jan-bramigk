@@ -27,10 +27,10 @@ O comportamento é compatível com as partidas oficiais.
 \begin{figure}[H]
   \centering
   \includegraphics[height=10cm]{communication}
-  \caption{Diagrama de comunicação entre os componentes.}\label{fig:arch-comm}
+  \caption{Diagrama de comunicação entre os componentes.}\label{fig:arch_comm}
 \end{figure}
 
-A figura~\ref{fig:arch-comm} representa como os componentes se comunicam.  A
+A figura~\ref{fig:arch_comm} representa como os componentes se comunicam.  A
 ferramenta se comunica apenas com o pyroboime para aproveitar todas as
 funcionalidades necessárias que fogem ao escopo desse trabalho.  Por isso o foco
 do desenvolvimento está concentrado em atender diretamente os objetivos.
@@ -40,6 +40,7 @@ codificada com o \textit{Protobuf}, uma biblioteca bem estabelecida que também 
 usada nos protocolos oficiais da competição.  Desse modo o \textit{overhead} de
 comunicação é baixo, não é necessário introduzir uma dependência ou codificação
 manual no core e é possível que versões futuras sejam retrocompatíveis.
+\nocite{protobufdocs}
 
 São dois tipos de mensagens:
 
@@ -58,7 +59,7 @@ As mensagens são transmitidas num socket ZMQ (\textit{ZeroMQ}, uma biblioteca d
 transmissão de dados na rede) visando a extensibilidade da ferramenta, pois com
 tal biblioteca é possível distribuir mensagens entre vários nós de forma
 confiável (característica desejável para um sistema distribuido) além de provêr
-confiabilidade e auto-reconexão para o uso atual.
+confiabilidade e auto-reconexão para o uso atual. \nocite{zmqdocs}
 
 O modo de transmissão é \textit{request-reply} em que a ferramente age como
 servidor respondendo as requisições do core, que consistem em atualizações cuja
@@ -72,11 +73,11 @@ seu \textit{buffer}, descrito brevemente no seção~\ref{sec:threads}.
   \centering
   \includegraphics[height=10cm]{threads}
   \caption{Diagrama de relação entre \textit{threads} e
-  dados.}\label{fig:arch-threads}
+  dados.}\label{fig:arch_threads}
 \end{figure}
 
 A ferramenta está implementada em 4 \textit{threads} fixas de acordo com a
-figura~\ref{fig:arch-threads}.  A separação foi motivada por:
+figura~\ref{fig:arch_threads}.  A separação foi motivada por:
 
 \begin{itemize}
   \item A interface gráfica necessitar ser responsiva ao usuário;
@@ -87,6 +88,50 @@ figura~\ref{fig:arch-threads}.  A separação foi motivada por:
   \item Certas informações devem ser coletadas periódicamente para atualizar
     alguns parâmetros e exibidas para o usuário.
 \end{itemize}
+
+\section{Interface Gráfica}
+
+É importante destacar o fato que a interface gráfica tem um papel muito
+importante na ferramenta.  Ela possibilita que um usuário não programador
+modifique, em tempo de execução, um conjunto de configurações que modifica, com
+uma grande amplitude, o comportamento do time controlado.  A interface visa
+provêr uma representação de simples compreensão do estado do jogo e de como as
+várias configurações podem afetar o comportamento.  Maiores detalhes sobre a
+interface em si são discutidos na seção~\ref{sec:gui_result}.  Esta seção aborda
+a arquitetura implementada que provê a interface.
+
+A figura~\ref{fig:arch_gui} mostra como os componentes interagem.  Em mais
+detalhes, esses componentes são:
+
+\begin{itemize}
+  \item GLFW: biblioteca que abstrai as APIs nativas de manipulação de janelas e
+    de eventos de mouse e teclado.  Além de fornecer contextos OpenGL.  Seu uso
+    é importante pois permite que a ferramenta seja compilada sem alteração para
+    diferentes sistemas operacionais.\footnote{Fato que ocorreu duranto todo o
+      desenvolvimento.  A ferramenta foi desenvolvida principalmente no OS X, e
+      em parte no Ubuntu (distribuição de Linux).  Além de um serviço de
+      integração (Travis) foi usado para validar a compilação no Ubuntu.  Embora
+    desejável, não houve tentativa de compilação no Windows.} \nocite{glfwdocs}
+  \item OpenGL: API de renderização 2D e 3D.  Seu uso se restringe a
+    renderizações no plano (2D).  É usada para desenhar todos os objetos que
+    representam estados, decisões e alguns artefatos auxiliares, além de ser
+    usado para prover o \textit{backend} de renderização do ImGui.
+    \nocite{opengldocs}
+  \item ImGui: Biblioteca leve de \textit{widgets} usada para criar janelas
+    internas, botões, barras de configuração deslizantes, caixas de seleção,
+    entre outros \textit{widgets}.  Como não possui dependências é necessário
+    prover um \textit{backend} de renderização.  Outra vantagem é ser orientada
+    a "modo imediato", na prática isso significa que, por exemplo, desenhar um
+    botão é uma única chamada de função, sem a necessidade de estruturação e
+    gerenciamento manual dos \textit{widgets}. \nocite{imguigithub}
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=10cm]{gui}
+  \caption{Diagrama de relação entre componentes gráficos}\label{fig:arch_gui}
+\end{figure}
+
 
 \section{API Pública}
 
@@ -102,10 +147,10 @@ possibilitar a evolução dessa em projetos futuros ou integração em outros
 projetos.
 
 Todas as estruturas e funções estão expostas em \textit{headers} C++, porém esta
-documentação irá tratar apenas das funcionalidades e organização sem prender à
-sintaxe ou modo de uso na linguagem em que está programada.  Para tais detalhes
-o anexo~\ref{att:headers} pode ser consultado, esse contém o conteúdo dos
-headers tratados nesta seção.
+documentação irá tratar apenas das funcionalidades e organização sem  se prender
+à sintaxe ou modo de uso na linguagem em que está programada.  Para tais
+detalhes o anexo~\ref{att:headers} pode ser consultado, esse contém o conteúdo
+dos headers tratados nesta seção.
 
 \subsection*{Enumeração \textit{ActionType}}
 
