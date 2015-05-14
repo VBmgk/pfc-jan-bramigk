@@ -1,10 +1,9 @@
-\chapter{Arquitetura do Sistema}\label{cap:arquitetura}
+\chapter{Arquitetura do \textit{Software}}\label{cap:arquitetura}
 
-Este capítulo descreve como a ferramenta desenvolvida interage com os
-\textit{softwares} em uso na competição.
-
-Os seguintes \textit{softwares} externos são de relevância para o entendimento
-da arquitetura escolhida:
+O \textit{software} desenvolvido é uma ferramenta, e ao longo deste capítulo ele
+é referido simplesmente por "a ferramenta".  Este capítulo descreve como a
+ferramenta interage com os outros \textit{softwares} em uso na competição.  Os
+seguintes são de relevância para o entendimento da arquitetura escolhida:
 
 \begin{itemize}
   \item ssl-vision: desenvolvido pela comunidade e de uso oficial na competição
@@ -19,8 +18,11 @@ da arquitetura escolhida:
     controle.
 \end{itemize}
 
-Para fins práticos o desenvolvimento ocorre com validações no simulador (grSim).
-O comportamento é compatível com as partidas oficiais.
+% Para fins práticos o desenvolvimento ocorre com validações no simulador (grSim).
+% O comportamento é compatível com as partidas oficiais.
+
+A ferramenta está implementada em C++11 (revisão recente de C++ suportada pela
+maioria dos compiladores modernos).
 
 \section{Comunicação com Componentes Externos}
 
