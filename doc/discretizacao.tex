@@ -14,7 +14,7 @@ Essa abstração pode ser separada em duas etapas:
 
 Essas etapas são descritas a seguir.
 
-\subsection{Representação do jogo}
+\subsection{Representação do jogo}\label{subsec:repres_jogo}
 
 \subsubsection{Posse de bola}
 
@@ -66,20 +66,10 @@ Cada um dos robôs em campo será modelado com as seguintes ações possíveis:
         $A_{def} = \lbrace Mover(r_i): r_i \in Rob_{def}\rbrace$
 \end{itemize}
 
-A figura~\ref{fig:plan_pass} mostra um planejamento com ações de mover e
-passar. Já a figura~\ref{fig:plan_kick} mostra um planejamento com uma
-ação de chutar no lugar de passar.
-
-% TODO: include images of plan kick and pass
-%\begin{figure}
-%  \centering
-%  \includegraphics[width=0.8\linewidth]{plan_pass}
-%  \caption{Planejamento com ações de mover (linha preta cheia) e
-%           passar (linha preta tracejada)}\label{fig:plan_pass}}
-%  \includegraphics[width=0.8\linewidth]{plan_kick}
-%  \caption{Planejamento com ações de mover (linha preta cheia) e
-%           passar (linha preta tracejada)}\label{fig:plan_kick}}
-%\end{figure}
+% TODO: referenciar ações plan kick and pass do capítulo resultados 
+%A figura~\ref{fig:plan_pass} mostra um planejamento com ações de mover e
+%passar. Já a figura~\ref{fig:plan_kick} mostra um planejamento com uma
+%ação de chutar no lugar de passar.
 
 Note que o robô com a bola pode se mover. Entretanto isso é indesejável, já que
 a velocidade do passe é maior que a movimentação do robô. Também existe uma
