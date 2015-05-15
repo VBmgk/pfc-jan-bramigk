@@ -32,7 +32,7 @@ afetam o comportamento do time:
 
 Esses parâmetros serão detalhados a seguir.
 
-\subsection{Custo do gap} 
+\subsection{Custo do gap}\label{subsec:custo_gap}
 O objetivos deste parâmetro é valorizar \textit{gaps} maiores
 de acordo com a soma total dos \textit{gaps} e com o maior \textit{gap}.
 O cálculo do \textit{gap} é feito da seguinte maneira:
@@ -45,6 +45,14 @@ O cálculo do \textit{gap} é feito da seguinte maneira:
 Os gaps são calculados de acordo com a posição de um determinado robô
 e a posição atual da bola. Isso gera um conjunto de segmentos de reta
 $\lbrace gap_i \rbrace$.
+
+Este custo afeta diretamente os seguintes custos:
+\begin{itemize}
+  \item Custo do Ataque
+  \item Custo dos gap vistos pelos robôs do time
+  \item Custo dos gaps vistos pelos robôs adversários
+  \item Custo da Defesa
+\end{itemize}
 
 \subsection{Correção do Gap devido a movimentação da bola} 
 O objetivo deste parâmetro é incorporar a movimentação
@@ -110,7 +118,8 @@ $move_p$, refinado assim o planejamento anterior.
 
 \subsection{Custo do Ataque}
 Este custo valoriza cituações nas quais o time em questão
-possue o domínio da bola (descrito na secção~\ref{sec:has_ball}).
+possue o domínio da bola (descrito na
+subsecção~\ref{subsec:repres_jogo}).
 
 \begin{dmath} 
  attack{\_}cost = weight_{ATTACK} . enemy{\_}gap
