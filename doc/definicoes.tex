@@ -1,4 +1,4 @@
-\section{Definições}
+\section{Definições}\label{sec:defs}
 
 Este capítulo visa definir os termos utilizados ao longo do
 trabalho. A medida que são definidos os termos do jogo do
@@ -8,7 +8,7 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
   Um corpo rígido $cr$ é definido por dois subconjuntos disjuntos
   de parâmetros $cr= \langle \hat{cr}, \bar{cr} \rangle$ em que:
   \begin{itemize}
-    \item $\hat{cr} = \langle \alpha, \beta, \gamma, \omega \rangle$,
+    \item $\hat{cr} = \langle pos, \theta, vel, \omega \rangle$,
     que são os parâmetros de estado mutáveis, respectivamente:
     posição ($\mathbb{R} ^{3}$), orientação ($\mathbb{R} ^{3}$),
     velocidade linear ($\mathbb{R} ^{3}$), velocidade angular
@@ -28,20 +28,20 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
 
 \begin{defi}[Bola]\label{def:bola}
   Bola é um corpo rígido $\hat{b}$, no qual somente as componentes
-  $\langle x,y \rangle$ do parâmetro $\hat{b}.\alpha$ são
+  $\langle x,y \rangle$ do parâmetro $\hat{b}.pos$ são
   observáveis.
 \end{defi}
 
-  De acordo com a  arquitetura considerada para a SSL descrita na
-  figura~\ref{arquitetura_ssl}, tem-se que, a partir de uma sequência
+  De acordo com a arquitetura do jogo descrita na secção~\ref{sec:arch_ssl},
+  tem-se que, a partir de uma sequência
   de quadros, é possível obter um valor estimado para o parâmetro
-  $\hat{b}.\gamma$ a partir do intervalo entre os dados recebidos
-  da \textit{SSL-Vision} e da equação $ \gamma \approxeq 
-  \frac{\Delta \alpha}{\Delta t} $. Entretanto, uma vez que a componente
-  $z$ de $\hat{b}.\alpha$ não é observável, $\hat{b}.\gamma.z$ 
+  $\hat{b}.vel$ a partir do intervalo entre os dados recebidos
+  da \textit{SSL-Vision} e da equação $ vel \approxeq 
+  \frac{\Delta pos}{\Delta t} $. Entretanto, uma vez que a componente
+  $z$ de $\hat{b}.pos$ não é observável, $\hat{b}.vel.z$ 
   não pode ser estimada a partir do intervalo entre os dados recebidos
   da \textit{SSL-Vision}. Semelhantemente,  uma vez que o
-  parâmetro $\hat{b}.\beta$ também não pode ser observado,
+  parâmetro $\hat{b}.\theta$ também não pode ser observado,
   não se pode estimar o valor de $\hat{b}.\omega$ com exatidão.
 
 % XXX[vbramigk] definir skill
@@ -56,11 +56,11 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
     \item Chute baixo: imprime uma força à bola $\hat{b}$
           e, possivelmente, um torque, com o objetivo de
           alterar as componentes $\langle x,y \rangle$
-          do parâmetro $\hat{b}.\gamma$;
+          do parâmetro $\hat{b}.vel$;
     \item Chute alto: imprime uma força à bola $\hat{b}$
           e, possivelmente, um torque, com o objetivo de
           alterar as componentes $\langle x,y,z \rangle$
-          do parâmetro $\hat{b}.\gamma$, com $\hat{b}.\gamma_z \neq 0$;
+          do parâmetro $\hat{b}.vel$, com $\hat{b}.vel_z \neq 0$;
     \item Receptor: recebe comandos enviados pelo sistema de
           transmissão de seu respectivo time;
     \item Sistema de movimentação: imprime uma força e um torque
@@ -73,7 +73,7 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
   executar um conjunto de ações $A_{rob}$. A figura~\ref{fig:robo}
   apresenta os atuadores típicos de um robô da SSL.
 
-  \begin{figure}
+  \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\linewidth]{robo}
     \caption{Atuadores típicos de um robo da SSL}\label{fig:robo}
@@ -86,7 +86,7 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
   \textit{SSL-Vision} juntamente com um sistema de transmissão
   para enviá-las ao software do seu respectivo time. Isso é
   interessante, pois, conforme observado na definição~\ref{def:bola},
-  o parâmetro $\hat{b}.\beta$ não é observável. Como o sistema de
+  o parâmetro $\hat{b}.\theta$ não é observável. Como o sistema de
   drible impõe um torque à bola, por meio de um sensor, é possível
   estimar o valor de $\hat{b}.\omega$. Sem esse sensor, não é possível
   prever com exatidão a trajetória da bola somente com informações de
@@ -197,10 +197,8 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
   \end{description}
 \end{defi}
 
-% TODO: referenciar secção do capítulo da arquitetura que fala da camera
-% TODO: referenciar imagem da secção Representação do jogo
-  Conforme citado em na secção (referenciar), $\delta t$ normalmente é $16,6{\ }ms$.
-  Um exemplo de $A^{i}$ pode ser visto na figura~\ref{fig:acoes_time}.
+  Conforme citado em na secção~\ref{sec:arch_ssl}, $\delta t$ normalmente é $16,6{\ }ms$.
+  Um exemplo de $A^{i}$ pode ser visto na figura~\ref{fig:default}.
 
 \begin{defi}[Logs]
   Dada uma partida $p$. O $log$ de $p$ é definidor por:
@@ -212,7 +210,6 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
   A principal diferença entre uma partida $p$ e $log$ é o desconhecimento das ações que levaram
   aos movimentos observados nas partidas. Isso é um metadado importante quando se quer utilizar
   os dados de um jogo para aproximar o comportamento de algum time. Este é um problema que está
-  fora do escopo deste trabálho. %Um exemplo de uma abordagem para esse problema pode ser encotrado
-  % TODO: Citar trabalho do CRC
-  %em (\textbf{citar trabalho CRC}).
+  fora do escopo deste trabálho. Um exemplo de uma abordagem para esse problema pode ser encotrado
+  em \cite{vail2008crf}).
 \end{defi}
