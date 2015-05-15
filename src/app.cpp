@@ -54,6 +54,7 @@ static bool play_minimax = false, play_decision_once = false,
             eval_state = true, eval_state_once = false,
             use_experimental = false;
 
+static bool ball_selected = false;
 static int selected_robot = 0;
 const int *app_selected_robot = &selected_robot;
 int app_selected_suggestion = -1;
@@ -360,10 +361,17 @@ void app_select_next_robot() {
                    (selected_robot + 1) % N_ROBOTS;
 }
 
+void app_select_ball() {
+  // select ball
+  ball_selected = ball_selected ? false: true;
+}
+
 #define MOVE(D, V)                                                     \
   void app_move_##D() {                                                \
-    if (selected_robot >= 0)                                           \
-      state.robots[selected_robot] += V;                               \
+    if (selected_robot >= 0) {                                         \
+      if(ball_selected == true) state.ball += V;                       \
+      else state.robots[selected_robot] += V;                          \
+    }                                                                  \
     update_param_group();                                              \
   }
 MOVE(up, Vector(0, move_step))

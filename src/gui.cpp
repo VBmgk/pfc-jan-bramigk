@@ -124,6 +124,9 @@ static void key_callback(GLFWwindow *window, int key, int, int action,
     case GLFW_KEY_RIGHT: {
       app_move_right();
     } break;
+    case GLFW_KEY_B: {
+      app_select_ball();
+    } break;
 
     default:
       break;

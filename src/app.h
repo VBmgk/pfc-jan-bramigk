@@ -17,6 +17,7 @@ void app_load_state();
 void app_save_state();
 void app_toggle_selected_player();
 void app_select_next_robot();
+void app_select_ball();
 void app_move_up();
 void app_move_down();
 void app_move_left();
