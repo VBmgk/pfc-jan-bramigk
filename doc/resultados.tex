@@ -1,17 +1,73 @@
 \chapter{Resultados}\label{cap:resultados}
 
 \section{Influência dos Parâmetros no Comportamento do Time}
-\subsection{Custo do gap}
-\subsection{Correção do Gap devido a movimentação da bola}
-\subsection{Distância Total dos Moves}
-\subsection{Distância Máxima dos Moves} 
-\subsection{Mudança do Planejamento da Move Table}
-\subsection{Custo do Ataque}
-\subsection{Custo dos gap vistos pelos robôs do time}
-\subsection{Custo dos gaps vistos pelos robôs adversários}
-\subsection{Custo da Defesa}
-\subsection{Número de Receptores}
-\subsection{Penalização por próximidade do gol do adversário}
-\subsection{Penalização por proximidade}
+
+Nesta secção são apresentados os diferentes comportamentos
+que podem ser obtidos através da modificação dos parâmetros
+apresentados no capítulo~\ref{cap:modelagem}. Cada parâmetro
+é modificado e os resultados na mudança do planejamento são
+evidenciados.
+
+Os parâmetros iniciais são definidos no arquivo src/consts.h, % TODO: referenciar anexos
+cujos valores são:
+
+% TODO: Substituir nomes das variáveis, conforme a modelagem
+\begin{itemize}
+  \item $CONSTANT{\_}RATE = true$
+  \item $KICK{\_}IF{\_}NO{\_}PASS = false$
+  \item $DECISION{\_}RATE = 7$
+  \item $RAMIFICATION{\_}NUMBER = 5000$
+  \item $FULL{\_}CHANGE{\_}PERCENTAGE = 100$
+  \item $MAX{\_}DEPTH = 0$
+  \item $KICK{\_}POS{\_}VARIATION = 0.150$
+  \item $MIN{\_}GAP{\_}TO{\_}KICK = 18.0$
+  \item $DESIRED{\_}PASS{\_}DIST = 2.0$
+  \item $WEIGHT{\_}BALL{\_}POS = 0$
+  \item $WEIGHT{\_}MOVE{\_}DIST{\_}MAX = 0$
+  \item $WEIGHT{\_}MOVE{\_}DIST{\_}TOTAL = 0$
+  \item $WEIGHT{\_}MOVE{\_}CHANGE = 2$
+  \item $WEIGHT{\_}PASS{\_}CHANGE = 2$
+  \item $WEIGHT{\_}KICK{\_}CHANGE = 2$
+  \item $TOTAL{\_}MAX{\_}GAP{\_}RATIO = 0.5$
+  \item $WEIGHT{\_}CLOSE{\_}TO{\_}BALL = 1000$
+  \item $WEIGHT{\_}ENEMY{\_}CLOSE{\_}TO{\_}BALL = 1000$
+  \item $WEIGHT{\_}HAS{\_}BALL = 5000$
+  \item $WEIGHT{\_}ATTACK = 1000$
+  \item $WEIGHT{\_}SEE{\_}ENEMY{\_}GOAL = 10$
+  \item $WEIGHT{\_}BLOCK{\_}GOAL = 180$
+  \item $WEIGHT{\_}BLOCK{\_}ATTACKER = 5000$
+  \item $WEIGHT{\_}GOOD{\_}RECEIVERS = 0$
+  \item $WEIGHT{\_}RECEIVERS{\_}NUM = 20$
+  \item $WEIGHT{\_}ENEMY{\_}RECEIVERS{\_}NUM = 20$
+  \item $DIST{\_}GOAL{\_}PENAL = 2000$
+  \item $DIST{\_}GOAL{\_}TO{\_}PENAL = 1.0$
+  \item $MOVE{\_}RADIUS{\_}0 = 0.5$
+  \item $MOVE{\_}RADIUS{\_}1 = 2.0$
+  \item $MOVE{\_}RADIUS{\_}2 = 7.0$
+\end{itemize}
+
+A figura~\ref{fig:default} apresenta o planejamento em um
+ambiente de ataque e defesa com os parâmetros iniciais
+apresentados anteriormente.
+
+\begin{figure}
+  \centering
+  \includegraphics[width= 0.8\linewidth]{result/default_atq}
+  \includegraphics[width= 0.8\linewidth]{result/default_def}
+  \caption{Planejamento com os parâmetros iniciais no
+           ataque (acima) e na defesa (abaixo)}\label{fig:default}
+\end{figure}
+
+\input{doc/results/kick_pos_var}
+\input{doc/results/dist_total_mv}
+\input{doc/results/dist_max_mv}
+\input{doc/results/atack_cost}
+\input{doc/results/defence_cost}
+\input{doc/results/changes_cost}
+\input{doc/results/see_enemy_goal}
+\input{doc/results/block_goal}
+\input{doc/results/recever_num}
+\input{doc/results/dist_goal_penal}
+\input{doc/results/dist_goal_2_penal}
 
 \section{Interface Gráfica}
