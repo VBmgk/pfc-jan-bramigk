@@ -89,48 +89,55 @@ set(DOC
 set(IMG
   img/arq_geral_prog.eps
   img/arquitetura_ssl.png
+  img/cmra_campo.png
   img/communication.eps
+  img/distr_mov.eps
   img/ex_tatica.eps
   img/gui.eps
+  img/gui_ball_move.png
+  img/gui_ball_stop.png
   img/gui_field.png
+  img/gui_kick.png
+  img/gui_move.png
   img/gui_params.png
+  img/gui_pass.png
   img/gui_widgets.png
   img/gui_zoom_in.png
   img/gui_zoom_out.png
-  img/gui_ball_move.png
-  img/gui_ball_stop.png
-  img/gui_pass.png
-  img/gui_kick.png
-  img/gui_move.png
   img/kick_pos_var_1.png
   img/kick_pos_var_2.png
+  img/minimax-tictactoe.jpg
+  img/minimax-tree.ps
+  img/minimax_flow.eps
+  img/padroes_ssl.png
   img/pos_chave_barreira.png
   img/pos_chave_lateral.png
-  img/robo.png
-  img/robocup2013.jpg
-  img/tab_dec.png
-  img/threads.eps
-  img/xadrez.jpg
   img/result/atack_atq_5000.png
   img/result/atack_def_5000.png
-  img/result/kickpos_0_atq.png
-  img/result/mov_dist_max_def_10.png
-  img/result/total_max_gap_atq_0.png
-  img/result/default_atq.png
-  img/result/default_def.png
-  img/result/kickpos_024_def.png
-  img/result/kickpos_024_atq.png
-  img/result/kickpos_0_def.png
-  img/result/mov_dist_total_atq_10.png
-  img/result/mov_dist_total_def_10.png
-  img/result/mov_dist_max_atq_10.png
-  img/result/total_max_gap_def_0.png
-  img/result/min_gap_atq_5.png
-  img/result/min_gap_def_5.png
   img/result/block_goal_atq_0.png
   img/result/block_goal_def_0.png
+  img/result/default_atq.png
+  img/result/default_def.png
+  img/result/kickpos_024_atq.png
+  img/result/kickpos_024_def.png
+  img/result/kickpos_0_atq.png
+  img/result/kickpos_0_def.png
+  img/result/min_gap_atq_5.png
+  img/result/min_gap_def_5.png
+  img/result/mov_dist_max_atq_10.png
+  img/result/mov_dist_max_def_10.png
+  img/result/mov_dist_total_atq_10.png
+  img/result/mov_dist_total_def_10.png
   img/result/see_enemy_goal_atq_1000.png
   img/result/see_enemy_goal_def_1000.png
+  img/result/total_max_gap_atq_0.png
+  img/result/total_max_gap_def_0.png
+  img/rob_data.png
+  img/robo.png
+  img/robocup2013.jpg
+  img/tab_dec.eps
+  img/threads.eps
+  img/xadrez.jpg
 )
 
 set(PROTO
@@ -213,8 +220,7 @@ if(BUILD_REPORT)
     INPUTS ${DOC} ${INC} ${PROTO}
     CONFIGURE relatorio.tex
     BIBFILES referencias.bib
-    #IMAGES ${IMG}
-    IMAGE_DIRS img img/result
+    IMAGES ${IMG}
     USE_INDEX
     NO_DEFAULT
   )
