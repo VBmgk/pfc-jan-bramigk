@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 2.8.8)
 project(ai) # TODO: new name maybe?
 
 # Super strict warnings =)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -pedantic-errors ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra ${CMAKE_CXX_FLAGS}")
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/.cmake/modules)
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-std=gnu++11 ${CMAKE_CXX_FLAGS}")
 if("${CMAKE_GENERATOR}" STREQUAL "Ninja" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   add_definitions("-Xclang -fcolor-diagnostics")
 endif()
@@ -60,20 +60,17 @@ set(INC
 
 set(DOC
   doc/anexos.tex
-  doc/arch_ssl.tex
-  doc/arch_sys.tex
+  doc/ssl.tex
+  doc/arquitetura.tex
   doc/conclusao.tex
-  doc/cronograma.tex
   doc/definicoes.tex
   doc/discretizacao.tex
   doc/funcao_objetivo.tex
+  doc/gui.tex
   doc/introducao.tex
-  doc/licoes_aprendidas.tex
-  doc/minimax.tex
   doc/modelagem.tex
   doc/dec_table.tex
   doc/posicoes_chave.tex
-  doc/programa.tex
   doc/resultados.tex
   doc/resumo.tex
   doc/table.tex
@@ -87,6 +84,53 @@ set(DOC
   doc/results/see_enemy_goal.tex
   doc/results/block_goal.tex
   doc/results/min_gap_kick.tex
+)
+
+set(IMG
+  img/arq_geral_prog.eps
+  img/arquitetura_ssl.png
+  img/communication.eps
+  img/ex_tatica.eps
+  img/gui.eps
+  img/gui_field.png
+  img/gui_params.png
+  img/gui_widgets.png
+  img/gui_zoom_in.png
+  img/gui_zoom_out.png
+  img/gui_ball_move.png
+  img/gui_ball_stop.png
+  img/gui_pass.png
+  img/gui_kick.png
+  img/gui_move.png
+  img/kick_pos_var_1.png
+  img/kick_pos_var_2.png
+  img/pos_chave_barreira.png
+  img/pos_chave_lateral.png
+  img/robo.png
+  img/robocup2013.jpg
+  img/tab_dec.png
+  img/threads.eps
+  img/xadrez.jpg
+  img/result/atack_atq_5000.png
+  img/result/atack_def_5000.png
+  img/result/kickpos_0_atq.png
+  img/result/mov_dist_max_def_10.png
+  img/result/total_max_gap_atq_0.png
+  img/result/default_atq.png
+  img/result/default_def.png
+  img/result/kickpos_024_def.png
+  img/result/kickpos_024_atq.png
+  img/result/kickpos_0_def.png
+  img/result/mov_dist_total_atq_10.png
+  img/result/mov_dist_total_def_10.png
+  img/result/mov_dist_max_atq_10.png
+  img/result/total_max_gap_def_0.png
+  img/result/min_gap_atq_5.png
+  img/result/min_gap_def_5.png
+  img/result/block_goal_atq_0.png
+  img/result/block_goal_def_0.png
+  img/result/see_enemy_goal_atq_1000.png
+  img/result/see_enemy_goal_def_1000.png
 )
 
 set(PROTO
@@ -160,7 +204,7 @@ if (PDFLATEX_COMPILER)
 endif()
 if(BUILD_REPORT)
   SET(LATEX_COMPILER_FLAGS
-    -interaction=batchmode --enable-write18 -file-line-error -shell-escape
+    --enable-write18 -file-line-error -shell-escape
     CACHE STRING "Flags passed to latex."
   )
   include(${CMAKE_SOURCE_DIR}/.cmake/UseLATEX.cmake)
@@ -169,10 +213,10 @@ if(BUILD_REPORT)
     INPUTS ${DOC} ${INC} ${PROTO}
     CONFIGURE relatorio.tex
     BIBFILES referencias.bib
+    #IMAGES ${IMG}
     IMAGE_DIRS img img/result
     USE_INDEX
     NO_DEFAULT
-    MANGLE_TARGET_NAMES
   )
 
   add_latex_document(apresentacao.tex
@@ -185,7 +229,7 @@ if(BUILD_REPORT)
 
   add_custom_target(open
     COMMAND ${OPEN} relatorio.pdf
-    DEPENDS relatorio_pdf
+    DEPENDS pdf
     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
   )
 
