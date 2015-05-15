@@ -1,10 +1,10 @@
-\section{Arquitetura do jogo}
+\section{Arquitetura do jogo}\label{sec:arch_ssl}
 
 A arquitetura a ser considerada é baseada em \cite{felixnavarro}.
 A \textit{RoboCup Small Size League} (SSL) envolve vários sistemas.
 Logo, com o objetivo de facilitar a compreensão do problema, a
 arquitetura do jogo a ser considerada é apresentada na
-figura~\ref{arquitetura_ssl}. Essa arquitetura é composta pelos
+figura~\ref{fig:arquitetura_ssl}. Essa arquitetura é composta pelos
 seguintes sistemas:
 
 \begin{itemize}
@@ -34,12 +34,11 @@ azul ou amarela. A disposição das outras cores é utilizada para identificar o
 do robô, i.e., cores diferentes são identificadas com números diferentes. A
 figura~\ref{fig:padroes_ssl} apresenta os padrões oficias da competição.
 
-% TODO: Incluir imagem padroes_ssl
-%\begin{figure}[thpb]
-%  \centering
-%  \includegraphics[width=20cm]{img/padroes_ssl}
-%  \caption{Padrões oficiais da SSL}\label{padroes_ssl}
-%\end{figure}
+\begin{figure}[thpb]
+  \centering
+  \includegraphics[width=0.8\linewidth]{padroes_ssl}
+  \caption{Padrões oficiais da SSL~\cite{zickler-ssl}}\label{fig:padroes_ssl}
+\end{figure}
 
 A posição dos círculos que compoem o padrão são utilizados para calcular a orientação
 e posiçao do robô no campo, conforme ilustrado na figura~\ref{fig:rob_data}. Isso
@@ -48,21 +47,23 @@ pelas duas câmeras posicionadas acima do campo. Esses dados são fornecidos em 
 cada $16,6{\ }ms$. A figura~\ref{fig:cmra_campo} mostra a disposição das câmeras no
 campo.
 
-% TODO: Incluir imagens cmra_campo e rob_data
-%\begin{figure}[thpb]
-%  \centering
-%  \includegraphics[width=20cm]{img/rob_data}
-%  \caption{Parâmetros de estádo mutáveis do robô (vide 
-%           definição~\ref{def:corpo_rigido})}\label{rob_data}
-%  \includegraphics[width=20cm]{img/cmra_campo}
-%  \caption{Disposição das câmeras no campo}\label{cmra_campo}
-%\end{figure}
+\begin{figure}[thpb]
+  \centering
+  \includegraphics[width=0.5\linewidth]{img/rob_data}
+  \caption{Parâmetros de estádo mutáveis do robô}\label{fig:rob_data}
+\end{figure}
+
+\begin{figure}[thpb]
+  \centering
+  \includegraphics[width= 0.8\linewidth]{img/cmra_campo}
+  \caption{Disposição das câmeras no campo}\label{fig:cmra_campo}
+\end{figure}
 
 \begin{landscape}
   \begin{figure}[thpb]
     \centering
     \includegraphics[width=20cm]{img/arquitetura_ssl}
-    \caption{Arquitetura básica da SSL}\label{arquitetura_ssl}
+    \caption{Arquitetura básica da SSL}\label{fig:arquitetura_ssl}
   \end{figure}
 \end{landscape}
 
