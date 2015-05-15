@@ -1,0 +1,26 @@
+\section{Estratégia de Busca}\label{sec:est_busca}
+A estratégia de busca utilizada para gerar os novos
+estados a partir do estado atual $x$ é apresentada na
+figura~\ref{fig:estr_busca}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width= 0.8\linewidth]{tab_dec}
+  \caption{Ilustração da distribuiçao dos tabuleiros
+           considerados no planejamento}\label{fig:estr_busca}
+\end{figure}
+
+Os tipos de ações que são geradas são:
+\begin{itemize}
+  \item \textit{TabDec}: Ação escolhida no último planejamento
+  \item \textit{Unit}: Ação gerada a partir da tabela de decisão
+        onde a ação de um único robô foi modificada
+  \item \textit{Cmplt}: Ação gerada a partir da tabela de decisão
+        onde a ação do time completo foi modificada
+  \item \textit{PosCv}: Ação gerada utilizando posições chave
+        (vide secção~\ref{subsec:pos_chave})
+\end{itemize}
+
+\input{doc/distr_move}
+\input{doc/dec_table}
+\input{doc/posicoes_chave}
