@@ -78,6 +78,19 @@ set(DOC
   doc/resumo.tex
   doc/table.tex
   doc/table_config.tex
+  doc/distr_move.tex
+  doc/estr_busca.tex
+  doc/results/atack_cost.tex
+  doc/results/changes_cost.tex
+  doc/results/dist_goal_2_penal.tex
+  doc/results/dist_max_mv.tex
+  doc/results/kick_pos_var.tex
+  doc/results/see_enemy_goal.tex
+  doc/results/block_goal.tex
+  doc/results/defence_cost.tex
+  doc/results/dist_goal_penal.tex
+  doc/results/dist_total_mv.tex
+  doc/results/recever_num.tex
 )
 
 set(PROTO
@@ -160,7 +173,7 @@ if(BUILD_REPORT)
     INPUTS ${DOC} ${INC} ${PROTO}
     CONFIGURE relatorio.tex
     BIBFILES referencias.bib
-    IMAGE_DIRS img
+    IMAGE_DIRS img img/result
     USE_INDEX
     NO_DEFAULT
     MANGLE_TARGET_NAMES
