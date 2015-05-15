@@ -128,6 +128,16 @@ subsecção~\ref{subsec:repres_jogo}).
 Onde $enemy{\_}gap_{value}$ é o valor do gap do goal adversário visto
 pelo robô que tem domínio da bola.
 
+\subsection{Custo da Defesa}
+Quando não se tem o domínio da bola o gap do time em questão
+visto pelo robô do time adversário que tem a bola é utilizado
+como penalização adicional.
+
+\begin{dmath}
+  defence penalty cost = weight_{BLOCK{\_}ATTACKER}
+   \sum_{r_i \in T} player{\_}gap_{robot}
+\end{dmath}
+
 \subsection{Custo dos gaps vistos pelos robôs do time}
 
 Este custo tem o objetivo de valorizar configurações nas quais
@@ -152,16 +162,6 @@ para o gol.
 \begin{dmath}
    goal gap of attacker cost = - weight_{BLOCK{\_}GOAL}
     \sum_{r_i \in T_enemy} player{\_}gap_{robot}
-\end{dmath}
-
-\subsection{Custo da Defesa}
-Quando não se tem o domínio da bola o gap do time em questão
-visto pelo robô do time adversário que tem a bola é utilizado
-como penalização adicional.
-
-\begin{dmath}
-  defence penalty cost = weight_{BLOCK{\_}ATTACKER}
-   \sum_{r_i \in T} player{\_}gap_{robot}
 \end{dmath}
 
 \subsection{Número de Receptores}
