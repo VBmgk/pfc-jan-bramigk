@@ -73,8 +73,6 @@ set(DOC
   doc/posicoes_chave.tex
   doc/resultados.tex
   doc/resumo.tex
-  doc/table.tex
-  doc/table_config.tex
   doc/distr_move.tex
   doc/estr_busca.tex
   doc/results/kick_pos_var.tex
