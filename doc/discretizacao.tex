@@ -44,15 +44,22 @@ encontro pode ser calculado da seguinte maneira:
 %     -----------------
 %            a
 
+\begin{gather}
+  b.vel \cdot t_{encontro} + b.pos = r.vel_{max} \cdot t_{encontro} + r.pos
+\end{gather}
+
+Trabalhando a equação acima, tem-se a seguinte equação do segundo grau:
 \begin{gather}  
-  b.vel \cdot t_{encontro} + b.pos = r.vel_{max} \cdot t_{encontro} + r.pos\\
   0 = (r.vel^2_{max}-b.vel^2) \cdot t^2 - \parallel r.pos - b.pos \parallel ^2
-     - 2 \cdot b.vel \cdot (b.pos - r.pos) \cdot t_{encontro}\\
-  \Delta = 4 \cdot [ ( b.vel \cdot (b.pos - r.pos)) ^2 +
-           (r.vel_{max}^2 - b.vel^2) \cdot \parallel r.pos - b.pos \parallel ^2]\\
+     - 2 \cdot b.vel \cdot (b.pos - r.pos) \cdot t_{encontro}
+\end{gather}
+Logo, tem-se:
+\begin{gather}  
   \boxed{t_{encontro} = \frac{ - b.vel \cdot (r.pos - b.pos) \pm \sqrt {\frac{\Delta}{4}}}
                  {(r.vel^2_{max} - b.vel^2)}}
-\end{gather} 
+\end{gather}
+Onde $\Delta = 4 \cdot [ ( b.vel \cdot (b.pos - r.pos)) ^2 +
+           (r.vel_{max}^2 - b.vel^2) \cdot \parallel r.pos - b.pos \parallel ^2]$.
 
 \subsubsection{Ações Consideradas}
 % TODO: Citar imagem \ref{fig:robo}
@@ -111,6 +118,6 @@ que o planejamento de trajetória deve ser levado em consideração. Esta parte 
 leva em consideração o modelo dinâmico do robô.
 Como isso é um problema complexo, com o objetivo de focar o escopo da pesquisa
 no planejamento de alto nível, será utilizada a arquitetura de controle do
-pyroboime. Essa parte do sistema será detalhada no capítulo~\ref{cap:arch_sys}.
+pyroboime. Essa parte do sistema será detalhada no capítulo~\ref{cap:arquitetura}.
 
 % vim: tw=80 et ts=2 sw=2 sts=2
