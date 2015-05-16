@@ -38,8 +38,8 @@ de acordo com a soma total dos \textit{gaps} e com o maior \textit{gap}.
 O cálculo do \textit{gap} é feito da seguinte maneira:
 
 \begin{dmath} 
- gap{\_}cost = ratio_{TOTAL{\_}MAX{\_}GAP} . \sum gap_i
- + (1 - ratio_{TOTAL{\_}MAX{\_}GAP}) . max{gap_i} 
+ c_{abertura{\ }gol} = taxa_{abertura{\ }total/max{\ }gol} . \sum abertura{\ }gol(r_i)
+ + (1 - taxa_{abertura{\ }total/max{\ }gol}) . max \lbrace abertura{\ }gol(r_i) \rbrace 
 \end{dmath} 
 
 Os gaps são calculados de acordo com a posição de um determinado robô
@@ -84,58 +84,56 @@ mudança de estado na função objetivo. Ele é formado pela soma dos
 \textit{moves} de todos os robôs do time em questão.
 
 \begin{dmath} 
- total{\_}move{\_}dist{\_}cost = weight_{MOVE{\_}DIST{\_}TOTAL} . 
- \sum \lVert pos_{r_i} - move_{r_i}\rVert
+ c_{dist{\ }total{\_}mover} = p_{dist{\ }total{\_}mover} . 
+ \sum_{r_i \in T_c} \lVert pos_{r_i} - Mover(r_i)\rVert
 \end{dmath} 
 
-Onde $r_i \in T$.
-
-\subsection{Distância Máxima dos Moves} 
+\subsection{Distância Máxima das Ações $Mover(r)$} 
 O objetivo deste parâmetro é incorporar o custo da
 mudança de estado na função objetivo. Ele é formado pelo \textit{move}
 maior do planejamento atual.
 
 \begin{dmath} 
- max move dist cost = weight_{MOVE{\_}DIST{\_}MAX} . 
- max \lbrace r_i \in T : \lVert pos_{r_i} - move_{r_i}\rVert \rbrace
+ c_{dist{\ }max{\ }mover}= p_{dist{\ }max{\ }mover} . 
+ max \lbrace r_i \in T_c : \lVert pos_{r_i} - Mover(r_i)\rVert \rbrace
 \end{dmath} 
 
-\subsection{Mudança do Planejamento da Move Table}\label{subsec:change_cost}
+\subsection{Mudança do Planejamento da Tabela de Decisão}\label{subsec:change_cost}
 O objetivo deste parâmetro é evitar mudanças grandes no
-planejamento do move. Uma das razões para isso é evitar um mode dinâmico
+planejamento da ação $Mover(r)$. Uma das razões para isso é evitar um mode dinâmico
 exato neste nível de planejamento, já que isso aumentaria muito o custo
 computacional desta etapa do planejamento e, consequentemente, reduziria
 o número de simulações possíveis. Por essas razões mudanças no planejamento
-dos \textit{moves} são penalizadas de acordo com a distância euclidiana
-entre o $move_p$ planejado anteriormente e o $move_mr$ modificado.
-Isso permite que sejam selecionados $moves_m$ mais próximos do
-$move_p$, refinado assim o planejamento anterior.
+das ações $Mover(r)$ são penalizadas de acordo com a distância euclidiana
+entre a $Mover_p(r)$ planejado anteriormente e o $Mover_{m}(r)$ modificado.
+Isso permite que sejam selecionados $Mover_{m}(r)$ mais próximos do
+$Mover_p(r)$, refinado assim o planejamento anterior.
 
 \begin{dmath} 
- move{\_}change{\_}cost = weight_{MOVE{\_}CHANGE} . 
- max \lbrace \sum_{r_i \in T} \lVert move_{r_i} - move table_{r_i}\rVert \rbrace
+ c_{mudança{\_}mover} = p_{mudança{\_}mover} . 
+ max \lbrace \sum_{r_i \in T_c} \lVert Mover(r_i) - Mover_p(r_i)\rVert \rbrace
 \end{dmath} 
 
 \subsection{Custo do Ataque}
 Este custo valoriza cituações nas quais o time em questão
-possue o domínio da bola (descrito na
-subsecção~\ref{subsec:repres_jogo}).
+possue o domínio da bola (descrito na subsecção~\ref{subsec:repres_jogo}).
 
+% TODO: Explicar notação
 \begin{dmath} 
- attack{\_}cost = weight_{ATTACK} . enemy{\_}gap
+ c_{ataque} = p_{ataque} . abertura{\ }gol_ad
 \end{dmath} 
 
-Onde $enemy{\_}gap_{value}$ é o valor do gap do goal adversário visto
+Onde $enemy{\_}gap_{value}$ é o valor da abertura do gol adversário visto
 pelo robô que tem domínio da bola.
 
 \subsection{Custo da Defesa}
-Quando não se tem o domínio da bola o gap do time em questão
+Quando não se tem o domínio da bola a abertura do gol do time em questão
 visto pelo robô do time adversário que tem a bola é utilizado
 como penalização adicional.
 
 \begin{dmath}
-  defence penalty cost = weight_{BLOCK{\_}ATTACKER}
-   \sum_{r_i \in T} player{\_}gap_{robot}
+  c_{defesa} = p_{defesa}
+   \sum_{r_i \in T_ad} abertura{\ }gol_c(r_i)
 \end{dmath}
 
 \subsection{Custo dos gaps vistos pelos robôs do time}
@@ -148,20 +146,20 @@ que esta com a posse de bola execute um passe para um robô
 em questão.
 
 \begin{dmath}
-   goal gap of attacker cost = weight_{SEE{\_}ENEMY{\_}GOAL}
-    \sum_{r_i \in T_player} enemy{\_}gap_{robot}
+   c_{abertura{\ }gol{\ }ad} = p_{abertura{\ }gol_{ad}}
+    \sum_{r_i \in T_c} abertura{\ }gol_{ad}(r_i)
 \end{dmath}
 
-\subsection{Custo dos gaps vistos pelos robôs adversários}
+\subsection{Custo do bloqueio do gol}
 
 Este custo é o análogo do custo anterior, mas para o
 time adversário. Ele visa penalizar situações nas quais
-os robôs adversários tenham grande visada (i.e., gap)
+os robôs adversários tenham grande visada (i.e., abertura)
 para o gol. 
 
 \begin{dmath}
-   goal gap of attacker cost = - weight_{BLOCK{\_}GOAL}
-    \sum_{r_i \in T_enemy} player{\_}gap_{robot}
+   c_{bloqueio{\ }gol} = - p_{bloqueio{\ }gol}
+    \sum_{r_i \in T_{ad}} abertura{\ }gol_{ad}(r_i)
 \end{dmath}
 
 \subsection{Número de Receptores}
@@ -170,8 +168,8 @@ Este custo visa valorizar cituaçõe nas quais existam
 vários robôs que possam receber passe.
 
 \begin{dmath}
-  number of recevers cost = weight{\_}RECEIVERS{\_}NUM . 
-   num \lbrace recever_i \rbrace
+  c_{receptores} = p_{receptores}
+   num \lbrace r_{receptor_i} \rbrace
 \end{dmath}
 
 \subsection{Penalização por próximidade do gol do adversário}
@@ -183,7 +181,8 @@ A partir de uma determinada distância, é adicionada uma parcela
 de penalização na função objetivo.
 
 \begin{dmath}
-  custo penalização = - w_{penalização de proximidade} \sum numero de robos perto
+  c_{penalização{\ }prox} = - p_{penalização{\ }prox}
+    \sum num \lbrace r_{perto} \rbrace
 \end{dmath}
 
 \subsection{Gap mínimo para chute à gol}
