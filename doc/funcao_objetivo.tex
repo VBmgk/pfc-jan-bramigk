@@ -9,14 +9,14 @@ expressão:
 Onde $\lbrace c_i \rbrace$ é o conjunto formado
 por custos e penalizações. São eles:
 \begin{enumerate}
-  \item Custo do gap
-  \item Correção do Gap devido a movimentação da bola
-  \item Distância Total dos Moves
-  \item Distância Máxima dos Moves 
+  \item Custo da Abertura do Gol
+  \item Correção da Abertura do Gol devido a movimentação da bola
+  \item Distância Total das Ações $Mover(r)$
+  \item Distância Máxima das Ações $Mover(r)$
   \item Mudança do Planejamento da Move Table
   \item Custo do Ataque
-  \item Custo dos gap vistos pelos robôs do time
-  \item Custo dos gaps vistos pelos robôs adversários
+  \item Custo das Aberturas vistas por $r \in T_c$
+  \item Custo das Aberturas vistas por $r \in T_{ad}$
   \item Custo da Defesa
   \item Número de Receptores
   \item Penalização por próximidade do gol do adversário
@@ -26,25 +26,28 @@ por custos e penalizações. São eles:
 Além dos parâmetros listados acima, outros parâmetros
 afetam o comportamento do time:
 \begin{enumerate}
-  \item Gap mínimo para chute à gol
+  \item Abertura do gol mínima para chute à gol
   \item Número de ramificações
 \end{enumerate}
 
 Esses parâmetros serão detalhados a seguir.
 
-\subsection{Custo do gap}\label{subsec:custo_gap}
-O objetivos deste parâmetro é valorizar \textit{gaps} maiores
-de acordo com a soma total dos \textit{gaps} e com o maior \textit{gap}.
-O cálculo do \textit{gap} é feito da seguinte maneira:
+\subsection{Custo da Abertura do Gol}\label{subsec:custo_gap}
+O objetivos deste parâmetro é valoriza as aberturas maiores
+de acordo com a soma total das aberturas com relação a cada
+$r \in T$ e com aberturas maiores.
+O cálculo deste custo é feito da seguinte maneira:
 
 \begin{dmath} 
- c_{abertura{\ }gol} = taxa_{abertura{\ }total/max{\ }gol} . \sum abertura{\ }gol(r_i)
- + (1 - taxa_{abertura{\ }total/max{\ }gol}) . max \lbrace abertura{\ }gol(r_i) \rbrace 
-\end{dmath} 
+ c_{abertura{\ }gol} = taxa_{abertura{\ }total/max{\ }gol} .
+   \sum_{r_i \in T} abertura{\ }gol(bola, r)
+   + (1 - taxa_{abertura{\ }total/max{\ }gol}) .
+   max \lbrace abertura{\ }gol(bola, r): r \in T \rbrace 
+\end{dmath}
 
-Os gaps são calculados de acordo com a posição de um determinado robô
+Os gaps são calculados de acordo com a posição de um determinado robô $r$ (obstáculo)
 e a posição atual da bola. Isso gera um conjunto de segmentos de reta
-$\lbrace gap_i \rbrace$.
+$\lbrace abertura{\ }gol(bola, r): r \in T $.
 
 Este custo afeta diretamente os seguintes custos:
 \begin{itemize}
@@ -54,9 +57,9 @@ Este custo afeta diretamente os seguintes custos:
   \item Custo da Defesa
 \end{itemize}
 
-\subsection{Correção do Gap devido a movimentação da bola} 
+\subsection{Correção da abertura do gol devido a movimentação da bola} 
 O objetivo deste parâmetro é incorporar a movimentação
-da bola pelo atacante no cálculo do \textit{gap} do gol. Isso é importante,
+da bola pelo atacante no cálculo da abertura do gol. Isso é importante,
 pois defensores mais
 próximos são mais facilmente driblados que defensores mais distantes. Isso
 pode ser visualizado na figura \ref{fig:kick_pos_1}, onde foi considerada
@@ -70,18 +73,19 @@ variação de 0cm na posição da bola. Essa variação é medida na linha norma
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.5\linewidth]{kick_pos_var_1}
-  \caption{\textit{Gap} do gol considerando-se uma variação de 15cm na 
+  \caption{Abertura do gol considerando-se uma variação de 15cm na 
            posição da bola}\label{fig:kick_pos_1}
   \includegraphics[width=0.5\linewidth]{kick_pos_var_2}
-  \caption{\textit{Gap} do gol sem variação de na posição da
+  \caption{Abertura do gol sem variação de na posição da
            bola}\label{fig:kick_pos_2}
 \end{figure}
 
 
-\subsection{Distância Total dos Moves} 
+\subsection{Distância Total das Ações $Mover(r)$} 
 O objetivo deste parâmetro é valorizar o custo da
-mudança de estado na função objetivo. Ele é formado pela soma dos
-\textit{moves} de todos os robôs do time em questão.
+mudança de estado na função objetivo. Ele é formado pela soma das
+distâncias que cada ação $Mover(r)$ irá percorrer partindo das
+respectivas posições do estado atual.
 
 \begin{dmath} 
  c_{dist{\ }total{\_}mover} = p_{dist{\ }total{\_}mover} . 
@@ -136,7 +140,7 @@ como penalização adicional.
    \sum_{r_i \in T_ad} abertura{\ }gol_c(r_i)
 \end{dmath}
 
-\subsection{Custo dos gaps vistos pelos robôs do time}
+\subsection{Custo das aberturas do gol vistas por $r\in T_c$}
 
 Este custo tem o objetivo de valorizar configurações nas quais
 os robôs que não tem a bola possuam visada para o gol do time
@@ -150,7 +154,7 @@ em questão.
     \sum_{r_i \in T_c} abertura{\ }gol_{ad}(r_i)
 \end{dmath}
 
-\subsection{Custo do bloqueio do gol}
+\subsection{Custo das aberturas do gol vistas por $r\in T_{ad}$}
 
 Este custo é o análogo do custo anterior, mas para o
 time adversário. Ele visa penalizar situações nas quais
@@ -185,11 +189,11 @@ de penalização na função objetivo.
     \sum num \lbrace r_{perto} \rbrace
 \end{dmath}
 
-\subsection{Gap mínimo para chute à gol}
-Este parâmetro é o ângulo total do gap do goal para permitir
+\subsection{Abertura mínima para chute à gol}
+Este parâmetro é o ângulo total da abertura do goal para permitir
 o chute pelo atacante. Ele é relevante, pois afeta o comportamento
 do atacante e, como consequência, o comportamento do time durante
-a posse de bola. Quando o gap do gol é menor que este valor, o
+a posse de bola. Quando a bertura do gol é menor que este valor, o
 atacante tem ação de chutar em direção ao goal.
 
 % TODO: Adicionar imagem para ilustrar este caso, já que não tem
