@@ -38,12 +38,12 @@ de acordo com a soma total das aberturas com relação a cada
 $r \in T$ e com aberturas maiores.
 O cálculo deste custo é feito da seguinte maneira:
 
-\begin{dmath} 
+\begin{multline} 
  c_{abertura{\ }gol} = taxa_{abertura{\ }total/max{\ }gol} .
-   \sum_{r_i \in T} abertura{\ }gol(bola, r)
+   \sum_{r_i \in T} abertura{\ }gol(bola, r)\\
    + (1 - taxa_{abertura{\ }total/max{\ }gol}) .
    max \lbrace abertura{\ }gol(bola, r): r \in T \rbrace 
-\end{dmath}
+\end{multline}
 
 Os gaps são calculados de acordo com a posição de um determinado robô $r$ (obstáculo)
 e a posição atual da bola. Isso gera um conjunto de segmentos de reta
@@ -88,19 +88,19 @@ distâncias que cada ação $Mover(r)$ irá percorrer partindo das
 respectivas posições do estado atual.
 
 \begin{dmath} 
- c_{dist{\ }total{\_}mover} = p_{dist{\ }total{\_}mover} . 
+ c_{dist{\ }total{\ }mover} = p_{dist{\ }total{\ }mover} . 
  \sum_{r_i \in T_c} \lVert pos_{r_i} - Mover(r_i)\rVert
 \end{dmath} 
 
 \subsection{Distância Máxima das Ações $Mover(r)$} 
 O objetivo deste parâmetro é incorporar o custo da
-mudança de estado na função objetivo. Ele é formado pelo \textit{move}
-maior do planejamento atual.
+mudança de estado na função objetivo. Ele é formado pela
+ação $Mover(r)$ do planejamento atual com maior deslocamento.
 
-\begin{dmath} 
+\begin{gather} 
  c_{dist{\ }max{\ }mover}= p_{dist{\ }max{\ }mover} . 
  max \lbrace r_i \in T_c : \lVert pos_{r_i} - Mover(r_i)\rVert \rbrace
-\end{dmath} 
+\end{gather} 
 
 \subsection{Mudança do Planejamento da Tabela de Decisão}\label{subsec:change_cost}
 O objetivo deste parâmetro é evitar mudanças grandes no
