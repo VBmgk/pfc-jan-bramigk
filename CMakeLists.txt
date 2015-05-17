@@ -75,6 +75,7 @@ set(DOC
   doc/resumo.tex
   doc/distr_move.tex
   doc/estr_busca.tex
+  doc/cons_finais.tex
   doc/results/kick_pos_var.tex
   doc/results/dist_total_mv.tex
   doc/results/dist_max_mv.tex
