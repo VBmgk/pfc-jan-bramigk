@@ -137,6 +137,7 @@ set(IMG
   img/tab_dec.eps
   img/threads.eps
   img/xadrez.jpg
+  img/mod_comp.jpg
 )
 
 set(PROTO
