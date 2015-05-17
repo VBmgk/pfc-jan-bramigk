@@ -2,98 +2,59 @@
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
 \begin{resumo}
 
-  Este trabalho apresenta uma ferramenta de representação comportamental baseado
-  em otimização para futebol de robôs de um time da \textit{Small
-  Size League} (SSL) de futebol de robôs para a equipe RoboIME (que representa o
-  IME nessa competição). Os times da SSL normalmente são comandados por
-  heurísticas puras. Isso restringe o movimento dos robôs a um determinado
-  conjunto fixo de comportamentos, limitando as jogadas possíveis.
+  Este trabalho apresenta uma ferramenta de representação comportamental baseada
+  em otimização para futebol de robôs para uma equipe da \textit{Small Size
+  League} (SSL) da RoboCup, RoboIME (representando o IME nesta competição).  As
+  equipes da SSL são geralmente controlados por heurísticas puras.  Isso
+  restringe o movimento dos robôs para um conjunto fixo de comportamentos,
+  limitando as possíveis jogadas.
 
   O objetivo deste trabalho é desenvolver uma ferramenta de representação
-  comportamental baseado em otimização para futebol de robôs.
+  comportamental baseada em otimização para futebol de robôs.
 
-  Para permitir que várias jogadas sejam simuladas o jogo foi abstraido. Isso é
-  importante, pois o sistema varia continuamente devido a presença dos robôs do
-  time adversário. Assim, um jogo contínuo foi abstraído em um discreto e sequencial,
-  semelhante a um jogo de xadrez. Partindo-se desta abstração foi definida
-  uma função utilidade, permitido que o problema seja tratado como um problema
-  de otimização.
+  Para permitir que várias jogadas sejam simuladas, o jogo é abstraído.  Isso é
+  importante pois o sistema varia continuamente devido à presença de robôs da
+  equipe adversária.  Assim, um jogo contínuo é abstraído em um discreto e
+  sequencial, semelhante ao xadrez.  Com base nessa abstração, foi definida uma
+  função utilidade, o que permitiu uma abordagem de otimização ao problema.
 
-  Foi implementada uma arquitetura de controle baseada na abstração criada.
-  Como plataforma de testes, é utilizada parte da \textit{pyroboime}, que
-  resolve o problema de controle físico dos robôs implementa as máquinas de estados
-  das táticas das ações considerados. A ferramenta é capaz de controlar um time com
-  comportamentos que bloqueiam chutes diretos, que avançam ao campo do adversário e
-  que se posicionam para ataques diretos e por meio de passe.
+  Foi implementada uma arquitetura de controle com base nessa abstração.  Como
+  plataforma de testes, parte do software já em uso pela RoboIME
+  (\textit{pyroboime}) é usado, o que resolve o controle físico dos robôs
+  através da implementação de máquinas de estado de táticas para as ações
+  abstraídas.  A ferramenta é capaz de controlar um time de robôs, gerando
+  comportamentos que variam entre bloquear chutes diretos, avançar para a quadra
+  adversária e se posicionar para atacar diretamente através de passes.
 
   \textbf{Palavras-chaves}: inteligência artificial, discretização, otimização, robótica, robocup.
 \end{resumo}
 
 % resumo em inglês
-% TODO: traduzir o resumo
-\begin{resumo}[Abstract]
-  \begin{otherlanguage*}{english}
-     \textbf{Abstract em produção}
-%    This work presents a control system for robot soccer team of the Small Size
-%    League (SSL) for the RoboIME team (which stands for IME on that competition)
-%    using a Minimax algorithm. The teams of SSL are usually controlled by plain
-%    heuristics. That restricts the movement of the robots to a limited set of
-%    behaviours, shortening the range of possible plays.
-%
-%    The objective of this work is to implement that system in such a way that
-%    its performance is at least comparable to that of the current intelligence
-%    being used by RoboIME (namely \textit{pyroboime}), which is heuristic.
-%
-%    For using a Minimax algorithm it is necessary to abstract the game in such a
-%    way that it can reach a whole range of moves in real time using few steps.
-%    In that manner a continous game is abstracted into a discrete sequential
-%    one, similar to chess. Based off that abstraction the Minimax algorithm is
-%    built.
-%
-%    With the purpose of verifying the feasability of this approach, a control
-%    architecture has been implemented on top of a discrete sequential model of
-%    the game. As a test platform part of \textit{pyrobime} is used, which solves
-%    the issue of controlling the real robots. With future results a planning
-%    algorithm will be developed superior to the one currently in use on
-%    \textit{pyroboime}.
-%
-%    %As of this publishing the objective has not been met.
-%
-%    \textbf{Key-words}: artificial intelligence, minimax, robotics, robocup.
-  \end{otherlanguage*}
-\end{resumo}
+\begin{resumo}[Abstract]\begin{otherlanguage*}{english}
 
+  This paper presents a behavioral representation tool based on optimization for
+  robot soccer for a RoboCup's Small Size League (SSL) team, RoboIME
+  (representing IME in this competition).  SSL teams are usually controlled by
+  pure heuristics.  This restricts the movement of the robots to a fixed set of
+  behaviors, limiting the possible plays.
 
+  The objective of this work is to develop a behavioral representation tool
+  based on optimization for robot soccer.
 
+  To allow several plays to be simulated, the game is abstracted.  This is
+  important because the system continuously varies due to the presence of robots
+  from the opposing team.  Thus, a continuous game is abstracted into a discrete
+  and sequential one, like chess.  Based on this abstraction, a utility function
+  was defined, allowing an optimization approach to the problem.
 
+  A control architecture based on that abstraction was implemented.  As testing
+  platform, part of the software already in use by RoboIME (pyroboime) is used,
+  which solves the physical control of the robots by implementing state machines
+  for the tactics of the abstracted actions.  The tool is able to control a set
+  of robots, generating behaviors ranging from blocking direct kicks, advancing
+  to the opponent's court and positioning for direct attacks through passes.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  \textbf{Key-words}: artificial intelligence, discretization, optimization, robotics, robocup.
+\end{otherlanguage*}\end{resumo}
 
 % vim: tw=80 et ts=2 sw=2 sts=2
