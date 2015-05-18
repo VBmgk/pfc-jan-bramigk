@@ -11,7 +11,7 @@ por custos e penalizações. Os pesos de cada custo
 serão denotados por $p_{descrição}$. São eles:
 \begin{enumerate}
   \item Custo da Abertura do Gol
-  \item Correção da Abertura do Gol devido a movimentação da bola
+  \item Correção da Abertura do Gol Devido a Movimentação da Bola
   \item Distância Total das Ações $Mover(r)$
   \item Distância Máxima das Ações $Mover(r)$
   \item Mudança do Planejamento da Move Table
@@ -20,8 +20,8 @@ serão denotados por $p_{descrição}$. São eles:
   \item Custo das Aberturas vistas por $r \in T_{ad}$
   \item Custo da Defesa
   \item Número de Receptores
-  \item Penalização por próximidade do gol do adversário
-  \item Penalização por proximidade
+  \item Penalização por Próximidade do Gol do Adversário
+  \item Penalização por Proximidade
 \end{enumerate}
 
 Além dos parâmetros listados acima, outros parâmetros
@@ -49,19 +49,19 @@ O cálculo deste custo é feito da seguinte maneira:
    max \lbrace abertura{\ }gol(bola, r): r \in T \rbrace 
 \end{multline}
 
-Os gaps são calculados de acordo com a posição de um determinado robô $r$ (obstáculo)
+As aberturas são calculados de acordo com a posição de um determinado robô $r$ (obstáculo)
 e a posição atual da bola. Isso gera um conjunto de segmentos de reta
 $\lbrace abertura{\ }gol(bola, r): r \in T $.
 
 Este custo afeta diretamente os seguintes custos:
 \begin{itemize}
   \item Custo do Ataque
-  \item Custo dos gap vistos pelos robôs do time
-  \item Custo dos gaps vistos pelos robôs adversários
   \item Custo da Defesa
+  \item Custo das aberturas do gol vistas por $r\in T_c$
+  \item Custo das aberturas do gol vistas por $r\in T_{ad}$
 \end{itemize}
 
-\subsection{Correção da abertura do gol devido a movimentação da bola} 
+\subsection{Correção da Abertura do Gol Devido a Movimentação da Bola} 
 O objetivo deste parâmetro é incorporar a movimentação
 da bola pelo atacante no cálculo da abertura do gol. Isso é importante,
 pois defensores mais
@@ -150,7 +150,7 @@ como penalização adicional.
    \sum_{r_i \in T_ad} abertura{\ }gol_c(r_i)
 \end{dmath}
 
-\subsection{Custo das aberturas do gol vistas por $r\in T_c$}
+\subsection{Custo das Aberturas do Gol Vistas por $r\in T_c$}
 
 Este custo tem o objetivo de valorizar configurações nas quais
 os robôs que não tem a bola possuam visada para o gol do time
@@ -164,7 +164,7 @@ em questão.
     \sum_{r_i \in T_c} abertura{\ }gol_{ad}(r_i)
 \end{dmath}
 
-\subsection{Custo das aberturas do gol vistas por $r\in T_{ad}$}
+\subsection{Custo das Aberturas do Gol Vistas por $r\in T_{ad}$}
 
 Este custo é o análogo do custo anterior, mas para o
 time adversário. Ele visa penalizar situações nas quais
@@ -186,11 +186,11 @@ vários robôs que possam receber passe.
    num \lbrace r_{receptor_i} \rbrace
 \end{dmath}
 
-\subsection{Penalização por próximidade do gol do adversário}
+\subsection{Penalização por Próximidade do Gol do Adversário}
 Esta penalização visa evitar que os robôs que estão no ataque
 se concentrem dentro da área do time adversário. Caso este
 parâmetro não seja adicionado, é esse o comportamento resultante
-do custo dos gap vistos pelos robôs do time em questão. 
+do custo das aberturas vistas pelos robôs do time em questão. 
 A partir de uma determinada distância, é adicionada uma parcela
 de penalização na função objetivo.
 
@@ -199,7 +199,7 @@ de penalização na função objetivo.
     \sum num \lbrace r_{perto} \rbrace
 \end{dmath}
 
-\subsection{Abertura mínima para chute à gol}
+\subsection{Abertura Mínima para Chute à Gol}
 Este parâmetro é o ângulo total da abertura do goal para permitir
 o chute pelo atacante. Ele é relevante, pois afeta o comportamento
 do atacante e, como consequência, o comportamento do time durante
