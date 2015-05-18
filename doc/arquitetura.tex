@@ -32,7 +32,7 @@ maioria dos compiladores modernos).
   \caption{Diagrama de comunicação entre os componentes.}\label{fig:arch_comm}
 \end{figure}
 
-A figura~\ref{fig:arch_comm} representa como os componentes se comunicam.  A
+A Figura~\ref{fig:arch_comm} representa como os componentes se comunicam.  A
 ferramenta se comunica apenas com o pyroboime para aproveitar todas as
 funcionalidades necessárias que fogem ao escopo desse trabalho.  Por isso o foco
 do desenvolvimento está concentrado em atender diretamente os objetivos.
@@ -55,7 +55,7 @@ São dois tipos de mensagens:
     realizar.
 \end{itemize}
 
-As especificações de ambas as mensagens se encontram no anexo~\ref{att:protos}.
+As especificações de ambas as mensagens se encontram no Anexo~\ref{att:protos}.
 
 As mensagens são transmitidas num socket ZMQ (\textit{ZeroMQ}, uma biblioteca de
 transmissão de dados na rede) visando a extensibilidade da ferramenta, pois com
@@ -67,7 +67,7 @@ O modo de transmissão é \textit{request-reply} em que a ferramente age como
 servidor respondendo as requisições do core, que consistem em atualizações cuja
 a resposta deve ser o comando a ser executado naquele estado requisitado.  Na
 prática a ferramenta irá transmitir o comando mais recente, que se encontra em
-seu \textit{buffer}, descrito brevemente no seção~\ref{sec:threads}.
+seu \textit{buffer}, descrito brevemente no Seção~\ref{sec:threads}.
 
 \section{\textit{Threads} do Sistema}\label{sec:threads}
 
@@ -79,7 +79,7 @@ seu \textit{buffer}, descrito brevemente no seção~\ref{sec:threads}.
 \end{figure}
 
 A ferramenta está implementada em 4 \textit{threads} fixas de acordo com a
-figura~\ref{fig:arch_threads}.  A separação foi motivada por:
+Figura~\ref{fig:arch_threads}.  A separação foi motivada por:
 
 \begin{itemize}
   \item A interface gráfica necessitar ser responsiva ao usuário;
@@ -99,10 +99,10 @@ modifique, em tempo de execução, um conjunto de configurações que modifica, 
 uma grande amplitude, o comportamento do time controlado.  A interface visa
 provêr uma representação de simples compreensão do estado do jogo e de como as
 várias configurações podem afetar o comportamento.  Maiores detalhes sobre a
-interface em si são discutidos na seção~\ref{sec:gui}.  Esta seção aborda
+interface em si são discutidos na Seção~\ref{sec:gui}.  Esta seção aborda
 a arquitetura implementada que provê a interface.
 
-A figura~\ref{fig:arch_gui} mostra como os componentes interagem.  Em mais
+A Figura~\ref{fig:arch_gui} mostra como os componentes interagem.  Em mais
 detalhes, esses componentes são:
 
 \begin{itemize}
@@ -151,7 +151,7 @@ projetos.
 Todas as estruturas e funções estão expostas em \textit{headers} C++, porém esta
 documentação irá tratar apenas das funcionalidades e organização sem  se prender
 à sintaxe ou modo de uso na linguagem em que está programada.  Para tais
-detalhes o anexo~\ref{att:headers} pode ser consultado, esse contém o conteúdo
+detalhes o Anexo~\ref{att:headers} pode ser consultado, esse contém o conteúdo
 dos headers tratados nesta seção.
 
 \subsection*{Enumeração \textit{ActionType}}
@@ -708,7 +708,7 @@ de tamanho genérico (porém fixo) sem semântica associada.
 Alguns operadores foram definidos para essa estrutura de modo que suas operações
 reflitam as operações matemáticas normalmente associadas a vetores.  Tais
 operadores foram omitidos da lista de métodos mas podem ser consultados no
-anexo~\ref{att:headers}.
+Anexo~\ref{att:headers}.
 
 \begin{itemize}
   \item \textit{norm2}
