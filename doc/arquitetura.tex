@@ -38,11 +38,11 @@ funcionalidades necessárias que fogem ao escopo desse trabalho.  Por isso o foc
 do desenvolvimento está concentrado em atender diretamente os objetivos.
 
 As mensagens trocadas entre a ferramenta e o core (\textit{pyroboime}) é
-codificada com o \textit{Protobuf}, uma biblioteca bem estabelecida que também é
-usada nos protocolos oficiais da competição.  Desse modo o \textit{overhead} de
-comunicação é baixo, não é necessário introduzir uma dependência ou codificação
-manual no core e é possível que versões futuras sejam retrocompatíveis.
-\nocite{protobufdocs}
+codificada com o \textit{Protobuf}~\cite{protobufdocs}, uma biblioteca bem
+estabelecida que também é usada nos protocolos oficiais da competição.  Desse
+modo o \textit{overhead} de comunicação é baixo, não é necessário introduzir uma
+dependência ou codificação manual no core e é possível que versões futuras sejam
+retrocompatíveis.
 
 São dois tipos de mensagens:
 
@@ -57,11 +57,11 @@ São dois tipos de mensagens:
 
 %As especificações de ambas as mensagens se encontram no Anexo~\ref{att:protos}.
 
-As mensagens são transmitidas num socket ZMQ (\textit{ZeroMQ}, uma biblioteca de
-transmissão de dados na rede) visando a extensibilidade da ferramenta, pois com
-tal biblioteca é possível distribuir mensagens entre vários nós de forma
-confiável (característica desejável para um sistema distribuido) além de provêr
-confiabilidade e auto-reconexão para o uso atual. \nocite{zmqdocs}
+As mensagens são transmitidas num socket ZMQ (\textit{ZeroMQ}~\cite{zmqdocs},
+uma biblioteca de transmissão de dados na rede) visando a extensibilidade da
+ferramenta, pois com tal biblioteca é possível distribuir mensagens entre vários
+nós de forma confiável (característica desejável para um sistema distribuido)
+além de provêr confiabilidade e auto-reconexão para o uso atual.
 
 O modo de transmissão é \textit{request-reply} em que a ferramente age como
 servidor respondendo as requisições do core, que consistem em atualizações cuja
@@ -113,19 +113,21 @@ detalhes, esses componentes são:
       desenvolvimento.  A ferramenta foi desenvolvida principalmente no OS X, e
       em parte no Ubuntu (distribuição de Linux).  Além de um serviço de
       integração (Travis) foi usado para validar a compilação no Ubuntu.  Embora
-    desejável, não houve tentativa de compilação no Windows.} \nocite{glfwdocs}
+    desejável, não houve tentativa de compilação no Windows.} (biblioteca
+    disponível em \cite{glfwdocs})
   \item OpenGL: API de renderização 2D e 3D.  Seu uso se restringe a
     renderizações no plano (2D).  É usada para desenhar todos os objetos que
     representam estados, decisões e alguns artefatos auxiliares, além de ser
-    usado para prover o \textit{backend} de renderização do ImGui.
-    \nocite{opengldocs}
+    usado para prover o \textit{backend} de renderização do ImGui. (API
+    disponível em \cite{opengldocs})
   \item ImGui: Biblioteca leve de \textit{widgets} usada para criar janelas
     internas, botões, barras de configuração deslizantes, caixas de seleção,
     entre outros \textit{widgets}.  Como não possui dependências é necessário
     prover um \textit{backend} de renderização.  Outra vantagem é ser orientada
     a "modo imediato", na prática isso significa que, por exemplo, desenhar um
     botão é uma única chamada de função, sem a necessidade de estruturação e
-    gerenciamento manual dos \textit{widgets}. \nocite{imguigithub}
+    gerenciamento manual dos \textit{widgets}. (biblioteca disponível em
+    \cite{imguigithub})
 \end{itemize}
 
 \begin{figure}[H]
