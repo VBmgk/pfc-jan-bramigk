@@ -59,7 +59,7 @@ set(INC
 )
 
 set(DOC
-  doc/anexos.tex
+  #doc/anexos.tex
   doc/ssl.tex
   doc/arquitetura.tex
   doc/conclusao.tex
@@ -217,7 +217,8 @@ if(BUILD_REPORT)
   include(${CMAKE_SOURCE_DIR}/.cmake/UseLATEX.cmake)
 
   add_latex_document(relatorio.tex
-    INPUTS ${DOC} ${INC} ${PROTO}
+    #INPUTS ${DOC} ${INC} ${PROTO}
+    INPUTS ${DOC}
     CONFIGURE relatorio.tex
     BIBFILES referencias.bib
     IMAGES ${IMG}
