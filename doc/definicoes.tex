@@ -27,7 +27,7 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
   coeficiente de amortecimento linear e angular.
 
 \begin{defi}[Bola]\label{def:bola}
-  Bola é um corpo rígido $\hat{b}$, no qual somente as componentes
+  Bola é um corpo rígido $b$, no qual somente as componentes
   $\langle x,y \rangle$ do parâmetro $\hat{b}.pos$ são
   observáveis.
 \end{defi}
@@ -47,29 +47,29 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
 % XXX[vbramigk] definir skill
 
 \begin{defi}[Robô]
-  Robô, representado por $rob$, é um conjunto de sistemas compostos
+  Robô, representado por $r$, é um conjunto de sistemas compostos
   de corpos rígidos, \textit{hardware} e \textit{firmware}. Neste
   trabalho será considerado que o robô tem os seguintes sistemas:
 
   \begin{itemize}
     \item Drible: imprime um torque a bola;
-    \item Chute baixo: imprime uma força à bola $\hat{b}$
+    \item Chute baixo: imprime uma força à bola $b$
           e, possivelmente, um torque, com o objetivo de
           alterar as componentes $\langle x,y \rangle$
           do parâmetro $\hat{b}.vel$;
-    \item Chute alto: imprime uma força à bola $\hat{b}$
+    \item Chute alto: imprime uma força à bola $b$
           e, possivelmente, um torque, com o objetivo de
           alterar as componentes $\langle x,y,z \rangle$
           do parâmetro $\hat{b}.vel$, com $\hat{b}.vel_z \neq 0$;
     \item Receptor: recebe comandos enviados pelo sistema de
           transmissão de seu respectivo time;
     \item Sistema de movimentação: imprime uma força e um torque
-          ao centro de massa global do $rob$;
+          ao centro de massa global do $r$;
   \end{itemize}
 \end{defi}
 
   A figura~\ref{fig:rob_data} ilustra os parâmetros de estado mutaveis
-  do rôbo. Por meio dos sistemas listados acima, cada robô $rob$ pode
+  do rôbo. Por meio dos sistemas listados acima, cada robô $r$ pode
   executar um conjunto de ações $A_{rob}$. A figura~\ref{fig:robo}
   apresenta os atuadores típicos de um robô da SSL.
 
@@ -160,20 +160,21 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
           $x \in X$ e computar o estado seguinte $x^{'} \in X$;
     \item $f_{U}: X \longrightarrow \mathbb{R^{+}} \cup\lbrace 0\rbrace$ uma função utilidade tal que
           $f_{U}(x)$ mede a utilidade do estado $x \in X$ um entre estados do mundo dado os estados;
-    \item $r_{ad}: \langle A_{ad}, X_{ob}^{i}\rangle \longrightarrow a_{ad}^{'}$ o modelo de reação dos robôs
+    \item $m_{reac{\ }ad}: \langle A_{ad}, X_{ob}^{i}\rangle \longrightarrow a_{ad}^{'}$ o modelo de reação dos robôs
           adversários dado $X_{ob}^{i}$;
     \item $AB =\lbrace V \subset X, E \subset A\rbrace$ uma árvore de busca;
-    \item $e_b: \langle X_{ob}^{i}, e, f_{U}, r_{ad}, AB\rangle \longrightarrow AB^{'}$ uma estratégia de busca.
+    \item $e_b: \langle X_{ob}^{i}, e, f_{U}, m_{reac{\ }ad}, AB\rangle \longrightarrow AB^{'}$ uma estratégia de busca.
   \end{description}
 
   Então, um time $T$ é definido por:
   \[
-    T: \langle Rob_c, A, X_{ob}^{i}, e, e_b, r_{ad} \rangle \longrightarrow a_c^{i+1}
+    T: \langle Rob_c, A, X_{ob}^{i}, e, e_b, m_{reac{\ }ad} \rangle \longrightarrow a_c^{i+1}
   \]
 \end{defi}
 
   Assim, utilizando-se de $e$, $T$ pode simular várias sequência de ações $a_c$ dado $X_{ob}^{i}$
-  a partir de $f_{U}$ e $e_b$.
+  a partir de $f_{U}$ e $e_b$. Pode-se, a partir de $m_{reac{\ }ad}$, considerar as ações do time
+  adversário baseado em estados anteriores.
 
 % TODO: describe more the notation
 \begin{defi}[Partida]
@@ -206,10 +207,10 @@ futebol de robôs, as problemáticas presentes são evidenciadas.
   \[
     log(p) = \lbrace p.\langle Ref^{0}, X_{ob}^{0}\rangle, \dots, p.\langle Ref^{N}, X_{ob}^{N}\rangle \rbrace
   \]
+\end{defi}
  
   A principal diferença entre uma partida $p$ e $log$ é o desconhecimento das ações que levaram
   aos movimentos observados nas partidas. Isso é um metadado importante quando se quer utilizar
-  os dados de um jogo para aproximar o comportamento de algum time. Este é um problema que está
-  fora do escopo deste trabálho. Um exemplo de uma abordagem para esse problema pode ser encotrado
-  em \cite{vail2008crf}).
-\end{defi}
+  os dados de um jogo para aproximar o comportamento de algum time (i.e., $m_{reac{\ }ad}$).
+  Este é um problema que está fora do escopo deste trabálho. Um exemplo de uma abordagem para
+  esse problema pode ser encotrado em \cite{vail2008crf}).

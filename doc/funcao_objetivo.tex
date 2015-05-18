@@ -7,7 +7,8 @@ expressão:
 \end{dmath}
 
 Onde $\lbrace c_i \rbrace$ é o conjunto formado
-por custos e penalizações. São eles:
+por custos e penalizações. Os pesos de cada custo
+serão denotados por $p_{descrição}$. São eles:
 \begin{enumerate}
   \item Custo da Abertura do Gol
   \item Correção da Abertura do Gol devido a movimentação da bola
@@ -30,7 +31,10 @@ afetam o comportamento do time:
   \item Número de ramificações
 \end{enumerate}
 
-Esses parâmetros serão detalhados a seguir.
+Esses parâmetros foram os primeiros utilizados no programa.
+Ao longo dos testes realizados, foram criados novos parâmetros.
+Entretanto, os parâmetros listados são suficientes para ilustrar
+a mudança no comportamento do time.
 
 \subsection{Custo da Abertura do Gol}\label{subsec:custo_gap}
 O objetivos deste parâmetro é valoriza as aberturas maiores
@@ -101,30 +105,39 @@ ação $Mover(r)$ do planejamento atual com maior deslocamento.
 
 \subsection{Mudança do Planejamento da Tabela de Decisão}\label{subsec:change_cost}
 O objetivo deste parâmetro é evitar mudanças grandes no
-planejamento da ação $Mover(r)$. Uma das razões para isso é evitar um mode dinâmico
+planejamento da ação $Mover(r)$. Uma das razões para isso é evitar um modelo dinâmico
 exato neste nível de planejamento, já que isso aumentaria muito o custo
 computacional desta etapa do planejamento e, consequentemente, reduziria
 o número de simulações possíveis. Por essas razões mudanças no planejamento
-das ações $Mover(r)$ são penalizadas de acordo com a distância euclidiana
-entre a $Mover_p(r)$ planejado anteriormente e o $Mover_{m}(r)$ modificado.
-Isso permite que sejam selecionados $Mover_{m}(r)$ mais próximos do
-$Mover_p(r)$, refinado assim o planejamento anterior.
+das ações $Mover(r)$ inicialmente foram penalizadas de acordo com a distância euclidiana
+entre a $Mover_p(r)$ planejado anteriormente e o $Mover_{m}(r)$ modificado, conforme
+a equação:
 
 \begin{dmath} 
- c_{mudança{\_}mover} = p_{mudança{\_}mover} . 
+ c_{mudança{\ }mover} = p_{mudança{\ }mover} . 
  max \lbrace \sum_{r_i \in T_c} \lVert Mover(r_i) - Mover_p(r_i)\rVert \rbrace
 \end{dmath} 
 
-\subsection{Custo do Ataque}
-Este custo valoriza cituações nas quais o time em questão
-possue o domínio da bola (descrito na subsecção~\ref{subsec:repres_jogo}).
+Isso permite que sejam selecionados $Mover_{m}(r)$ mais próximos do
+$Mover_p(r)$, refinado assim o planejamento anterior. Entretanto,
+um parâmetro mais significativo é o valor absoluto do ângulo entre
+essas ações e a posição de $r$, $\lVert ang(r, Mover_{m}(r), Mover_p(r)) \rVert$.
+Dessa maneira, tem-se que o custo é computado da seguinte maneira:
 
-% TODO: Explicar notação
 \begin{dmath} 
- c_{ataque} = p_{ataque} . abertura{\ }gol_ad
+ c_{mudança{\ }mover} = p_{mudança{\ }mover} . 
+ max \lbrace \sum_{r_i \in T_c} \lVert ang(r, Mover_{m}(r), Mover_p(r)) \rVert \rbrace
 \end{dmath} 
 
-Onde $enemy{\_}gap_{value}$ é o valor da abertura do gol adversário visto
+\subsection{Custo do Ataque}
+Este custo valoriza situações nas quais o time em questão
+possue o domínio da bola (descrito na subsecção~\ref{subsec:repres_jogo}).
+
+\begin{dmath} 
+ c_{ataque} = p_{ataque} . abertura{\ }gol_{ad}
+\end{dmath} 
+
+Onde $abertura{\ }gol_{ad}$ é o valor da abertura do gol adversário visto
 pelo robô que tem domínio da bola.
 
 \subsection{Custo da Defesa}
