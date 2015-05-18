@@ -15,36 +15,68 @@ realizados são:
 
 % TODO: Substituir nomes das variáveis, conforme a modelagem
 \begin{enumerate}
-  \item $FULL{\_}CHANGE{\_}PERCENTAGE = 100$
-  \item $KICK{\_}POS{\_}VARIATION = 0.150$
-  \item $MIN{\_}GAP{\_}TO{\_}KICK = 18.0$
-  \item $DESIRED{\_}PASS{\_}DIST = 2.0$
-  \item $WEIGHT{\_}MOVE{\_}DIST{\_}MAX = 0$
-  \item $WEIGHT{\_}MOVE{\_}DIST{\_}TOTAL = 0$
-  \item $WEIGHT{\_}ATTACK = 1000$
-  \item $WEIGHT{\_}SEE{\_}ENEMY{\_}GOAL = 10$
-  \item $WEIGHT{\_}BLOCK{\_}GOAL = 180$
-  \item $WEIGHT{\_}BLOCK{\_}ATTACKER = 5000$
+  \item Distância de movimentação da bola: 15cm
+  \item Abertura mínima para chute à gol: 18.0 graus
+%  \item $p_{dist{\ }max{\ }mover} = 0$
+%  \item $p_{dist{\ }total{\ }mover} = 0$
+%  \item $p_{ataque} = 1000$
+  \item $p_{abertura{\ }gol_{ad}} = 10$
+  \item $p_{abertura{\ }gol_{c}} = 180$
 \end{enumerate}
 
-A figura~\ref{fig:default} apresenta o planejamento em um
-ambiente de ataque e defesa com os parâmetros iniciais
-apresentados anteriormente.
+As figuras~\ref{fig:default_atq} e~\ref{fig:default_def} apresentam
+o planejamento em um ambiente de ataque e defesa, respectivamente,
+com os parâmetros iniciais apresentados anteriormente.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width= 0.8\linewidth]{result/default_atq}
-  \includegraphics[width= 0.8\linewidth]{result/default_def}
   \caption{Planejamento com os parâmetros iniciais no
-           ataque (acima) e na defesa (abaixo)}\label{fig:default}
+           ataque}\label{fig:default_atq}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width= 0.8\linewidth]{result/default_def}
+  \caption{Planejamento com os parâmetros iniciais
+           na defesa}\label{fig:default_def}
 \end{figure}
 
 \input{doc/results/kick_pos_var}
-\input{doc/results/dist_total_mv}
-\input{doc/results/dist_max_mv}
-\input{doc/results/atack_cost}
+%\input{doc/results/dist_total_mv}
+%\input{doc/results/dist_max_mv}
+%\input{doc/results/atack_cost}
 \input{doc/results/see_enemy_goal}
 \input{doc/results/block_goal}
 \input{doc/results/min_gap_kick}
 
+\section{Goleiro}
+Conforme pode ser visto nos experimentos anteriores,
+somente em um experimento o goleiro não surgiu.
+Somente foi desconsiderada a penalização para um
+dos robôs de $T_c$. Isso é interessante, pois
+não foi necessário restringir o movimento deste
+robô, permitindo que este se mova conforme a
+valoração de $f_U$.
+
+\section{Desempenho em Jogo}
+Foram realizados dois jogos supervisionados de dez minutos cada.
+O time $T_1$ jogou com os parâmetros iniciais apresentados no
+início deste capítulo. Já no time $T_2$ foi modificado
+somente o peso $p_{ataque}$ para 3530. Os resultados são apresentados
+na tabela~\ref{tab:games}.
+
+\begin{table}
+  \begin{center}
+  \begin{tabular}{|c|c|}
+    \hline
+    Times      & Resultado \\
+    \hline
+    $T_1$ vs $T_1$ &  0 vs 0   \\
+    \hline
+    $T_1$ vs $T_2$ &  0 vs 1   \\
+    \hline
+  \end{tabular}
+  \caption{Resultado dos jogos $T_1$ contra $T_1$ e $T_1$ contra $T_2$}\label{tab:games}
+  \end{center}
+\end{table}
 % vim: tw=80 et ts=2 sw=2 sts=2 ft=tex
