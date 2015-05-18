@@ -87,7 +87,7 @@ set(DOC
 
 set(IMG
   img/arq_geral_prog.eps
-  img/arquitetura_ssl.png
+  img/arq_ssl.eps
   img/cmra_campo.png
   img/communication.eps
   img/distr_mov.eps
