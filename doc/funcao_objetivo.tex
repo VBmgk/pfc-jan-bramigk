@@ -49,9 +49,9 @@ O cálculo deste custo é feito da seguinte maneira:
    max \lbrace abertura{\ }gol(bola, r): r \in T \rbrace 
 \end{multline}
 
-As aberturas são calculados de acordo com a posição de um determinado robô $r$ (obstáculo)
+As aberturas são calculadas de acordo com a posição de um determinado robô $r$ (obstáculo)
 e a posição atual da bola. Isso gera um conjunto de segmentos de reta
-$\lbrace abertura{\ }gol(bola, r): r \in T $.
+$\lbrace abertura{\ }gol(bola, r): r \in T \rbrace$.
 
 Este custo afeta diretamente os seguintes custos:
 \begin{itemize}
@@ -110,7 +110,7 @@ exato neste nível de planejamento, já que isso aumentaria muito o custo
 computacional desta etapa do planejamento e, consequentemente, reduziria
 o número de simulações possíveis. Por essas razões mudanças no planejamento
 das ações $Mover(r)$ inicialmente foram penalizadas de acordo com a distância euclidiana
-entre a $Mover_p(r)$ planejado anteriormente e o $Mover_{m}(r)$ modificado, conforme
+entre o $Mover_p(r)$ planejado anteriormente e o $Mover_{m}(r)$ modificado, conforme
 a equação:
 
 \begin{dmath} 
@@ -122,7 +122,7 @@ Isso permite que sejam selecionados $Mover_{m}(r)$ mais próximos do
 $Mover_p(r)$, refinado assim o planejamento anterior. Entretanto,
 um parâmetro mais significativo é o valor absoluto do ângulo entre
 essas ações e a posição de $r$, $\lVert ang(r, Mover_{m}(r), Mover_p(r)) \rVert$.
-Dessa maneira, tem-se que o custo é computado da seguinte maneira:
+Dessa maneira, tem-se que este custo é computado da seguinte maneira:
 
 \begin{dmath} 
  c_{mudança{\ }mover} = p_{mudança{\ }mover} . 
@@ -146,7 +146,7 @@ visto pelo robô do time adversário que tem a bola é utilizado
 como penalização adicional.
 
 \begin{dmath}
-  c_{defesa} = p_{defesa}
+  c_{defesa} = p_{defesa} .
    \sum_{r_i \in T_ad} abertura{\ }gol_c(r_i)
 \end{dmath}
 
@@ -156,11 +156,11 @@ Este custo tem o objetivo de valorizar configurações nas quais
 os robôs que não tem a bola possuam visada para o gol do time
 adversário. Isso
 é desejavel, já que permite que um gol seja feito caso o robô
-que esta com a posse de bola execute um passe para um robô
+que esta com a posse de bola execute um passe para um dos robôs
 em questão.
 
 \begin{dmath}
-   c_{abertura{\ }gol{\ }ad} = p_{abertura{\ }gol_{ad}}
+   c_{abertura{\ }gol{\ }ad} = p_{abertura{\ }gol_{ad}} .
     \sum_{r_i \in T_c} abertura{\ }gol_{ad}(r_i)
 \end{dmath}
 
@@ -172,7 +172,7 @@ os robôs adversários tenham grande visada (i.e., abertura)
 para o gol. 
 
 \begin{dmath}
-   c_{bloqueio{\ }gol} = - p_{bloqueio{\ }gol}
+   c_{bloqueio{\ }gol} = - p_{bloqueio{\ }gol} .
     \sum_{r_i \in T_{ad}} abertura{\ }gol_{ad}(r_i)
 \end{dmath}
 
@@ -182,7 +182,7 @@ Este custo visa valorizar cituaçõe nas quais existam
 vários robôs que possam receber passe.
 
 \begin{dmath}
-  c_{receptores} = p_{receptores}
+  c_{receptores} = p_{receptores} .
    num \lbrace r_{receptor_i} \rbrace
 \end{dmath}
 

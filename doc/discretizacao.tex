@@ -23,7 +23,7 @@ de bola. O robô que possue a bola é aquele que consegue intercepta-la
 no menor tempo possível. Como introduzir um modelo que considere
 a dinâmica do robô iria introduzir um custo computacional muito alto,
 foi utilizado um modelo simplificado. As simplificações são as
-seguintes (somente para o calculo do tempo da interceptação):
+seguintes (somente para o cálculo do tempo da interceptação):
 
 \begin{itemize}
   \item A bola se move a velocidade constante
@@ -79,7 +79,7 @@ Cada um dos robôs em campo será modelado com as seguintes ações possíveis:
 %ação de chutar no lugar de passar.
 
 Note que o robô com a bola pode se mover. Entretanto isso é indesejável, já que
-a velocidade do passe é maior que a movimentação do robô. Também existe uma
+a velocidade do passe é maior que a velocidade de movimentação do robô. Também existe uma
 restrição quanto à distância máxima que se pode conduzir a bola que, se não
 for respeitada, resulta em penalidade para o time do robô infrator.
 
@@ -114,10 +114,10 @@ com os resultados obtidos nos teste práticos.
 
 Esta etapa do modelo é responsável por converter o resultado do planejamento em
 comandos mais concretos. Conforme evidenciado na seção anterior, é nesta parte
-que o planejamento de trajetória deve ser levado em consideração. Esta parte que
+que o planejamento de trajetória deve ser levado em consideração. Esta é a parte que
 leva em consideração o modelo dinâmico do robô.
 Como isso é um problema complexo, com o objetivo de focar o escopo da pesquisa
 no planejamento de alto nível, será utilizada a arquitetura de controle do
-pyroboime. Essa parte do sistema será detalhada no Capítulo~\ref{cap:arquitetura}.
+pyroboime. %Essa parte do sistema será detalhada no Capítulo~\ref{cap:arquitetura}.
 
 % vim: tw=80 et ts=2 sw=2 sts=2

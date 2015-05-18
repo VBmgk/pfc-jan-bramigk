@@ -25,7 +25,7 @@ alterar o simulador para reposicionar a bola ou os robôs durante a partida.
 
 \section{Dificuldades}
 
-A principal dificuldade foi o criar os parâmetros da função objetivo e
+A principal dificuldade foi criar os parâmetros da função objetivo e
 ajusta-los para se ter um bom desempenho. Isso, pois o espaço de busca dos
 parâmetros aumenta a cada parâmetro adicionado, complicando o ajuste dos
 parâmetros.
@@ -43,7 +43,7 @@ base, conforme~\cite{russell2003artificial}, temos a Equação~\ref{eq:cres_exp}
 
 Isso não é um problema que pode ser tratado simplesmente com o aumento da
 velocidade de processamento. Deve-se ajustar o nível de abstração de acordo com
-os resultados obtidos nos teste práticos..
+os resultados obtidos nos teste práticos.
 
 Quanto mais ações, maior é o custo computacional. Por isso, talvez seja mais
 relevante investir em soluções envolvendo teoria dos jogos. Com vários níveis de
@@ -60,11 +60,11 @@ somente um robô por aresta. Isso, contudo, deve ser considerado no modelo para
 manter a coerência do planejamento.  Ficou evidente a importância da modelagem
 do jogo no desempenho do planejamento.
 
-Um problema fundamental para um bom desempenho é o controle.  Fator que foi
-evidenciado nos testes com o simulador, afetando o desempenho do time. Isso,
-pois um planejamento não tem utilidade quando não é válido no mundo real. Por
-exemplo, se um passe resultar em um gol no planejamento, mas não for executado
-corretamente, perde-se a posse de bola.
-
+Por fim, um problema fundamental para um bom desempenho é o controle.  Fator que foi
+evidenciado nos testes com o simulador, afetando o desempenho do time. A importância
+deste problema fica clara quando um planejamento que custou tempo e recursos computacionais
+não é executado corretamente. Um planejamento não tem utilidade quando não é válido
+no mundo real. Por exemplo, se um passe resultar em um gol no planejamento, mas não
+for executado corretamente, perde-se a posse de bola.
 
 % vim: tw=80 et ts=2 sw=2 sts=2 ft=tex
