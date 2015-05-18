@@ -257,7 +257,7 @@
   Aprovado em #1 pela seguinte Banca Examinadora:
 
   \assinatura{\textbf{\imprimirorientador\ - \imprimirorientadorTitulo} \\ Orientador}
-  \assinatura{\textbf{\convidadoumNome\ - \convidadoumTitulo}}
+  \assinatura{\textbf{\convidadoumNome\ - \convidadoumTitulo} \\ Coorientador}
   \assinatura{\textbf{\convidadodoisNome\ - \convidadodoisTitulo}}
   \assinatura{\textbf{\convidadotresNome\ - \convidadotresTitulo}}
   %TODO: find out why does abntex@ifnotempty doesn't work so we can have some dynamic list
