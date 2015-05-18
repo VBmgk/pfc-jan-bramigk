@@ -62,22 +62,19 @@ O objetivo deste parâmetro é incorporar a movimentação
 da bola pelo atacante no cálculo da abertura do gol. Isso é importante,
 pois defensores mais
 próximos são mais facilmente driblados que defensores mais distantes. Isso
-pode ser visualizado na figura \ref{fig:kick_pos_1}, onde foi considerada
-uma variação de 15cm. Já na figura \ref{fig:kick_pos_2} foi considerada uma
-variação de 0cm na posição da bola. Essa variação é medida na linha normal
+pode ser visualizado na figura \ref{fig:kick_pos}, onde foi considerada
+uma variação de 15cm e de 0cm. Essa variação é medida na linha normal
 à reta formada pela bola e pelo robô em questão.
 
 % TODO: Adicionar gráfico detalhado as contas
 %       vide arquivo board.cpp para detalhes de implementação
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\linewidth]{kick_pos_var_1}
+  \includegraphics[height=0.4\linewidth]{kick_pos_var_1}
+  \includegraphics[height=0.4\linewidth]{kick_pos_var_2}
   \caption{Abertura do gol considerando-se uma variação de 15cm na 
-           posição da bola}\label{fig:kick_pos_1}
-  \includegraphics[width=0.5\linewidth]{kick_pos_var_2}
-  \caption{Abertura do gol sem variação de na posição da
-           bola}\label{fig:kick_pos_2}
+           posição da bola (esquerda) e sem variação (direita)}\label{fig:kick_pos}
 \end{figure}
 
 
