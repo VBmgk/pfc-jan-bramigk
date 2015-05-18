@@ -252,6 +252,7 @@
 
   \par\imprimirpreambulo
   \par\imprimirorientadorRotulo~\imprimirorientador
+  \par\imprimircoorientadorRotulo~\imprimircoorientador
   \par
 
   Aprovado em #1 pela seguinte Banca Examinadora:
