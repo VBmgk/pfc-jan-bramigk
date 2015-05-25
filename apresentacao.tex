@@ -29,12 +29,8 @@
 }
 
 \section{Introdução}
-% tempo: 1 min
-% Robocup / Roboime /ssl
+% Robocup
 % Objetivo
-% Estudo do Minimax
-% Modelagem ( contínuo -> discreto )
-% Prova de Conceito
 \frame{%
   \frametitle{Robocup}
   \begin{block}{}
@@ -51,182 +47,198 @@
   \begin{block}
     \centering
     \begin{itemize}
-      \item Desenvolver um algoritmo de controle para o futebol de robôs
-        com melhor performance em um conjunto de situações que o utilizado
-        atualmente
-      \item Criar um modelo discreto sequencial para o problema do futebol
-        de robôs
+      \item Desenvolver uma ferramenta de representação
+        comportamental baseado em otimização para futebol de robôs
+
+      \item Criar um modelo discreto sequencial para o
+        problema do futebol de robôs
     \end{itemize}
   \end{block}
 }
 
-\frame{%
-  \frametitle{Atividades anteriores}
-  \begin{block}
-    \centering
-    \begin{itemize}
-      \item Estudo do Minimax
-      \item Modelagem (Contínuo $\rightarrow$ Discreto)
-      \item Prova de conceito
-    \end{itemize}
-  \end{block}
-}
-
-\section{Mapeamento contínuo-discreto}
+\section{Modelagem}
 % Modelagem
-% tempo: 3 min
-% - Nesce para entender o programa
-% - Actions -> Tactics (Skills?)
-% - Posse de bola
-% - Move Pass Kick
+% tempo: X min
+% - SSL
+% - Definições
+% |--> Posse de bola
+% +--> Move Pass Kick
+% - Discretização
+% - Função Objetivo
+% - Estratégia de Busca
 \frame{%
-  \frametitle{Mapeamento contínuo-discreto}
+  \frametitle{Mapeamento}
   \begin{block}{}
     \centering
     \begin{itemize}
-      \item Ação de um time com a bola é uma lista de:
-        \begin{itemize}
-          \item robô sem a bola:
-            \begin{itemize}
-              \item $Move(x, y)$
-            \end{itemize}
-          \item robô com a bola:
-            \begin{itemize}
-              \item $Move(x, y)$
-              \item $Kick(x, y)$
-              \item $Pass(r)$
-            \end{itemize}
-        \end{itemize}
-      \item Ação de um time sem a bola é uma lista de:
-        \begin{itemize}
-          \item $Move(x, y)$
-        \end{itemize}
+      \item SSL
+      \item Definições
+      \item Discretização
+      \item Função Objetivo
+      \item Estratégia de Busca
+    \end{itemize}
+  \end{block}
+}
+
+\subsection{SSL}
+\frame{%
+  \frametitle{SSL}
+  \begin{figure}[thpb]
+    \includegraphics[width= 0.8\linewidth]{img/cmra_campo}
+    \caption{Disposição das câmeras no campo}
+  \end{figure}
+}
+\frame{%
+  \frametitle{SSL}
+  \begin{figure}[thpb]
+    \includegraphics[width= 0.8\linewidth]{img/arq_ssl}
+    \caption{Arquitetura básica da SSL}
+  \end{figure}
+}
+
+\frame{%
+  \frametitle{SSL}
+  \begin{figure}[thpb]
+    \centering
+    \includegraphics[width=0.3\linewidth]{img/rob_data}
+    \caption{Parâmetros de estádo mutáveis do robô}
+  \end{figure}
+}
+
+\subsection{Discretização}
+\frame{%
+  \frametitle{Discretização}
+  \begin{block}{}
+    \begin{itemize}
+      \item Representação do jogo
+      \begin{itemize}
+        \item Posse de bola
+        \item Ações Consideradas
+      \end{itemize}
+
+      \item Execução do planejamento: pyroboime
     \end{itemize}
   \end{block}
 }
 
 \frame{%
-  \frametitle{Mapeamento contínuo-discreto}
+  \frametitle{Ações Consideradas}
   \begin{block}{}
-    \centering
-    \begin{figure}
-      \centering
-      \includegraphics[width=0.7\linewidth]{ex_tatica}
-      \caption{Exemplo de tática para a ação de chute}
-    \end{figure}
+    \begin{itemize}
+      \item Time no ataque (i.e., com a bola)
+      \begin{itemize}
+        \item $Mover(r)$
+        \item $Chutar(r_{com{\ }bola})$
+        \item $Passar(r,r_{com{\ }bola})$
+      \end{itemize}
+    
+      \item Time na defesa (i.e., sem a bola)
+      \begin{itemize}
+        \item $Mover(r)$
+      \end{itemize}
+    \end{itemize}
   \end{block}
+}
+
+\subsection{Função Objetivo}
+\frame{%
+  \frametitle{Função Objetivo}
+  \begin{block}{}
+    \begin{itemize}
+      \item $f_U = \sum c_i$
+      \item $c_i$: custos e penalizações
+      \begin{itemize}
+        \item Custo da Abertura do Gol
+        \item Distância Total das Ações $Mover(r)$
+        \item Distância Máxima das Ações $Mover(r)$
+        \item etc
+      \end{itemize}
+    \end{itemize}
+  \end{block}
+}
+
+\subsection{Estratégia de Busca}
+\frame{%
+  \frametitle{Estratégia de Busca}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width= 0.8\linewidth]{tab_dec}
+    \caption{Ilustração da distribuição dos tabuleiros
+             considerados no planejamento}\label{fig:estr_busca}
+  \end{figure}
+}
+
+\frame{%
+  \frametitle{Distribuição da Ação $Mover(r)$}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth] {distr_mov}
+    \caption{Distribuição da Ação $Mover(r)$}\label{fig:distr_mov}
+  \end{figure}
+}
+
+\frame{%
+  \frametitle{Posição Chave}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width= 0.5\linewidth]{pos_chave_barreira}
+    \caption{Sugestão de uma barreira (em rosa)}\label{fig:pos_chave_barreira}
+  \end{figure}
 }
 
 \section{Arquitetura}
-% tempo: 4 min
-% - Armadillo
 % - compet. ???
 % - zmq / rede
 % - evidenciar vantagens
 % - python / c++
-% - concluir que faz mais sentido
 \frame{%
   \frametitle{Arquitetura}
-  \begin{block}{}
-    \begin{figure}
-      \centering
-      \includegraphics[width=0.8 \linewidth]{img/arq_geral_prog}
-      \caption{Arquitetura simplificada do sistema de controle}\label{fig:arq_prog}
-    \end{figure}
-  \end{block}
-}
-\frame{%
-  \frametitle{Arquitetura}
-  \begin{block}{}
+  \begin{figure}
     \centering
-    \begin{itemize}
-      \item Comunicação via rede para processamento dedicado
-      \item \textit{Threads} separatas para melhor desempenho:
-        \begin{itemize}
-          \item Comunicação
-          \item GUI
-          \item Minimax
-        \end{itemize}
-      \item Bibliotecas e APIs:
-        \begin{itemize}
-          \item Armadillo
-          \item Protobuff (Google)
-          \item ZMQ
-        \end{itemize}
-    \end{itemize}
-  \end{block}
+    \includegraphics[width= 0.3\linewidth]{communication}
+    \includegraphics[width= 0.6\linewidth]{threads}
+    \caption{Diagrama de comunicação entre os componentes
+             (E) e de relação entre \textit{threads} e
+             dados (D).}\label{fig:arch_threads}
+  \end{figure}
 }
 
-\section{Programa}
-% Modelagem
-% tempo: 5 min
+\section{Resultados}
+% Resultados
 % - exemplo representacao
 % - funcao de avaliacao e dados auxiliares
 % - exemplo passe
 % - execucao no grsim
 \frame{%
-  \frametitle{Programa}
+  \frametitle{Resultados}
+  \centering
+  VIDEO
+}
+
+\section{Considerações finais}
+\frame{%
+  \frametitle{Considerações finais}
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{mod_comp}
+    \caption{Modelo de Competição para melhorar
+             o time}\label{fig:mod_comp}
+  \end{figure}
+}
+
+\section{Conclusão}
+\frame{%
+  \frametitle{Conclusão}
   \begin{block}{}
     \centering
-    Exemplo de execução:
     \begin{itemize}
-      \item Representação visual das jogadas
-      \item Função de avaliação
-      \item Planejamento do passe
-      \item Transmissão do planejamento para o grSim
-    \end{itemize}
-  \end{block}
-}
-
-\setlength{\tabcolsep}{3pt}
-\section{Cronograma}
-\frame{%
-  \frametitle{Cronograma}
-  \begin{table}[Ht!]
-    \begin{center}
-      \begin{tabular}{|*{12}{c|}}
-      \hline &    \multicolumn{5}{|c|}{2014}   &             \multicolumn{6}{|c|}{2015}           \\ \hline
-      Tarefas& Ago   & Set   & Out    & Nov    & Dez   & Jan   & Fev  & Mar  & Abr  & Mai  & Jun  \\ \hline
-      \hline
-      MMP    &   X   &   X   &   X    &        &       &       &      &      &      &      &      \\ \hline
-      PVC    &       &       &   X    &   X    &       &       &      &      &      &      &      \\ \hline
-      IMPARQ &       &       &   X    &   X    &   .   &       &      &      &      &      &      \\ \hline
-      IMPALG &       &       &        &        &   .   &   .   &   .  &   .  &   .  &      &      \\ \hline
-      TST    &       &       &        &        &       &       &   .  &   .  &   .  &      &  PR  \\ \hline
-      RED    &   X   &   X   &   X    &   X    &   .   &   .   &   .  &   .  &   .  &      &      \\ \hline
-      DEF    &       &       &        &        &       &       &      &      &      &   .  &      \\ \hline
-    \end{tabular}
-    \end{center}
-  \end{table}
-}
-
-\frame{%
-  \frametitle{Conclusão}
-  \begin{block}
-    \centering
-    \textbf{Atividades realizadas}
-    \begin{itemize}
-      \item Estudo do algoritmo minimax
-      \item Implementações
-        \begin{itemize}
-          \item Mapeamento contínuo-discreto do futebol de robôs
-          \item Protocolos de comunicação entre os módulos do programa
-          \item Arquitetura do programa
-          \item Algoritmo minimax
-        \end{itemize}
-    \end{itemize}
-  \end{block}
-}
-
-\frame{%
-  \frametitle{Conclusão}
-  \begin{block}
-    \centering
-    \textbf{Próximas etapas}
-    \begin{itemize}
-      \item Ajuste da função de avaliação
-      \item Implementação da memória do planejamento anterior
-      \item Automatização partidas contra a inteligência heurística
+      \item Foi desenvolvido um modelo abstrato do futebol de robôs, que
+            foi base para o programa apresentado      
+      \item A ferramenta criada atingiu os objetivos desejados, modificando o
+            comportamento do time através da modificação dos parâmetros da
+            função objetivo
+      \item Foi desenvolvida com sucesso uma interface gráfica que permite
+            modificar esses parâmetros em tempo de execução.
     \end{itemize}
   \end{block}
 }
