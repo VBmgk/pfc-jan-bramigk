@@ -13,6 +13,10 @@ struct State {
   GameArray<Vector> robots, robots_v;
 };
 
+struct Gradient {
+  TeamArray<Vector> vectors;
+};
+
 struct Decision;
 struct DecisionTable;
 
@@ -41,6 +45,12 @@ float evaluate_with_decision(Player player, const State &state,
                              const Decision &decision,
                              const DecisionTable &table,
                              float *values = nullptr);
+
+Gradient evaluate_with_decision_gradient(Player player,
+                                         const State &state,
+                                         const Decision &decision,
+                                         const DecisionTable &table,
+                                         float *values = nullptr);
 
 void discover_possible_receivers(const State state,
                                  const DecisionTable *table,
