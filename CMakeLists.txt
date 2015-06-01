@@ -10,6 +10,7 @@ set(CMAKE_CXX_FLAGS "-std=gnu++11 ${CMAKE_CXX_FLAGS}")
 if("${CMAKE_GENERATOR}" STREQUAL "Ninja" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   add_definitions("-Xclang -fcolor-diagnostics")
 endif()
+set(CMAKE_CXX_FLAGS "-lmat2cpp -llapack -llapacke -lblas -lm ${CMAKE_CXX_FLAGS}") # TODO: make clang add this
 
 include_directories(src)
 include_directories(vendor/imgui)
@@ -55,6 +56,9 @@ set(INC
   src/utils.h
   src/valued_decision.h
   src/vector.h
+  src/lapacke.h
+  src/lapacke_config.h
+  src/lapacke_mangling.h
   #src/weight.h
 )
 
