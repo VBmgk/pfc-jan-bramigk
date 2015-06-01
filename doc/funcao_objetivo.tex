@@ -20,7 +20,7 @@ serão denotados por $p_{descrição}$. São eles:
   \item Custo das Aberturas vistas por $r \in T_{ad}$
   \item Custo da Defesa
   \item Número de Receptores
-  \item Penalização por Próximidade do Gol do Adversário
+  \item Penalização por Proximidade do Gol do Adversário
   \item Penalização por Proximidade
 \end{enumerate}
 
@@ -83,7 +83,7 @@ uma variação de 15cm e de 0cm. Essa variação é medida na linha normal
 
 
 \subsection{Distância Total das Ações $Mover(r)$} 
-O objetivo deste parâmetro é valorizar o custo da
+O objetivo deste parâmetro é valorar o custo da
 mudança de estado na função objetivo. Ele é formado pela soma das
 distâncias que cada ação $Mover(r)$ irá percorrer partindo das
 respectivas posições do estado atual.
@@ -131,7 +131,7 @@ Dessa maneira, tem-se que este custo é computado da seguinte maneira:
 
 \subsection{Custo do Ataque}
 Este custo valoriza situações nas quais o time em questão
-possue o domínio da bola (descrito na Subsecção~\ref{subsec:repres_jogo}).
+possui o domínio da bola (descrito na Subsecção~\ref{subsec:repres_jogo}).
 
 \begin{dmath} 
  c_{ataque} = p_{ataque} . abertura{\ }gol_{ad}
@@ -186,7 +186,7 @@ vários robôs que possam receber passe.
    num \lbrace r_{receptor_i} \rbrace
 \end{dmath}
 
-\subsection{Penalização por Próximidade do Gol do Adversário}
+\subsection{Penalização por Proximidade do Gol do Adversário}
 Esta penalização visa evitar que os robôs que estão no ataque
 se concentrem dentro da área do time adversário. Caso este
 parâmetro não seja adicionado, é esse o comportamento resultante
@@ -213,3 +213,5 @@ atacante tem ação de chutar em direção ao goal.
 Este parâmetro é o número de possibilidades que serão simulados
 em cada iteração do algorítmo de avaliação. Ele influencia o
 tempo de resposta do planejamento.
+
+% vim: tw=80 et ts=2 sw=2 sts=2 ft=tex

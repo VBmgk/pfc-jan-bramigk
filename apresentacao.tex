@@ -4,12 +4,10 @@
 \usepackage{graphicx}
 \usepackage[portuguese]{algorithm2e}% Para escrever algorítimos
 \usepackage{listings}			% Para usar \lstinputlisting e incluir código
-\usepackage{subcaption}			% Para usar \begin{subfigure} e colocar figuras (a) e (b) lado a lado
+%\usepackage{subcaption}			% Para usar \begin{subfigure} e colocar figuras (a) e (b) lado a lado
 \usepackage{multicol}
 
-\title[Técnicas de IA aplicadas ao futebol de robôs]{%
-  Técnicas de IA Aplicadas a Sistemas Multiagentes Cooperativos e Competitivos
-}
+\title[Uma Ferramenta para Futebol de Robôs]{Uma Ferramenta de Representação Comportamental Baseada em Otimização para Futebol de Robôs}
 \author[Jan Segre\and Victor Bramigk]{%
   Jan Segre\\
   Victor Bramigk\\
@@ -67,7 +65,7 @@
 % - Função Objetivo
 % - Estratégia de Busca
 \frame{%
-  \frametitle{Mapeamento}
+  \frametitle{Modelagem}
   \begin{block}{}
     \centering
     \begin{itemize}
@@ -131,7 +129,7 @@
         \item $Chutar(r_{com{\ }bola})$
         \item $Passar(r,r_{com{\ }bola})$
       \end{itemize}
-    
+
       \item Time na defesa (i.e., sem a bola)
       \begin{itemize}
         \item $Mover(r)$
@@ -195,8 +193,8 @@
   \frametitle{Arquitetura}
   \begin{figure}
     \centering
-    \includegraphics[width= 0.3\linewidth]{communication}
-    \includegraphics[width= 0.6\linewidth]{threads}
+    \includegraphics[width= 0.27\linewidth]{communication}
+    \includegraphics[width= 0.60\linewidth]{threads}
     \caption{Diagrama de comunicação entre os componentes
              (E) e de relação entre \textit{threads} e
              dados (D).}\label{fig:arch_threads}
@@ -233,15 +231,16 @@
     \centering
     \begin{itemize}
       \item Foi desenvolvido um modelo abstrato do futebol de robôs, que
-            foi base para o programa apresentado      
+            foi base para o programa apresentado;
       \item A ferramenta criada atingiu os objetivos desejados, modificando o
             comportamento do time através da modificação dos parâmetros da
-            função objetivo
-      \item Foi desenvolvida com sucesso uma interface gráfica que permite
-            modificar esses parâmetros em tempo de execução.
+            função objetivo;
+      \item A interface gráfica permite modificar esses parâmetros em tempo
+            de execução.
     \end{itemize}
   \end{block}
 }
 
 \end{document}
-% vim: tw=80 et ts=2 sw=2 sts=2
+
+% vim: tw=80 et ts=2 sw=2 sts=2 ft=tex
