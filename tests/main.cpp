@@ -1,108 +1,61 @@
-#include <iostream>
-#include "base.h"
-#include "body.h"
-#include "minimax.h"
+#include "move_solver.h"
 
-void print(const Robot& r){
-  std::cout << "robot:\n"
-      << "id: " << r.getId() << std::endl
-      << "pos: " << r.pos()  << std::endl;
+num f(const vec x) { 
+  if (x.size() < 2) exit(1);
+
+  return pow(x(0), 3) - 12 * x(0) * x(1) + pow(x(1), 3)
+         - 63 * (x(0) + x(1));
 }
 
-void print(const Ball &b){
-  std::cout << "Ball: " << std::endl
-            << b.v() << std::endl
-            << b.pos() << std::endl;
-}
+int main(void) {
+  num gamma = 0.05, erro,
+      eig_min,   eig_max;
 
-void print(const Board& board, const Ball &b1, const Ball &b2){
-  for(auto &_r: board.getRobotsMoving()){
-    print(*_r);
-      std::cout << "time to ball: " << board.timeToBall(*_r) << std::endl;
-      std::cout << "time to ball 1: " << board.timeToVirtualBall(*_r, b1) << std::endl;
-      std::cout << "time to ball 2: " << board.timeToVirtualBall(*_r, b2) << std::endl;
-  }
-}
+  mat H;
 
-void print(const Board& board){
-  std::cout << "Team with ball: ";
-      if( board.getRobotWithBall().second == MIN) std::cout << " min" << std::endl;
-      else std::cout << " max" << std::endl;
+  int info;
+  vec x (2), x1(2), sol(2), sol_nwtn(2);
+  x  <<= M_PI_2, 0;
+  x1 <<=      0, 0;
 
-  std::cout << "CanGetPass list: ";
+  tie(sol, erro)                = grad_min (f, x, gamma);
+  tie(H, eig_min, eig_max,info) = hessian  (f, x);
+  cout <<  "hessian matrix: " << H          << endl;
 
-  std::cout << "min:";
-  for(auto& r: board.canGetPass(MIN)) print(*r);
+  tie(H, eig_min, eig_max,info) = hessian  (f, x1);
 
-  std::cout << "max:";
-  for(auto& r: board.canGetPass(MAX)) print(*r);
+  // testing matrix_div with vectors
+  mat A(3,3),_b(3,1); vec b(3);
+  size_t _r;
+  A <<= 1, 0, 0, 0, 1, 0, 0, 0, 1;
+  b <<= 2, 3, 4;
+  // transform vector to matrix
+  copy(b.begin(), b.end(), _b.begin1());
 
-}
+  cout << "x  = " << x                      << endl
+       << "x1 = " << x1                     << endl
+       << "grad(f, x)  = "  << grad (f, x)  << endl
+       << "grad(f, x1) = "  << grad (f, x1) << endl
+       << "grad_min(f, x, " << gamma << ") = "
+       << sol << " with error = " << erro   << endl
+       << "hessian matrix: " << H           << endl
+       << "eig max: " << eig_min            << endl
+       << "eig min: " << eig_max            << endl
+       << "A.x = b: "<< matrix_div(A, _b, _r) << endl;
 
+  tie(sol_nwtn, erro, eig_min, eig_max, info) = newton_min (f, x1);
+  cout << "newton_min(f,x1): " << sol_nwtn  << endl
+       << "erro: "    << erro               << endl
+       << "eig max: " << eig_min            << endl
+       << "eig min: " << eig_max            << endl;
 
-int main(void){
-  Vector v = Vector::getURand();
-  Vector null;
-  Team min, max;
+  tie(sol_nwtn, erro) = newton_grad (f, x1, gamma, true);
+  cout << "newton_grad (f,x1): " << sol_nwtn << endl
+       << "erro: "    << erro                << endl;
 
-  // Creating random min
-  for(int i=1; i<5 ;i++)
-    min.addRobot(
-      Robot(i, Vector::getURand(), Vector::getNRand(v))
-    );
+  tie(sol_nwtn, erro) = newton_grad (f, x1, gamma, false);
+  cout << "newton_grad (f,x1): " << sol_nwtn << endl
+       << "erro: "    << erro                << endl;
 
-  // Creating random max
-  for(int i=1; i<3 ;i++)
-    max.addRobot(
-      Robot(i, Vector::getURand(), Vector::getNRand(v))
-    );
-
-  // Creating different balls
-  Ball ball_1, ball_2;
-  ball_1.setV(Vector(2, 0));
-  ball_2.setV(Vector(-2, 2));
-
-  Board board(min,max);
-  // boards ball position
-  print(board.getBall());
-
-  print(board, ball_1, ball_2);
-
-  auto _r = board.getRobotWithBall().first;
-  print(*_r);
-
-  _r = board.getRobotWithVirtualBall(ball_1).first;
-  print(*_r);
-
-  _r = board.getRobotWithVirtualBall(ball_2).first;
-  print(*_r);
-
-  print(board);
-
-  // TODO[bramigk]: testar com googletest
-  // kickLineCrossRobot test
-  Robot r_kicker(0, Vector(0, 0), Vector(0, 0));
-  Robot r_blocker(1, Vector(1.5, 0), Vector(0, 0));
-
-  Ball b(Vector(0.5, 0), Vector(0, 0));
-
-  Team min2, max2;
-  min2.addRobot(r_kicker);
-  max2.addRobot(r_kicker);
-  Board board2(min2,max2,b);
-
-  print(*board2.getRobotWithBall().first);
-
-  //std::cout << "kicklinecrossRobot: ";
-  //if( board2.kickLineCrossRobot(150, r_blocker)) std::cout << "Ok" << std::endl;
-  //else std::cout << "nao ok" << std::endl;
-
-  // lineSegmentCrossCircle test
-  if (Vector::lineSegmentCrossCircle(
-          Vector(0, 0), Vector(2, 0),
-          Vector(1, 0), Robot::radius()))
-    std::cout << "basic funcion ok" << std::endl;
-  else
-    std::cout << "basic funcion errada" << std::endl;
   return 0;
 }

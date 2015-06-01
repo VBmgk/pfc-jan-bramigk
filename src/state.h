@@ -1,6 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
+#include "numerical_methods.h"
 #include "consts.h"
 #include "vector.h"
 #include "array.h"

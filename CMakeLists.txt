@@ -56,6 +56,7 @@ set(INC
   src/utils.h
   src/valued_decision.h
   src/vector.h
+  src/numerical_methods.h
   src/lapacke.h
   src/lapacke_config.h
   src/lapacke_mangling.h
@@ -167,6 +168,9 @@ include_directories(${ZMQ_INCLUDE_DIRS})
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 
+find_package(Boost 1.54 COMPONENTS program_options REQUIRED)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+
 #find_package(PkgConfig REQUIRED)
 #pkg_search_module(GLFW REQUIRED glfw3)
 #include_directories(${GLFW_INCLUDE_DIRS})
@@ -201,7 +205,7 @@ set(COMMON_LIBRARIES
 
 add_executable(ai src/main.cpp $<TARGET_OBJECTS:core>)
 #target_link_libraries(ai ${COMMON_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
-target_link_libraries(ai ${COMMON_LIBRARIES} glfw ${GLFW_LIBRARIES})
+target_link_libraries(ai ${COMMON_LIBRARIES} ${Boost_LIBRARIES} glfw ${GLFW_LIBRARIES})
 
 add_custom_target(run
   COMMAND ai
