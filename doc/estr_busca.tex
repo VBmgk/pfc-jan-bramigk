@@ -23,6 +23,37 @@ Os tipos de ações que são geradas são:
 \end{itemize}
 
 A ação selecionada é aquela que gera o maior valor de $f_U$.
+O método da decida do gradiente foi implementado para melhorar
+o planejamento. Calculando a série de Taylor para $f_U$ em torno
+de $x_k$, tem-se:
+\begin{dmath}
+  f_U(x) = f_U(x_k) + \nabla f_U(x_k)^T(x-x_k) + O(\lVert x - x_k\rVert^2)
+\end{dmath} 
+
+Calculando no ponto $x_k + \gamma d$, com $\lVert d \rVert = 1$, tem-se:
+\begin{dmath}
+  f_U(x_k + \gamma d) = f_U(x_k) + \gamma \nabla f_U(x_k)^Td + O(\gamma^2)
+\end{dmath} 
+
+Para $\gamma$ suficientemente pequeno, tem-se que:
+\begin{multline}
+  f_U(x_k + \gamma d) - f_U(x_k) \approxeq \gamma \nabla f_U(x_k)^Td\\
+  f_U(x_k + \gamma d) - f_U(x_k) > 0 \Rightarrow \gamma \nabla f_U(x_k)^Td > 0
+\end{multline} 
+
+Logo, tomando $d = \frac{\nabla f_U(x_k)}{\lVert \nabla f_U(x_k)\rVert}$ e
+$\gamma > 0$, pode-se aumentar o valor de $f_U$ \cite{belegundu2011optimization}.
+
+Como a taxa das soluções é fundamental para se controlar os robôs, pode-se
+aplicar esse método de duas maneiras:
+\begin{itemize}
+  \item somente na melhor ação selecionada
+  \item em todas as ações consideradas
+\end{itemize}
+
+A segunda opção reduz a taxa á zero pacotes por segundo, o que
+prejudica o controle e invalida o planejamento, já que o estado
+do jogo se modifica continuamente devido a ação do time adversário.
 
 \input{doc/distr_move}
 \input{doc/dec_table}
