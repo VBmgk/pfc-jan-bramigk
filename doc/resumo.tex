@@ -2,31 +2,25 @@
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
 \begin{resumo}
 
-% Estrutura do resumo por parágrafo:
-%      - Contextualização ok
-%      - Objetivos        ok
-%      - Contribuições    ok
-
   Este trabalho apresenta uma ferramenta de representação comportamental baseada
   em otimização para futebol de robôs para uma equipe da \textit{Small Size
-  League} (SSL) da RoboCup, RoboIME (representando o IME nesta competição).  As
-  equipes da SSL são geralmente controlados por heurísticas puras.  Isso
+  League} (SSL) da RoboCup, RoboIME (representando IME nesta competição).
+  Equipes da SSL são geralmente controlados por heurísticas puras. Isso
   restringe o movimento dos robôs para um conjunto fixo de comportamentos,
   limitando as possíveis jogadas.
 
   O objetivo deste trabalho é desenvolver uma ferramenta de representação
   comportamental baseada em otimização para futebol de robôs.
 
-  Foi criado um modelo discreto e sequencial no domínio das ações,
-  juntamente com uma função utilidade. Isso possibilitou que uma busca
-  fosse feita para encontrar jogadas com avalição boa, de acordo com
-  essa função. Foi implementada uma arquitetura de controle com base
-  nessa abstração, onde se implementou uma busca composta do método da decida
-  do gradiente aplicado a jogadas aleatórias, de sugestões de ações inseridas
-  através da interface gráfica desenvolvida e do último planejamento. 
-  A ferramenta é capaz de controlar um time de robôs, gerando
-  comportamentos que variam entre bloquear chutes diretos, avançar para a quadra
-  adversária e se posicionar para atacar diretamente através de passes.
+  Um modelo discreto e sequencial no domínio das acções foi criado, juntamente
+  com uma função utilidade. Isso possibilitou que uma busca seja feita para
+  encontrar jogadas com boa avaliação de acordo com essa função. Foi
+  implementada uma arquitetura de controle baseada nessa abstração, onde é feita
+  uma busca pela combinação do método de descida do gradiente aplicado a um
+  conjunto de jogadas aleatórios, ações sugeridas (inseridos através da GUI) e o
+  planejamento anterior. A ferramenta é capaz de controlar um conjunto de robôs,
+  dando origem a comportamentos que vão desde bloquear chutes diretos, avançar
+  para a quadra adversária e se posicionar para atacar através de passes.
 
   \textbf{Palavras-chaves}: inteligência artificial, discretização, otimização, robótica, robocup.
 \end{resumo}
@@ -36,25 +30,22 @@
 
   This paper presents a behavioral representation tool based on optimization for
   robot soccer for a RoboCup's Small Size League (SSL) team, RoboIME
-  (representing IME in this competition).  SSL teams are usually controlled by
-  pure heuristics.  This restricts the movement of the robots to a fixed set of
+  (representing IME in this competition). SSL teams are usually controlled by
+  pure heuristics. This restricts the movement of the robots to a fixed set of
   behaviors, limiting the possible plays.
 
   The objective of this work is to develop a behavioral representation tool
   based on optimization for robot soccer.
 
-  To allow several plays to be simulated, the game is abstracted.  This is
-  important because the system continuously varies due to the presence of robots
-  from the opposing team.  Thus, a continuous game is abstracted into a discrete
-  and sequential one, like chess.  Based on this abstraction, a utility function
-  was defined, allowing an optimization approach to the problem.
-
-  A control architecture based on that abstraction was implemented.  As testing
-  platform, part of the software already in use by RoboIME (pyroboime) is used,
-  which solves the physical control of the robots by implementing state machines
-  for the tactics of the abstracted actions.  The tool is able to control a set
-  of robots, generating behaviors ranging from blocking direct kicks, advancing
-  to the opponent's court and positioning for direct attacks through passes.
+  A discreet and sequential model in the field of actions was created, along
+  with a utility function. This enabled a search to be made to find plays with
+  good evaluation according to that function. A control architecture based on
+  this abstraction was implemented, where a search is made by combining a
+  gradient descent method applied to a set of random moves, suggested actions
+  (inserted through the GUI) and the previous planning. The tool is able to
+  control a set of robot, yielding behaviors which range from blocking direct
+  kicks, advancing to the opponent's court and positioning for attacking through
+  passes.
 
   \textbf{Key-words}: artificial intelligence, discretization, optimization, robotics, robocup.
 \end{otherlanguage*}\end{resumo}
