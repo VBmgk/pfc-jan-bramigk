@@ -84,12 +84,12 @@ A ferramenta está implementada em 4 \textit{threads} fixas de acordo com a
 Figura~\ref{fig:arch_threads}.  A separação foi motivada por:
 
 \begin{itemize}
-  \item A interface gráfica necessitar ser responsiva ao usuário;
-  \item A taxa de tomada de decisão poder ser mais lenta que a taxa de
+  \item interface gráfica responsiva ao usuário;
+  \item taxa de tomada de decisão poder ser mais lenta que a taxa de
     atualização do estado, portanto a comunicação tem sua própria
     \textit{thread} que escreve e lê de um buffer compartilhado pela
     \textit{thread} de tomada de decisão;
-  \item Certas informações devem ser coletadas periódicamente para atualizar
+  \item certas informações devem ser coletadas periódicamente para atualizar
     alguns parâmetros e exibidas para o usuário.
 \end{itemize}
 
