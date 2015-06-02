@@ -7,7 +7,6 @@
 #include "player.h"
 #include "segment.h"
 #include "filter.h"
-#include "numerical_methods.h"
 
 struct State {
   Vector ball, ball_v;
