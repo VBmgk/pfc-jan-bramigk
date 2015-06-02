@@ -1,13 +1,13 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "numerical_methods.h"
 #include "consts.h"
 #include "vector.h"
 #include "array.h"
 #include "player.h"
 #include "segment.h"
 #include "filter.h"
+#include "numerical_methods.h"
 
 struct State {
   Vector ball, ball_v;

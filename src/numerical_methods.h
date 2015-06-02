@@ -22,6 +22,8 @@
 #include <mat2cpp.hpp>
 #include "lapacke.h"
 
+namespace numerical_method {
+
 using namespace boost::numeric::ublas;
 using namespace mat2cpp;
 using namespace std;
@@ -47,7 +49,7 @@ num norm(const vec e) { return sqrt(inner_prod(e, e)); }
 /************
  * Gradiend *
  ************/
-vec grad(num (*f)(const vec), vec x) {
+vec grad(num (*f)(const vec), const vec x) {
   vec grad(x.size());
   for (unsigned int i = 0; i < x.size() ;i++) {
     vec x_pls_delta = x, x_mns_delta = x;
@@ -137,7 +139,7 @@ tuple<num,num,int> max_min_eigs(const mat& A) {
   return make_tuple(max, min, info);
 }
 // compute hessian and its greatest and lowest eigenvalues
-tuple<mat, num, num, int> hessian(num (*f)(const vec), vec x) {
+tuple<mat, num, num, int> hessian(num (*f)(const vec), const vec x) {
   // Hessian matrix
   mat H = zeros(x.size(), x.size());
   num eig_min, eig_max;
@@ -166,7 +168,7 @@ tuple<mat, num, num, int> hessian(num (*f)(const vec), vec x) {
 /**********************************************************
  * Find inflexion point using newton method               *
  **********************************************************/
-tuple<vec,num,num,num,int> newton_min(num (*f)(const vec), vec x) {
+tuple<vec,num,num,num,int> newton_min(num (*f)(const vec), const vec x) {
   unsigned int N = x.size(), n_it = 1;
   int info = -1;
   num erro =  1, eig_min, eig_max;
@@ -249,5 +251,6 @@ tuple<vec,num>
 #undef TOL
 #undef N_MAX
 #undef MAX_SUB_IT
+}
 
 #endif
