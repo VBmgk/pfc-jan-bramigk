@@ -6,9 +6,9 @@ expressão:
   f_U = \sum c_i 
 \end{dmath}
 
-Onde $\lbrace c_i \rbrace$ é o conjunto formado
-por custos e penalizações. Os pesos de cada custo
-serão denotados por $p_{descrição}$. São eles:
+Onde $\lbrace c_i \rbrace$ é o conjunto formado por custos. Os pesos de
+cada custo serão denotados por $p_{descrição}$. São eles:
+% TODO: Eu tirei a penalização, mas talvez seja melhor explicar
 \begin{enumerate}
   \item Custo da Abertura do Gol
   \item Correção da Abertura do Gol Devido a Movimentação da Bola
@@ -36,8 +36,10 @@ Ao longo dos testes realizados, foram criados novos parâmetros.
 Entretanto, os parâmetros listados são suficientes para ilustrar
 a mudança no comportamento do time.
 
+% OBS: o Maj Duarte circulou o título, mas não sei se foi
+%      pelos dois erros de português que tinha aqui...
 \subsection{Custo da Abertura do Gol}\label{subsec:custo_gap}
-O objetivos deste parâmetro é valorizar as aberturas maiores
+O objetivo deste parâmetro é valorizar as aberturas maiores
 de acordo com a soma total das aberturas com relação a cada
 $r \in T$ e com aberturas maiores.
 O cálculo deste custo é feito da seguinte maneira:
