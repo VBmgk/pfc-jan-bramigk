@@ -1,8 +1,8 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
-#include <imgui.h>
 
+#include "update.pb.h"
 #include "utils.h"
 #include "state.h"
 #include "vector.h"
@@ -10,7 +10,6 @@
 #include "segment.h"
 #include "decision.h"
 #include "decision_table.h"
-#include "update.pb.h"
 #include "id_table.h"
 
 State uniform_rand_state() {
@@ -29,8 +28,7 @@ bool can_kick_directly(State state, Player player) {
     return false;
 
   Player enemy = ENEMY_FOR(player);
-  float linear_gap =
-      total_gap_len_from_pos(state, state.ball, enemy, rwb);
+  float linear_gap = total_gap_len_from_pos(state, state.ball, enemy, rwb);
   float dist_to_goal = dist(state.ball, GOAL_POS(enemy));
   float angular_gap = DEGREES(2 * atan2f(linear_gap / 2, dist_to_goal));
 
@@ -122,12 +120,12 @@ int robot_with_ball(const State state, float *time_min, float *time_max,
   float best_time_min = std::numeric_limits<float>::infinity();
   float best_time_max = std::numeric_limits<float>::infinity();
 
-#define KEEP_BEST(BEST, ROBOT)                                         \
-  do {                                                                 \
-    if (t < BEST) {                                                    \
-      ROBOT = i;                                                       \
-      BEST = t;                                                        \
-    }                                                                  \
+#define KEEP_BEST(BEST, ROBOT)                                                 \
+  do {                                                                         \
+    if (t < BEST) {                                                            \
+      ROBOT = i;                                                               \
+      BEST = t;                                                                \
+    }                                                                          \
   } while (0)
 
   FOR_EVERY_ROBOT(i) {
@@ -157,16 +155,14 @@ int robot_with_ball(const State state, float *time_min, float *time_max,
   return robot;
 }
 
-int can_receive_pass(const State state, int vrobot, Player player,
-                     Vector vpos, Vector vball, Vector vball_v) {
+int can_receive_pass(const State state, int vrobot, Player player, Vector vpos,
+                     Vector vball, Vector vball_v) {
   int robot = vrobot;
   // XXX: speed 0 for us maybe?
-  float min_time =
-      time_to_pos(vpos, {}, vball, vball_v, ROBOT_MAX_SPEED);
+  float min_time = time_to_pos(vpos, {}, vball, vball_v, ROBOT_MAX_SPEED);
 
   FOR_TEAM_ROBOT(i, ENEMY_OF(player)) {
-    float t = time_to_pos(state.robots[i], {}, vball, vball_v,
-                          ROBOT_MAX_SPEED);
+    float t = time_to_pos(state.robots[i], {}, vball, vball_v, ROBOT_MAX_SPEED);
     if (t < min_time) {
       robot = i;
       min_time = t;
@@ -244,10 +240,8 @@ bool solve_lineq(float a, float b, Sol &x, float c) {
   }
 }
 
-bool linear_dependency(float a1, float a2, float &x, float b1,
-                       float b2) {
-  float norm_a = sqrt(a1 * a1 + a2 * a2),
-        norm_b = sqrt(b1 * b1 + b2 * b2),
+bool linear_dependency(float a1, float a2, float &x, float b1, float b2) {
+  float norm_a = sqrt(a1 * a1 + a2 * a2), norm_b = sqrt(b1 * b1 + b2 * b2),
         norm_ab = sqrt((a1 + b1) * (a1 + b1) + (a2 + b2) * (a2 + b2));
 
   if (norm_ab == norm_a + norm_b) {
@@ -268,8 +262,8 @@ bool linear_dependency(float a1, float a2, float &x, float b1,
   }
 }
 
-bool solve_Ax_b(float a11, float a12, float a21, float a22, Sol &x,
-                float b1, float b2) {
+bool solve_Ax_b(float a11, float a12, float a21, float a22, Sol &x, float b1,
+                float b2) {
   // x1 = (b1 . a22 - a12 . b2) / det
   // x2 = (b2 . a11 - a21 . b1) / det
   float det = a11 * a22 - a12 * a21;
@@ -369,8 +363,7 @@ bool shadow_for_robot_from_pos(Vector rpos, Vector pos, float gx,
   // to eliminate robots with no shadow
   Sol aux = {0.0, 0.0};
 
-  if (solve_Ax_b(nu.x, nd.x, nu.y, nd.y, aux, (rd - ru).x,
-                 (rd - ru).y)) {
+  if (solve_Ax_b(nu.x, nd.x, nu.y, nd.y, aux, (rd - ru).x, (rd - ru).y)) {
     // system has solution
     // p = intersection of lu = { aux . nu + ru} and
     //                     ld = { aux . nd + rd}
@@ -439,9 +432,9 @@ bool cmp_segments(Segment a, Segment b) {
   return a.u == b.u ? a.d > b.d : a.u > b.u;
 }
 
-void discover_gaps_from_pos(const State state, Vector pos,
-                            Player player, Segment *gaps,
-                            int *gaps_count_ptr, int ignore_robot) {
+void discover_gaps_from_pos(const State state, Vector pos, Player player,
+                            Segment *gaps, int *gaps_count_ptr,
+                            int ignore_robot) {
 
   float gx = GOAL_X(player);
 
@@ -530,12 +523,11 @@ void discover_gaps_from_pos(const State state, Vector pos,
   *gaps_count_ptr = gaps_count;
 }
 
-float total_gap_len_from_pos(const State state, Vector pos,
-                             Player player, int ignore_robot) {
+float total_gap_len_from_pos(const State state, Vector pos, Player player,
+                             int ignore_robot) {
   int gaps_count;
   Segment gaps[N_ROBOTS * 2]; // this should be enough
-  discover_gaps_from_pos(state, pos, player, gaps, &gaps_count,
-                         ignore_robot);
+  discover_gaps_from_pos(state, pos, player, gaps, &gaps_count, ignore_robot);
 
   float total_len = 0.0;
   FOR_N(i, gaps_count) { total_len += gaps[i].u - gaps[i].d; }
@@ -547,8 +539,7 @@ float max_gap_len_from_pos(const State state, Vector pos, Player player,
                            int ignore_robot) {
   int gaps_count;
   Segment gaps[N_ROBOTS * 2]; // this should be enough
-  discover_gaps_from_pos(state, pos, player, gaps, &gaps_count,
-                         ignore_robot);
+  discover_gaps_from_pos(state, pos, player, gaps, &gaps_count, ignore_robot);
 
   float max_len = 0.0;
   FOR_N(i, gaps_count) {
@@ -558,171 +549,6 @@ float max_gap_len_from_pos(const State state, Vector pos, Player player,
   }
 
   return max_len;
-}
-
-float gap_value(const State state, Player player, Vector pos) {
-  Vector goal = GOAL_POS(player);
-  float dist_to_goal = dist(pos, goal);
-
-  float total_gap_linear = total_gap_len_from_pos(state, pos, player);
-  float total_gap =
-      DEGREES(2 * atan2f(total_gap_linear / 2, dist_to_goal));
-  while (total_gap < 0)
-    total_gap += 360;
-  while (total_gap > 360)
-    total_gap -= 360;
-
-  float max_gap_linear = max_gap_len_from_pos(state, pos, player);
-  float max_gap = DEGREES(2 * atan2f(max_gap_linear / 2, dist_to_goal));
-  while (max_gap < 0)
-    max_gap += 360;
-  while (max_gap > 360)
-    max_gap -= 360;
-
-  return TOTAL_MAX_GAP_RATIO * total_gap +
-         (1 - TOTAL_MAX_GAP_RATIO) * max_gap;
-}
-
-float evaluate_with_decision(Player player, const State &state,
-                             const struct Decision &decision,
-                             const struct DecisionTable &table,
-                             float *values) {
-  float dumb_values[W_SIZE];
-  if (values == nullptr)
-    values = dumb_values;
-
-  Player enemy = ENEMY_FOR(player);
-
-  float time_min, time_max;
-  int rwb_min, rwb_max;
-
-  // check wheter we have the ball
-  int rwb =
-      robot_with_ball(state, &time_min, &time_max, &rwb_min, &rwb_max);
-  bool has_ball = PLAYER_OF(rwb) == player;
-
-  float time_player = player == MAX ? time_max : time_min;
-  float time_enemy = player == MIN ? time_max : time_min;
-  int rwb_player = player == MAX ? rwb_max : rwb_min;
-  // int rwb_enemy = player == MIN ? rwb_max : rwb_min;
-
-  float value = 0.0;
-#define W(NAME, VAL)                                                   \
-  do {                                                                 \
-    float v = NAME * VAL;                                              \
-    values[_##NAME] += v;                                              \
-    value += v;                                                        \
-  } while (false)
-
-  W(WEIGHT_CLOSE_TO_BALL, 1 / (1 + time_player));
-  W(WEIGHT_ENEMY_CLOSE_TO_BALL, -1 / (1 + time_enemy));
-  W(WEIGHT_BALL_POS, state.ball.x);
-
-  // bonus for having the ball
-  if (has_ball) {
-    W(WEIGHT_HAS_BALL, 1);
-  }
-
-  W(WEIGHT_ATTACK, gap_value(state, enemy, state.ball));
-  // or penalty for not having it
-  // else
-  W(WEIGHT_BLOCK_ATTACKER, -gap_value(state, player, state.ball));
-
-  // penalty for exposing own goal
-  FOR_TEAM_ROBOT(i, enemy) {
-    W(WEIGHT_BLOCK_GOAL, -gap_value(state, player, state.robots[i]));
-  }
-
-  // bonus for having more robots able to receive a pass
-  TeamFilter receivers;
-  discover_possible_receivers(state, &table, player, receivers,
-                              has_ball ? rwb : -1);
-  W(WEIGHT_RECEIVERS_NUM, receivers.count);
-
-  // onus for having enemies able to receive a pass
-  TeamFilter enemy_receivers;
-  discover_possible_receivers(state, &table, enemy, enemy_receivers,
-                              has_ball ? -1 : rwb);
-  W(WEIGHT_ENEMY_RECEIVERS_NUM, -enemy_receivers.count);
-
-  // bonus for seeing enemy goal
-  float best_receiver = 0;
-  FOR_TEAM_ROBOT(i, player) {
-    float gap = gap_value(state, enemy, state.robots[i]);
-    auto robot = state.robots[i];
-    W(WEIGHT_SEE_ENEMY_GOAL, gap);
-
-    if (rwb_player != i && !receivers[i] &&
-        norm2(robot - GOAL_POS(enemy)) > SQ(DEFENSE_RADIUS)) {
-      float this_gap = fmin(0.1, gap);
-      float good_receiver =
-          this_gap /
-          (1 + SQ(DESIRED_PASS_DIST - norm(state.ball - robot)));
-      good_receiver += robot.x + FIELD_WIDTH / 2;
-      if (best_receiver < good_receiver)
-        best_receiver = good_receiver;
-    }
-
-    // penalty for being too close to enemy goal
-    if (dist(state.robots[i], GOAL_POS(enemy)) < DIST_GOAL_TO_PENAL) {
-      value -= DIST_GOAL_PENAL;
-      values[_WEIGHT_PENALS] -= DIST_GOAL_PENAL;
-    }
-  }
-  W(WEIGHT_GOOD_RECEIVERS, best_receiver);
-
-  float move_dist_total = 0, move_dist_max = 0, move_change = 0,
-        pass_change = 0, kick_change = 0;
-
-  FOR_TEAM_ROBOT(i, player) {
-    auto action = decision.action[i];
-    auto rpos = state.robots[i];
-    switch (action.type) {
-    case MOVE: {
-      float move_dist = norm(action.move_pos - rpos);
-      move_dist_max = std::max(move_dist_max, move_dist);
-      move_dist_total += move_dist;
-
-      auto mvec = table.move[i].move_pos - rpos;
-      auto nvec = action.move_pos - rpos;
-      auto mnd = sqrt(norm2(mvec) * norm2(nvec));
-      if (move_dist > ROBOT_RADIUS && mnd > SQ(ROBOT_RADIUS)) {
-        // move_change += norm(action.move_pos -
-        // table.move[i].move_pos);
-        float c = mvec * nvec / mnd;
-        if (c - 1.0 < 0.00001)
-          c = 1.0;
-        move_change += acos(c);
-      }
-    } break;
-    case PASS:
-      if (table.pass_robot >= 0) {
-        // XXX: assuming everything is ok and the receiver has a move
-        // action
-        pass_change +=
-            norm(decision.action[action.pass_receiver].move_pos -
-                 table.move[table.pass.pass_receiver].move_pos);
-      }
-      break;
-    case KICK:
-      if (table.kick_robot >= 0) {
-        kick_change += norm(action.kick_pos - table.move[i].kick_pos);
-      }
-      break;
-    case NONE:
-      break;
-    }
-  }
-
-  // ImGui::Text("move_change: %f", move_change);
-  W(WEIGHT_MOVE_DIST_TOTAL, -move_dist_total);
-  W(WEIGHT_MOVE_DIST_MAX, -move_dist_max);
-  W(WEIGHT_MOVE_CHANGE, -move_change);
-  W(WEIGHT_PASS_CHANGE, -pass_change);
-  W(WEIGHT_KICK_CHANGE, -kick_change);
-
-#undef W
-  return value;
 }
 
 void update_from_proto(State &state, UpdateMessage &ptb_update,
@@ -753,8 +579,7 @@ void update_from_proto(State &state, UpdateMessage &ptb_update,
   }
 }
 
-void discover_possible_receivers(const State state,
-                                 const DecisionTable *table,
+void discover_possible_receivers(const State state, const DecisionTable *table,
                                  Player player, TeamFilter &result,
                                  int passer) {
   // int rwb = robot_with_ball(state);
@@ -784,8 +609,7 @@ void discover_possible_receivers(const State state,
         norm2(move_pos - state.ball) / SQ(ROBOT_KICK_SPEED);
     float passer_to_ball_time =
         passer >= 0
-            ? norm2(state.robots[passer] - state.ball) /
-                  SQ(ROBOT_MAX_SPEED)
+            ? norm2(state.robots[passer] - state.ball) / SQ(ROBOT_MAX_SPEED)
             : 0.0;
     if (passer_to_ball_time + ball_to_pos_time < robot_to_pos_time) {
       filter_out(result, i);
@@ -796,9 +620,9 @@ void discover_possible_receivers(const State state,
       continue;
     }
 
-    int vrobot = can_receive_pass(
-        state, i, player, move_pos, state.ball,
-        unit(move_pos - state.ball) * ROBOT_KICK_SPEED);
+    int vrobot =
+        can_receive_pass(state, i, player, move_pos, state.ball,
+                         unit(move_pos - state.ball) * ROBOT_KICK_SPEED);
     // can_receive_pass(state, i, player, state.robots[i], state.ball,
     // unit(move_pos - state.ball) * ROBOT_KICK_SPEED);
 

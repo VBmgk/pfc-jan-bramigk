@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <random>
 
+#include "discrete.pb.h"
 #include "action.h"
 #include "state.h"
-#include "discrete.pb.h"
 #include "player.h"
 #include "utils.h"
 #include "vector.h"
@@ -70,12 +70,11 @@ again:
     r_radius = MOVE_RADIUS_2;
     break;
   }
-  pos = rand_vector_bounded(state.robots[robot], r_radius,
-                            FIELD_WIDTH / 2, FIELD_HEIGHT / 2);
+  pos = rand_vector_bounded(state.robots[robot], r_radius, FIELD_WIDTH / 2,
+                            FIELD_HEIGHT / 2);
 
   // XXX: do not allow __ANYONE__ (temporary) to enter the defense area
-  if (robot % N_ROBOTS != 0 &&
-      norm(GOAL_POS(p) - pos) <= DEFENSE_RADIUS)
+  if (robot % N_ROBOTS != 0 && norm(GOAL_POS(p) - pos) <= DEFENSE_RADIUS)
     // if (norm(GOAL_POS(p) - pos) <= DEFENSE_RADIUS)
     goto again;
 
@@ -99,16 +98,15 @@ again:
 // Action gen_kick_action(int robot, const State &state, struct
 // DecisionTable
 // &table);
-Action gen_kick_action(int robot, const State &state,
-                       struct DecisionTable &) {
+Action gen_kick_action(int robot, const State &state, struct DecisionTable &) {
   // XXX: can table help in any way? avoid maybe?
 
   float ky, kx = GOAL_X(ENEMY_OF(robot));
 
   int gaps_count;
   Segment gaps[N_ROBOTS * 2]; // this should be enough
-  discover_gaps_from_pos(state, state.ball, ENEMY_OF(robot), gaps,
-                         &gaps_count, robot);
+  discover_gaps_from_pos(state, state.ball, ENEMY_OF(robot), gaps, &gaps_count,
+                         robot);
 
   float max_len = 0.0;
   FOR_N(i, gaps_count) {
@@ -122,8 +120,7 @@ Action gen_kick_action(int robot, const State &state,
   return make_kick_action({kx, ky});
 }
 
-Action gen_pass_action(int robot, const State &state,
-                       DecisionTable &table) {
+Action gen_pass_action(int robot, const State &state, DecisionTable &table) {
   Player player = PLAYER_OF(robot);
   TeamFilter receivers;
   filter_out(receivers, robot);
@@ -154,8 +151,8 @@ Action gen_pass_action(int robot, const State &state,
   }
 }
 
-Action gen_primary_action(int robot, const State &state,
-                          DecisionTable &table, bool kick) {
+Action gen_primary_action(int robot, const State &state, DecisionTable &table,
+                          bool kick) {
   return kick ? gen_kick_action(robot, state, table)
               : gen_pass_action(robot, state, table);
 }
@@ -176,8 +173,7 @@ void apply_to_state(Action action, int robot, State *state) {
     auto ball = state->ball;
     auto recv = state->robots[action.pass_receiver];
     state->robots[robot] = ball;
-    state->ball =
-        recv - unit(recv - ball) * (ROBOT_RADIUS + BALL_RADIUS);
+    state->ball = recv - unit(recv - ball) * (ROBOT_RADIUS + BALL_RADIUS);
   } break;
 
   case NONE:

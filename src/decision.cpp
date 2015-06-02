@@ -1,12 +1,12 @@
 #include <stdio.h>
 
+#include "discrete.pb.h"
 #include "decision.h"
 #include "decision_table.h"
 #include "state.h"
 #include "action.h"
 #include "consts.h"
 #include "utils.h"
-#include "discrete.pb.h"
 #include "id_table.h"
 #include "segment.h"
 
@@ -127,8 +127,7 @@ void to_proto_action(Action &action, CommandMessage::Action *ptb_action,
 }
 
 void to_proto_command(const Decision &decision, Player player,
-                      CommandMessage &ptb_command,
-                      const IdTable &table) {
+                      CommandMessage &ptb_command, const IdTable &table) {
   FOR_TEAM_ROBOT(i, player) {
     Action &&action = decision.action[i];
     if (action.type != NONE) {

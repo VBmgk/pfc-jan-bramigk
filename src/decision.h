@@ -13,8 +13,7 @@ struct Decision {
   TeamArray<Action> action = {};
 };
 
-void apply_to_state(const Decision decision, Player player,
-                    State *state);
+void apply_to_state(const Decision decision, Player player, State *state);
 
 Decision gen_decision(bool kick, const State &state, Player player,
                       DecisionTable &table, int robot_to_move = -1);

@@ -46,8 +46,7 @@ Vector rand_vector_bounded(const Vector _vec, float radius, float xb,
   return pos;
 }
 
-bool line_segment_cross_circle(Vector p1, Vector p2, Vector c,
-                               float r) {
+bool line_segment_cross_circle(Vector p1, Vector p2, Vector c, float r) {
   // Note: this only works because the robot is not a point
   Vector v_u = unit(p1 - p2);
   Vector u = p1 - c;

@@ -60,8 +60,7 @@ void load_suggestions(Suggestions &suggestions, const char *filename) {
   char line[256];
   fgets(line, 256, file);
   if (strcmp(line, SUGGS_FILE_HEADER "\n")) {
-    fprintf(stderr,
-            "Incompatible header detected, maybe newer or invalid.\n");
+    fprintf(stderr, "Incompatible header detected, maybe newer or invalid.\n");
   }
 
   int &tables_count = suggestions.tables_count;
@@ -85,8 +84,7 @@ void load_suggestions(Suggestions &suggestions, const char *filename) {
 
     int exceeding_spots = 0;
     if (spots_count > MAX_SUGGESTION_SPOTS) {
-      fprintf(stderr, "Warning: too many spots (%i), truncating.",
-              spots_count);
+      fprintf(stderr, "Warning: too many spots (%i), truncating.", spots_count);
       exceeding_spots = spots_count - MAX_SUGGESTION_SPOTS;
       spots_count = MAX_SUGGESTION_SPOTS;
     }

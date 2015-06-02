@@ -43,6 +43,9 @@ extern float PARAM_GROUP_THRESHOLD;
 extern float PARAM_GROUP_CONQUER_TIME;
 void set_param_group(int new_param_group);
 
+enum FineOptimize { NO_OPTIMIZE, OPTIMIZE_ALL, OPTIMIZE_BEST };
+extern FineOptimize FINE_OPTIMIZE;
+
 #ifdef _CONST_IMPL
 #define PARAM(TYPE, NAME, DEFAULT) _CONST_IMPL(TYPE, NAME, DEFAULT)
 #else
