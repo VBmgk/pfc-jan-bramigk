@@ -250,9 +250,11 @@
   \vspace*{\fill}
   \end{center}
 
+  % TODO: Adicionar comando para dois orientadores
   \par\imprimirpreambulo
-  \par\imprimirorientadorRotulo~\imprimirorientador
-  \par\imprimircoorientadorRotulo~\imprimircoorientador
+  %\par\imprimirorientadorRotulo~\imprimirorientador
+  %\par\imprimircoorientadorRotulo~\imprimircoorientador
+  \par Orientadores:~\imprimirorientador\ e \imprimircoorientador
   \par
 
   Aprovado em #1 pela seguinte Banca Examinadora:
