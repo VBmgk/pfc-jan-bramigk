@@ -55,6 +55,11 @@
 \renewcommand{\algorithmcfname}{Algoritmo}%
 % ---
 
+
+\usepackage{chngcntr} % Para mudar estilos de numeração
+% Agrupar numeração de figuras por capítulo
+\counterwithin{figure}{chapter}
+
 % ---
 % Pacotes de citacoes
 % ---
@@ -434,7 +439,7 @@ para futebol de robôs}
 % Referências bibliográficas
 % ----------------------------------------------------------
 %\bibliographystyle{plainnat}%abbrvnat, unsrtnat, apsrev, rmpaps, IEEEtranN, achemso, rsc
-\bibliographystyle{plain}
+\bibliographystyle{ieeetr} % was plain
 \bibliography{referencias}
 
 % ----------------------------------------------------------
