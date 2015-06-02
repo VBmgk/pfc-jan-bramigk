@@ -116,7 +116,7 @@
       \par \imprimirpreambulo
       \par {\imprimirorientadorRotulo~\imprimirorientador\par}
       \abntex@ifnotempty{\imprimircoorientador}{
-        {\imprimircoorientadorRotulo~\imprimircoorientador}
+        {\imprimirorientadorRotulo~\imprimircoorientador}
       }
     \end{minipage}
     \vspace*{\fill}
@@ -258,7 +258,7 @@
   Aprovado em #1 pela seguinte Banca Examinadora:
 
   \assinatura{\textbf{\imprimirorientador\ - \imprimirorientadorTitulo} \\ Orientador}
-  \assinatura{\textbf{\convidadoumNome\ - \convidadoumTitulo} \\ Coorientador}
+  \assinatura{\textbf{\convidadoumNome\ - \convidadoumTitulo} \\ Orientador}
   \assinatura{\textbf{\convidadodoisNome\ - \convidadodoisTitulo}}
   \assinatura{\textbf{\convidadotresNome\ - \convidadotresTitulo}}
   %TODO: find out why does abntex@ifnotempty doesn't work so we can have some dynamic list
