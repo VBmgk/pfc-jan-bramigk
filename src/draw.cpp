@@ -41,8 +41,7 @@ void draw_options_window(void) {
   ImGui::Checkbox("draw gap", &DRAW_GAP);
   ImGui::RadioButton("no time to ball", &DRAW_BALL_SHADOW, 0);
   ImGui::RadioButton("draw time to ball", &DRAW_BALL_SHADOW, 1);
-  ImGui::RadioButton("draw time to ball after pass", &DRAW_BALL_SHADOW,
-                     2);
+  ImGui::RadioButton("draw time to ball after pass", &DRAW_BALL_SHADOW, 2);
   ImGui::Checkbox("draw possible receivers", &DRAW_POSSIBLE_RECEIVERS);
   ImGui::Checkbox("draw ball owner", &DRAW_BALL_OWNER);
   ImGui::Checkbox("draw selected robot", &DRAW_SELECTED_ROBOT);
@@ -55,8 +54,7 @@ void screen_zoom(int width, int height, double zoom, double center_x,
   float ratio = width / (float)height;
   glViewport(0, 0, width, height);
 
-  glClearColor(((float)DARK_GREEN[0]) / 255.0,
-               ((float)DARK_GREEN[1]) / 255.0,
+  glClearColor(((float)DARK_GREEN[0]) / 255.0, ((float)DARK_GREEN[1]) / 255.0,
                ((float)DARK_GREEN[2]) / 255.0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT);
   // glPushMatrix();
@@ -66,8 +64,8 @@ void screen_zoom(int width, int height, double zoom, double center_x,
   float r = 1.0 / zoom;
   float ox = -center_x / width * 2;
   float oy = center_y / height * 2;
-  glOrtho((ox - 1.0) * ratio * r, (ox + 1.0) * ratio * r,
-          (oy - 1.0) * r, (oy + 1.0) * r, 1.0, -1.0);
+  glOrtho((ox - 1.0) * ratio * r, (ox + 1.0) * ratio * r, (oy - 1.0) * r,
+          (oy + 1.0) * r, 1.0, -1.0);
 }
 
 void raw_circle(float radius, int sides = NSIDES) {
@@ -85,8 +83,7 @@ void draw_circle(float radius) {
   glEnd();
 }
 
-void draw_robot(Vector pos, const GLubyte *color,
-                float extra_radius = 0.0) {
+void draw_robot(Vector pos, const GLubyte *color, float extra_radius = 0.0) {
   glPushMatrix();
   glTranslatef(pos.x, pos.y, 0.0);
   glColor3ubv(color);
@@ -121,8 +118,8 @@ void draw_shadow(const State &state) {
   Segment gaps[N_ROBOTS * 2];
 
   int robot = robot_with_ball(state);
-  discover_gaps_from_pos(state, state.ball, ENEMY_OF(robot), gaps,
-                         &gaps_count, robot);
+  discover_gaps_from_pos(state, state.ball, ENEMY_OF(robot), gaps, &gaps_count,
+                         robot);
   float gx = GOAL_X(ENEMY_OF(robot));
 
   auto b = state.ball;
@@ -154,14 +151,13 @@ void draw_field(void) {
   glColor3ubv(WHITE);
 
   // mid line
-  glRectf(-LINE_WIDTH / 2, -FIELD_HEIGHT / 2, LINE_WIDTH / 2,
-          FIELD_HEIGHT / 2);
+  glRectf(-LINE_WIDTH / 2, -FIELD_HEIGHT / 2, LINE_WIDTH / 2, FIELD_HEIGHT / 2);
 
   // BACK LINES
-  glRectf(-FIELD_WIDTH / 2, -FIELD_HEIGHT / 2,
-          -FIELD_WIDTH / 2 + LINE_WIDTH, FIELD_HEIGHT / 2);
-  glRectf(FIELD_WIDTH / 2, -FIELD_HEIGHT / 2,
-          FIELD_WIDTH / 2 - LINE_WIDTH, FIELD_HEIGHT / 2);
+  glRectf(-FIELD_WIDTH / 2, -FIELD_HEIGHT / 2, -FIELD_WIDTH / 2 + LINE_WIDTH,
+          FIELD_HEIGHT / 2);
+  glRectf(FIELD_WIDTH / 2, -FIELD_HEIGHT / 2, FIELD_WIDTH / 2 - LINE_WIDTH,
+          FIELD_HEIGHT / 2);
 
   // SIDE LINES
   glRectf(-FIELD_WIDTH / 2, -FIELD_HEIGHT / 2, FIELD_WIDTH / 2,
@@ -251,24 +247,18 @@ void draw_field(void) {
   // the goals
   glColor3ubv(GREY);
   glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH,
-          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, -FIELD_WIDTH / 2,
-          -GOAL_WIDTH / 2);
+          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, -FIELD_WIDTH / 2, -GOAL_WIDTH / 2);
   glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH,
-          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, -FIELD_WIDTH / 2,
-          GOAL_WIDTH / 2);
+          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, -FIELD_WIDTH / 2, GOAL_WIDTH / 2);
   glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH - GOAL_WALL_WIDTH,
-          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH,
-          -FIELD_WIDTH / 2 - GOAL_DEPTH,
+          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, -FIELD_WIDTH / 2 - GOAL_DEPTH,
           GOAL_WIDTH / 2 + GOAL_WALL_WIDTH);
   glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH,
-          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, FIELD_WIDTH / 2,
-          -GOAL_WIDTH / 2);
+          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, FIELD_WIDTH / 2, -GOAL_WIDTH / 2);
   glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH,
-          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, FIELD_WIDTH / 2,
-          GOAL_WIDTH / 2);
+          GOAL_WIDTH / 2 + GOAL_WALL_WIDTH, FIELD_WIDTH / 2, GOAL_WIDTH / 2);
   glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH + GOAL_WALL_WIDTH,
-          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH,
-          FIELD_WIDTH / 2 + GOAL_DEPTH,
+          -GOAL_WIDTH / 2 - GOAL_WALL_WIDTH, FIELD_WIDTH / 2 + GOAL_DEPTH,
           GOAL_WIDTH / 2 + GOAL_WALL_WIDTH);
 }
 
@@ -282,8 +272,8 @@ void draw_ball(Vector pos) {
 
 void draw_goals() {
   glColor3ubv(BLUE);
-  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH, GOAL_WIDTH / 2,
-          -FIELD_WIDTH / 2, -GOAL_WIDTH / 2);
+  glRectf(-FIELD_WIDTH / 2 - GOAL_DEPTH, GOAL_WIDTH / 2, -FIELD_WIDTH / 2,
+          -GOAL_WIDTH / 2);
 
   glColor3ubv(YELLOW);
   glRectf(FIELD_WIDTH / 2 + GOAL_DEPTH, GOAL_WIDTH / 2, FIELD_WIDTH / 2,
@@ -314,9 +304,8 @@ void draw_state(const State &state) {
            y < S + FIELD_HEIGHT / 2; y += I) {
         float t = time_to_pos({x, y}, {}, state.ball, state.ball_v);
         float c = (1 - std::sqrt(t)) / 2 - 0.1;
-        glColor4f(
-            1, 0, 1,
-            c); // this works ok because t=1 means 1 second, which is ok
+        glColor4f(1, 0, 1,
+                  c); // this works ok because t=1 means 1 second, which is ok
         // glRectf(x, y, x + S, y + S);
         glPushMatrix();
         glTranslatef(x, y, 0.0);
@@ -332,8 +321,7 @@ void draw_state(const State &state) {
   if (DRAW_BALL_SHADOW == 2 && *app_selected_robot != -1) {
     constexpr float I = 0.10;
     constexpr float S = I / 2;
-    auto target =
-        app_decision_table->move[*app_selected_robot].move_pos;
+    auto target = app_decision_table->move[*app_selected_robot].move_pos;
     auto kick_v = unit(target - state.ball) * ROBOT_KICK_SPEED;
     glPushMatrix();
     glEnable(GL_BLEND);
@@ -342,12 +330,10 @@ void draw_state(const State &state) {
          x < S + FIELD_WIDTH / 2; x += I) {
       for (float y = -FIELD_HEIGHT / 2 + std::fmod(FIELD_HEIGHT, I) / 2;
            y < S + FIELD_HEIGHT / 2; y += I) {
-        float t = time_to_pos({x, y}, {}, state.ball, kick_v,
-                              ROBOT_MAX_SPEED);
+        float t = time_to_pos({x, y}, {}, state.ball, kick_v, ROBOT_MAX_SPEED);
         float c = (1 - std::sqrt(t)) / 2 - 0.1;
-        glColor4f(
-            1, 0, 1,
-            c); // this works ok because t=1 means 1 second, which is ok
+        glColor4f(1, 0, 1,
+                  c); // this works ok because t=1 means 1 second, which is ok
         // glRectf(x, y, x + S, y + S);
         glPushMatrix();
         glTranslatef(x, y, 0.0);
@@ -366,8 +352,7 @@ void draw_state(const State &state) {
     // DRAW_RECEIVERS(MAX);
     TeamFilter receivers;
     int rwb = robot_with_ball(state);
-    discover_possible_receivers(state, app_decision_table, MAX,
-                                receivers,
+    discover_possible_receivers(state, app_decision_table, MAX, receivers,
                                 PLAYER_OF(rwb) == MAX ? rwb : -1);
     FOR_TEAM_ROBOT_IN(i, MAX, receivers) {
       draw_robot(state.robots[i], PINK2, 2 * BALL_RADIUS);
@@ -387,16 +372,15 @@ void draw_state(const State &state) {
 
   if (DRAW_SELECTED_ROBOT) {
     // shadow for selected robot
-    draw_robot(state.robots[*app_selected_robot], RED,
-               -ROBOT_RADIUS / 2);
+    draw_robot(state.robots[*app_selected_robot], RED, -ROBOT_RADIUS / 2);
   }
 
   // and the ball
   draw_ball(state.ball);
 }
 
-void draw_decision(const struct Decision &decision,
-                   const struct State &state, Player player) {
+void draw_decision(const struct Decision &decision, const struct State &state,
+                   Player player) {
   FOR_TEAM_ROBOT(i, player) {
     auto action = decision.action[i % N_ROBOTS];
     switch (action.type) {

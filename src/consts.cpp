@@ -1,5 +1,5 @@
-#define _CONST_IMPL(TYPE, NAME, DEFAULT)                               \
-  TYPE NAME = DEFAULT;                                                 \
+#define _CONST_IMPL(TYPE, NAME, DEFAULT)                                       \
+  TYPE NAME = DEFAULT;                                                         \
   TYPE _V_##NAME[] = {DEFAULT, DEFAULT, DEFAULT, DEFAULT};
 #include "consts.h"
 
@@ -10,11 +10,13 @@ bool PARAM_GROUP_CONQUER = true;
 float PARAM_GROUP_THRESHOLD = 1.000;    // 1m
 float PARAM_GROUP_CONQUER_TIME = 0.500; // 0.1s
 
+FineOptimize FINE_OPTIMIZE = OPTIMIZE_BEST;
+
 static void change_param_group(int new_param_group) {
   int oldp = param_group;
   int newp = new_param_group;
-#define PARAM_SWAP(NAME)                                               \
-  _V_##NAME[oldp] = NAME;                                              \
+#define PARAM_SWAP(NAME)                                                       \
+  _V_##NAME[oldp] = NAME;                                                      \
   NAME = _V_##NAME[newp];
   PARAM_SWAP(CONSTANT_RATE);
   PARAM_SWAP(KICK_IF_NO_PASS);

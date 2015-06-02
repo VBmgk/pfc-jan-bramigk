@@ -14,15 +14,9 @@ struct Vector {
   constexpr Vector operator-(const Vector &o) const {
     return Vector(x - o.x, y - o.y);
   }
-  constexpr Vector operator*(float k) const {
-    return Vector(x * k, y * k);
-  }
-  constexpr Vector operator/(float k) const {
-    return Vector(x / k, y / k);
-  }
-  constexpr float operator*(const Vector &o) const {
-    return x * o.x + y * o.y;
-  }
+  constexpr Vector operator*(float k) const { return Vector(x * k, y * k); }
+  constexpr Vector operator/(float k) const { return Vector(x / k, y / k); }
+  constexpr float operator*(const Vector &o) const { return x * o.x + y * o.y; }
   Vector operator+=(const Vector &o) {
     x += o.x;
     y += o.y;

@@ -20,7 +20,7 @@ int add_spot(SuggestionTable &table);
 int del_spot(SuggestionTable &table, int index);
 
 Decision gen_decision(bool kick, const SuggestionTable &table,
-                      const struct State *state,
-                      struct DecisionTable &dtable, Player player);
+                      const struct State *state, struct DecisionTable &dtable,
+                      Player player);
 
 #endif

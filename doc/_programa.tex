@@ -6,12 +6,12 @@ Este capítulo descreve o programa desenvolvido para implementar o algoritmo de
 controle proposto no capítulo~\ref{cap:mapeamento}, bem como as APIs e programas
 utilizados adicionalmente para possibilitar a execução de testes comparativos.
 
-Na seção~\ref{sec:arq_prog} uma arquitetura simplificada do sistema de controle é apresentada.
-Por sistema de controle, entenda-se o processo que vai desde a aquisição dos
-dados da visão, planejamento e trasmissão dos comandos aos robôs.
+Na seção~\ref{sec:arq_prog} uma arquitetura simplificada do sistema de controle
+é apresentada.  Por sistema de controle, entenda-se o processo que vai desde a
+aquisição dos dados da visão, planejamento e trasmissão dos comandos aos robôs.
 
-Na seção~\ref{sec:minimax} uma implementação do algoritmo de controle conceitualizado no
-capítulo~\ref{cap:mapeamento} é apresentada.
+Na seção~\ref{sec:minimax} uma implementação do algoritmo de controle
+conceitualizado no capítulo~\ref{cap:mapeamento} é apresentada.
 
 Na seção~\ref{sec:pyroboime} o programa pyroboime é descrito.
 
@@ -41,8 +41,8 @@ O fluxo do programa é apresentado na figura~\ref{fig:minimax_flow}.
 \end{figure}
 
 O processo de tradução consiste em transformar o planejamento obtido em uma
-mensagem a ser enviada para o programa pyroboime. Para isso, foi utilizado
-o protobuf. A estrutura do protocolo de resposta é apresentada no
+mensagem a ser enviada para o programa pyroboime. Para isso, foi utilizado o
+protobuf. A estrutura do protocolo de resposta é apresentada no
 arquivo~\ref{alg:minimax_resp_proto}. A estrutura do protocolo de atualização do
 estado do tabuleiro apresentada no arquivo~\ref{alg:minimax_req_proto}.
 
@@ -53,8 +53,8 @@ Para otimizar os cálculos foi utilizada a API armadillo.
 label={alg:minimax_resp_proto}]{proto/discrete.proto}
 
 % Arquivo de requisição
-\lstinputlisting[caption={Arquivo de definição do protocolo de atualização do estado do tabuleiro},
-label={alg:minimax_req_proto}]{proto/update.proto}
+\lstinputlisting[caption={Arquivo de definição do protocolo de atualização do
+estado do tabuleiro}, label={alg:minimax_req_proto}]{proto/update.proto}
 
 \section{Pyroboime}\label{sec:pyroboime}
 % disclaim: google translate of tdp software file
@@ -97,4 +97,5 @@ algoritmo minimax. Futuramente será utilizado o algoritmo pronto para rodar
 partidas simuladas contra a inteligência atual para serem levantados dados com
 o objetivo de comparar de modo mais objetivo o algoritmo anterior e o
 desenvolvido neste trabalho.
-% vim: tw=80 et ts=2 sw=2 sts=2
+
+% vim: tw=80 et ts=2 sw=2 sts=2 ft=tex

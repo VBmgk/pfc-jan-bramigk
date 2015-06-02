@@ -13,31 +13,36 @@ As abordagens consideradas para criação de uma IA para a SSL são:
 \end{itemize}
 
 \section{Objetivos de longo prazo}
+
 Desenvolver uma inteligência que comece com uma solução baseada em jogos, que
 gradativamente vai aprendendo o comportamento de seu oponente e vai se
-transformando em uma inteligência baseada em otimização, na medida do possível, e
-enquanto for necessário.
+transformando em uma inteligência baseada em otimização, na medida do possível,
+e enquanto for necessário.
 
 \section{Problemas aprendidos}
+
 % TODO: citar cap madeira
-A implementação de uma abordagem baseada em jogos com uma simulação física complicada
-tornava a resposta lenta, logo a qualidade da solução obtida em tempo real era inferior
-àquela obtida por uma heurística pura.
-Foi tentado um minimax com simulador físico, mas o custo computacional das simulações
-associado ao cresciemento exponencial da árvore minimax não permite um controle eficiente
-dos robôs em um ambiente dinâmico com agentes que não são controláveis.
-Foi tentado um minimax com chaveamento de heurística, mas fracasou devido ao
-custo computacional. Logo também optou-se por heurísticas puras nos
-times com robôs omnidirecionais.
+A implementação de uma abordagem baseada em jogos com uma simulação física
+complicada tornava a resposta lenta, logo a qualidade da solução obtida em tempo
+real era inferior àquela obtida por uma heurística pura.  Foi tentado um minimax
+com simulador físico, mas o custo computacional das simulações associado ao
+cresciemento exponencial da árvore minimax não permite um controle eficiente dos
+robôs em um ambiente dinâmico com agentes que não são controláveis.  Foi tentado
+um minimax com chaveamento de heurística, mas fracasou devido ao custo
+computacional. Logo também optou-se por heurísticas puras nos times com robôs
+omnidirecionais.
 
 \section{Proposta de solução}
+
 Explorar o fato de que no jogo com robôs omnidirecionais não são necessárias as
-trajetórias elaboradas que o primeiro time usava.
-Aproximar a simulação física por um jogo de tabuleiro. Ou seja, levar a simulação para um
-nível mais conceitual.
+trajetórias elaboradas que o primeiro time usava.  Aproximar a simulação física
+por um jogo de tabuleiro. Ou seja, levar a simulação para um nível mais
+conceitual.
 
 \section{Minimax para robôs omnidirecionais}
+
 Modelagem das jogadas possíveis de cada robô:
+
 \begin{itemize}
  \item Pegar a bola parada, se o oponente não estiver mais próximo da bola que o
  nosso robô.
@@ -47,27 +52,29 @@ Modelagem das jogadas possíveis de cada robô:
  \item Chutar a gol, se não tiver ninguém no caminho da bola.
  \item Deslocar-se para outro ponto escolhido aleatoriamente, se não tiver ninguém
  em seu caminho, ou utilizar a célula de Voronoi.
- \item Deslocar-se para o ponto escolhido na última jogada. ( Aprendizagem local )
+ \item Deslocar-se para o ponto escolhido na última jogada. (Aprendizagem local)
 \end{itemize}
 
 \section{Problemas}
-Não foi realizado um mapeamento do modelo conceitual para os
-controles dos robôs. Não foi descoberto o problema.
+
+Não foi realizado um mapeamento do modelo conceitual para os controles dos
+robôs. Não foi descoberto o problema.
 
 Considere que o time que esteja se defendendo esteja na raiz da árvore MiniMax.
 Neste caso, o goleiro deste time sempre conseguirá ficar entre a bola e o gol.
 
 \section{Ideias}
+
 Provavelmente é necessário fazer algum tipo de desacoplamento do comportamento dos
-jogadores para melhorar o aproveitamento da CPU\@.
-Talvez seja melhor definir algumas jogadas de movimento com finalidade especifica,
-por exemplo, bloquear a bola defensivamente. O problema é o aumento do tempo de
-processamento.
+jogadores para melhorar o aproveitamento da CPU\@.  Talvez seja melhor definir
+algumas jogadas de movimento com finalidade especifica, por exemplo, bloquear a
+bola defensivamente. O problema é o aumento do tempo de processamento.
 
 \section{Considerações}
-O benefício da substituição das jogadas do oponente por jogadas aprendidas é duplo,
-aumenta-se a efetividade das jogadas, e simultaneamente possibilita que o
-número de jogadas consideradas possa aumentar. O problema de encontrar um
-modelo para o comportamento do oponente é a parte mais desafiadora do projeto.
 
-% vim: tw=80 et ts=2 sw=2 sts=2
+O benefício da substituição das jogadas do oponente por jogadas aprendidas é
+duplo, aumenta-se a efetividade das jogadas, e simultaneamente possibilita que o
+número de jogadas consideradas possa aumentar. O problema de encontrar um modelo
+para o comportamento do oponente é a parte mais desafiadora do projeto.
+
+% vim: tw=80 et ts=2 sw=2 sts=2 ft=tex

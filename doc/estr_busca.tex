@@ -1,7 +1,7 @@
 \section{Estratégia de Busca}\label{sec:est_busca}
-A estratégia de busca utilizada para gerar os novos
-estados a partir do estado atual $x$ é apresentada na
-Figura~\ref{fig:estr_busca}.
+
+A estratégia de busca utilizada para gerar os novos estados a partir do estado
+atual $x$ é apresentada na Figura~\ref{fig:estr_busca}.
 
 \begin{figure}[H]
   \centering
@@ -13,13 +13,13 @@ Figura~\ref{fig:estr_busca}.
 
 Os tipos de ações que são geradas são:
 \begin{itemize}
-  \item \textit{Tabela de decisão}: Ação escolhida no último planejamento
-  \item \textit{Único}: Ação gerada a partir da tabela de decisão
-        onde a ação de um único robô foi modificada
-  \item \textit{Total}: Ação gerada a partir da tabela de decisão
-        onde a ação do time completo foi modificada
-  \item \textit{Posição Chave}: Ação gerada utilizando posições chave
-        (vide Seção~\ref{subsec:pos_chave})
+  \item \textit{Tabela de decisão}: Ação escolhida no último planejamento;
+  \item \textit{Único}: Ação gerada a partir da tabela de decisão onde a ação de
+    um único robô foi modificada;
+  \item \textit{Total}: Ação gerada a partir da tabela de decisão onde a ação do
+    time completo foi modificada;
+  \item \textit{Posição Chave}: Ação gerada utilizando posições chave (vide
+    Seção~\ref{subsec:pos_chave}).
 \end{itemize}
 
 A ação selecionada é aquela que gera o maior valor de $f_U$.
@@ -27,3 +27,5 @@ A ação selecionada é aquela que gera o maior valor de $f_U$.
 \input{doc/distr_move}
 \input{doc/dec_table}
 \input{doc/posicoes_chave}
+
+% vim: tw=80 et ts=2 sw=2 sts=2 ft=tex

@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS "-std=gnu++11 ${CMAKE_CXX_FLAGS}")
 if("${CMAKE_GENERATOR}" STREQUAL "Ninja" AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   add_definitions("-Xclang -fcolor-diagnostics")
 endif()
-set(CMAKE_CXX_FLAGS "-lmat2cpp -llapack -llapacke -lblas -lm ${CMAKE_CXX_FLAGS}") # TODO: make clang add this
+#set(CMAKE_CXX_FLAGS "-lmat2cpp -llapack -llapacke -lblas -lm ${CMAKE_CXX_FLAGS}") # TODO: make clang add this
 
 include_directories(src)
 include_directories(vendor/imgui)
@@ -168,8 +168,8 @@ include_directories(${ZMQ_INCLUDE_DIRS})
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 
-find_package(Boost 1.54 COMPONENTS program_options REQUIRED)
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+#find_package(Boost 1.54 COMPONENTS program_options REQUIRED)
+#INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 
 #find_package(PkgConfig REQUIRED)
 #pkg_search_module(GLFW REQUIRED glfw3)
@@ -205,7 +205,8 @@ set(COMMON_LIBRARIES
 
 add_executable(ai src/main.cpp $<TARGET_OBJECTS:core>)
 #target_link_libraries(ai ${COMMON_LIBRARIES} ${GLFW_STATIC_LIBRARIES})
-target_link_libraries(ai ${COMMON_LIBRARIES} ${Boost_LIBRARIES} glfw ${GLFW_LIBRARIES})
+#target_link_libraries(ai ${COMMON_LIBRARIES} ${Boost_LIBRARIES} glfw ${GLFW_LIBRARIES})
+target_link_libraries(ai ${COMMON_LIBRARIES} glfw ${GLFW_LIBRARIES})
 
 add_custom_target(run
   COMMAND ai

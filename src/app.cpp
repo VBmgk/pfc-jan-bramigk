@@ -50,9 +50,8 @@ static struct {
   float decision_val = 0.0;
 } display;
 
-static bool play_minimax = false, play_decision_once = false,
-            eval_state = true, eval_state_once = false,
-            use_experimental = false;
+static bool play_minimax = false, play_decision_once = false, eval_state = true,
+            eval_state_once = false, use_experimental = false;
 
 static bool ball_selected = false;
 static int selected_robot = 0;
@@ -164,8 +163,7 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
     zmq::socket_t socket(context, ZMQ_REP);
 
     // we will listen on any interface at port 5555
-    static const char *addr =
-        play_as_max ? "tcp://*:5555" : "tcp://*:5556";
+    static const char *addr = play_as_max ? "tcp://*:5555" : "tcp://*:5556";
     socket.bind(addr);
 
     // this is importante to avoid blocking the whole process
@@ -220,14 +218,13 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
           // another important part, we'll assemble the protobuf command
           // packet
           CommandMessage command;
-          to_proto_command(local_decision, play_as_max ? MAX : MIN,
-                           command, id_table);
+          to_proto_command(local_decision, play_as_max ? MAX : MIN, command,
+                           id_table);
 
           // now let's serialize and shove it on our message buffer
           command.SerializeToString(&data);
           zmq::message_t command_message(data.length());
-          memcpy((void *)command_message.data(), data.c_str(),
-                 data.length());
+          memcpy((void *)command_message.data(), data.c_str(), data.length());
 
           // finally, reply:
           socket.send(command_message);
@@ -261,15 +258,13 @@ void app_run(std::function<void(void)> loop_func, bool play_as_max) {
         if (MAX_DEPTH == 0) {
           // optimization decision
           if (play_as_max) {
-            auto valued_decision =
-                decide(optimization, local_state, MAX, &suggestions,
-                       &ram_count);
+            auto valued_decision = decide(optimization, local_state, MAX,
+                                          &suggestions, &ram_count);
             local_decision_max = valued_decision.decision;
             val = valued_decision.value;
           } else {
-            auto valued_decision =
-                decide(optimization, local_state, MIN, &suggestions,
-                       &ram_count);
+            auto valued_decision = decide(optimization, local_state, MIN,
+                                          &suggestions, &ram_count);
             local_decision_min = valued_decision.decision;
             val = valued_decision.value;
           }
@@ -357,22 +352,24 @@ void app_toggle_selected_player() {
 }
 
 void app_select_next_robot() {
-  selected_robot = (selected_robot / N_ROBOTS) * N_ROBOTS +
-                   (selected_robot + 1) % N_ROBOTS;
+  selected_robot =
+      (selected_robot / N_ROBOTS) * N_ROBOTS + (selected_robot + 1) % N_ROBOTS;
 }
 
 void app_select_ball() {
   // select ball
-  ball_selected = ball_selected ? false: true;
+  ball_selected = ball_selected ? false : true;
 }
 
-#define MOVE(D, V)                                                     \
-  void app_move_##D() {                                                \
-    if (selected_robot >= 0) {                                         \
-      if(ball_selected == true) state.ball += V;                       \
-      else state.robots[selected_robot] += V;                          \
-    }                                                                  \
-    update_param_group();                                              \
+#define MOVE(D, V)                                                             \
+  void app_move_##D() {                                                        \
+    if (selected_robot >= 0) {                                                 \
+      if (ball_selected == true)                                               \
+        state.ball += V;                                                       \
+      else                                                                     \
+        state.robots[selected_robot] += V;                                     \
+    }                                                                          \
+    update_param_group();                                                      \
   }
 MOVE(up, Vector(0, move_step))
 MOVE(down, Vector(0, -move_step))
@@ -491,8 +488,7 @@ void app_load_params(const char *filename) {
   char line[256];
   fgets(line, 256, file);
   if (strcmp(line, PARAMS_FILE_HEADER "\n")) {
-    fprintf(stderr,
-            "Incompatible header detected, maybe newer or invalid.\n");
+    fprintf(stderr, "Incompatible header detected, maybe newer or invalid.\n");
     goto out;
   }
 
@@ -501,8 +497,8 @@ void app_load_params(const char *filename) {
   while (!feof(file)) {
     fgets(line, 256, file);
 #define SEP " = "
-#define LOAD_PARAM(MODE, NAME)                                         \
-  if (!strncmp(line, #NAME, strlen(#NAME)))                            \
+#define LOAD_PARAM(MODE, NAME)                                                 \
+  if (!strncmp(line, #NAME, strlen(#NAME)))                                    \
   sscanf(line, "%*s" SEP MODE, &NAME)
     LOAD_PARAM("%i", CONSTANT_RATE);
     LOAD_PARAM("%i", KICK_IF_NO_PASS);

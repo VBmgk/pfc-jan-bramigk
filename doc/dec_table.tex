@@ -1,18 +1,18 @@
 \subsection{Tabela de Decisão}\label{sec:tab_dec}
-A tabela de decisão contém a memória das últimas
-decisões $a_{anterior} \in A_c$ de todos os robôs de $T_c$.
-Isso é incorporado na próxima rodada do algorítmo,
+
+A tabela de decisão contém a memória das últimas decisões $a_{anterior} \in A_c$
+de todos os robôs de $T_c$.  Isso é incorporado na próxima rodada do algorítmo,
 conforme ilustrado na Figura~\ref{fig:estr_busca}.
 
 
-Devido a movimentação dos robôs em $Rob_{ad}$, somente as
-ações $Mover(r_i)$ e $Chutar(r_{com{\ }bola})$ são guardadas
-intergralmente. No caso da ação $Passar(r_j, r_{com{\ }bola})$,
-devido a restrição de o robô que recebe interceptar a bola
-antes dos robôs em $Rob_{ad}$, o cálculo do receptor $r_j$ é
-feito a cada rodada. O receptor anterior só entra no custo
-da mudança (vide Seção~\ref{subsec:change_cost}). 
+Devido a movimentação dos robôs em $Rob_{ad}$, somente as ações $Mover(r_i)$ e
+$Chutar(r_{com{\ }bola})$ são guardadas intergralmente. No caso da ação
+$Passar(r_j, r_{com{\ }bola})$, devido a restrição de o robô que recebe
+interceptar a bola antes dos robôs em $Rob_{ad}$, o cálculo do receptor $r_j$ é
+feito a cada rodada. O receptor anterior só entra no custo da mudança (vide
+Seção~\ref{subsec:change_cost}).
 
-Caso a posse de pola passe para o time adversário, o robô
-que possuia a bola anteriormente fica com a sua última
-ação do tipo $Mover(r_i)$.
+Caso a posse de pola passe para o time adversário, o robô que possuia a bola
+anteriormente fica com a sua última ação do tipo $Mover(r_i)$.
+
+% vim: tw=80 et ts=2 sw=2 sts=2 ft=tex

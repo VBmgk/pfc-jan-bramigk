@@ -55,8 +55,7 @@ Decision gen_decision(bool kick, const SuggestionTable &table,
   }
 
   if (player == PLAYER_OF(rwb)) {
-    decision.action[rwb] =
-        gen_primary_action(rwb, *state, dtable, kick);
+    decision.action[rwb] = gen_primary_action(rwb, *state, dtable, kick);
   }
 
   return decision;
