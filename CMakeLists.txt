@@ -65,6 +65,7 @@ set(INC
 
 set(DOC
   #doc/anexos.tex
+  doc/apendices.tex
   doc/ssl.tex
   doc/arquitetura.tex
   doc/conclusao.tex
