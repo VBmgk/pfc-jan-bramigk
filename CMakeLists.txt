@@ -144,6 +144,7 @@ set(IMG
   img/threads.eps
   img/xadrez.jpg
   img/mod_comp.jpg
+  img/uml_comm.png
 )
 
 set(PROTO
@@ -237,7 +238,8 @@ if(BUILD_REPORT)
   )
 
   add_latex_document(apresentacao.tex
-    IMAGE_DIRS img
+    #IMAGE_DIRS img
+    IMAGES ${IMG}
     NO_DEFAULT
     MANGLE_TARGET_NAMES
   )
