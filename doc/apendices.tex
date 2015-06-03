@@ -25,7 +25,7 @@ Representa o tipo da ação.
 
 \begin{itemize}
   \item \textit{NONE}: nenhuma ação;
-  \item \textit{MOVE}: acão de movimentação;
+  \item \textit{MOVE}: ação de movimentação;
   \item \textit{PASS}: ação de passe;
   \item \textit{KICK}: ação de chute.
 \end{itemize}
@@ -34,7 +34,7 @@ Representa o tipo da ação.
 
 Representa a ação individual a ser executada por um robô, não está amarrada à um
 robô, essa associação deve ser feita pelo usuário da estrutura, isso permite uma
-associação implicita baseada na ordem do vetor ou outros tipos de otimizações,
+associação implícita baseada na ordem do vetor ou outros tipos de otimizações,
 por esse motivo algumas funções recebem um Id de robô para saber qual robô usar
 em certas circunstâncias.
 
@@ -74,7 +74,7 @@ em certas circunstâncias.
     \par Saída: ação do tipo PASS aleatória para algum robô (do mesmo time) que
     possa receber o passe, o critério para receber o passe envolve que o
     receptor chegue em seu destino antes que o passador consiga chegar na bola e
-    chuta-lá até o destino do receptor, além disso após o chute o receptor deve
+    chutá-la até o destino do receptor, além disso após o chute o receptor deve
     conseguir ser o dono da bola.
   \item \textit{gen_primary_action}
     \par Entrada: Id de um robô, estado, tabela de decisão, flag que indica se é
@@ -256,10 +256,10 @@ Representa de qual tipo de ramo uma decisão foi gerada.
 
 \begin{itemize}
   \item \textit{kick_robot}: Id do robô com ação de chute, é opcional, na
-    ausência indica que não há robo com ação de chute.
+    ausência indica que não há robô com ação de chute.
   \item \textit{kick}: ação de chute.
   \item \textit{pass_robot}: Id do robô com ação de chute, é opcional, na
-    ausência indica que não há robo com ação de chute.
+    ausência indica que não há robô com ação de chute.
   \item \textit{pass}: ação de passe.
   \item \textit{move}: array de ações de movimentação com tamanho igual ao
     número de robôs que um time possui.
@@ -351,7 +351,7 @@ Representa um segmento de uma dimensão, usado para cálculo de \textit{gaps}
 Representa o estado do jogo.  É importante ressaltar que os Ids usados dentro da
 ferramenta têm significado diferente do Id usado no jogo.  Aqui os Ids são
 únicos para cada robô, mesmo entre times, isto é, um Id usado pelo time MIN não
-pode ser usado pelo time MAX.  Mais notável é que os Ids variam necessáriamente
+pode ser usado pelo time MAX.  Mais notável é que os Ids variam necessariamente
 entre $0$ e $11$ inclusive, sendo a primeira porção correspondente ao time MIN e
 a segunda ao time MAX.  Esse design permite usar Ids como índices de arrays e
 determinar o time a partir de um Id.  Para tanto é necessário uma tabela de Ids
@@ -448,7 +448,7 @@ de posições chaves que é usado para gerar uma única decisão.
     estado, tabela de decisão, time.
     \par Saída: decisão construída a partir da tabela de sugestão, o
     comportamento há menos posições que robôs é preencher com moves aleatórios e
-    quando há mais posiçoes que robôs é usar as posições mais próximas há cada
+    quando há mais posições que robôs é usar as posições mais próximas há cada
     robô sem que haja repetição.
 \end{itemize}
 
@@ -537,10 +537,10 @@ Representa o conjunto de todas as tabelas de sugestões.
 \subsection*{Estrutura \textit{ValuedDecision}}
 
 Essa estrutura existe para anexar um valor à uma decisão, a intenção é que esse
-seja um valor calculato pela função objetivo.  Uma alternativa seria usar tuplas
-ou retornar o valor em um argumento de saída (pointeiro ou referência) mas a
+seja um valor calculado pela função objetivo.  Uma alternativa seria usar tuplas
+ou retornar o valor em um argumento de saída (ponteiro ou referência) mas a
 estrutura é simples e possui uma semântica explícita e facilita evoluções, como
-por exemplo a própria adição do attributo \textit{values}.
+por exemplo a própria adição do atributo \textit{values}.
 
 \subsubsection*{Atributos}
 

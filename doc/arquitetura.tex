@@ -11,7 +11,7 @@ seguintes são de relevância para o entendimento da arquitetura escolhida:
     rede dos dados processados (estado do jogo);
   \item grSim: desenvolvido pela comunidade e amplamente usado pelas equipes
     para simular o ambiente das partidas, o protocolo usado para enviar o estado
-    pela rede é identico ao do ssl-vision;
+    pela rede é idêntico ao do ssl-vision;
   \item pyroboime: também chamado de core desenvolvido pela RoboIME, atualmente
     provê uma camada de abstração sobre a comunicação com o ambiente de jogo
     (real ou simulado) incluindo redução de ruído, planejamento de trajetória e
@@ -44,7 +44,7 @@ codificadas com o \textit{Protobuf}~\cite{protobufdocs}, uma biblioteca bem
 estabelecida que também é usada nos protocolos oficiais da competição.  Desse
 modo o \textit{overhead} de comunicação é baixo, não é necessário introduzir uma
 dependência ou codificação manual no core e é possível que versões futuras sejam
-retrocompatíveis.
+retro-compatíveis.
 
 São dois tipos de mensagens:
 
@@ -62,8 +62,8 @@ São dois tipos de mensagens:
 As mensagens são transmitidas em um socket ZMQ (\textit{ZeroMQ}~\cite{zmqdocs},
 uma biblioteca de transmissão de dados na rede) visando a extensibilidade da
 ferramenta, pois com tal biblioteca é possível distribuir mensagens entre vários
-nós de forma confiável (característica desejável para um sistema distribuido)
-além de provêr confiabilidade e auto-reconexão para o uso atual.
+nós de forma confiável (característica desejável para um sistema distribuído)
+além de prover confiabilidade e auto-reconexão para o uso atual.
 
 O modo de transmissão é o \textit{request-reply}, em que a ferramente age como
 servidor respondendo as requisições do core. Esse modelo é composto por
@@ -90,7 +90,7 @@ Figura~\ref{fig:arch_threads}.  A separação foi motivada por:
     atualização do estado, portanto a comunicação tem sua própria
     \textit{thread} que escreve e lê de um buffer compartilhado pela
     \textit{thread} de tomada de decisão;
-  \item certas informações devem ser coletadas periódicamente para atualizar
+  \item certas informações devem ser coletadas periodicamente para atualizar
     alguns parâmetros e exibidas para o usuário.
 \end{itemize}
 
