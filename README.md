@@ -9,7 +9,8 @@ Convenções:
 
 - coloque a seguinte `vim modeline` no final de cada `.tex`:
 
-        % vim: tw=80 et ts=2 sw=2 sts=2
+        % vim: tw=80 et ts=2 sw=2 sts=2 ft=tex spelllang=pt_br,en
+
 - prefixe labels de imagens com `fig:`
 - prefixe labels de equações com `eq:`
 - prefixe labels de capítulos com `cap:`
