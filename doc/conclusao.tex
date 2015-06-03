@@ -1,7 +1,6 @@
 %\addcontentsline{toc}{chapter}{Conclusão}
 \chapter{Conclusão}\label{cap:conclusao}
 
-% TODO:
 % OBS: - Recontextualizar trabalho
 %      - Retificação do cumprimento dos objetivos
 %      - Listagem das contribuições
@@ -10,15 +9,14 @@
 
 Este trabalho objetiva desenvolver uma ferramenta de representação
 comportamental baseada em otimização para futebol de robôs.  A meta
-intermediária é criar um modelo discreto sequencial para o problema do futebol
-de robôs. A partir desta discretização, foi desenvolvida uma arquitetura de
-controle que seleciona jogadas o mais próximo da jogada ótima possível, de
-acordo com uma função de avaliação e dentro do tempo disponível para o
-planejamento.
+intermediária é criar um modelo discreto sequencial para o problema
+do futebol de robôs.
 
 Foi desenvolvido um modelo abstrato do futebol de robôs no
 Capítulo~\ref{cap:modelagem}. Este modelo foi base para o programa apresentado
-no Capítulo~\ref{cap:arquitetura}.
+no Capítulo~\ref{cap:arquitetura}. Este programa utiliza o gradiente da função
+objetivo para selecionar jogadas ótimas dentro do tempo disponível para o
+planejamento.
 
 A ferramenta criada atingiu os objetivos desejados, modificando o comportamento
 do time através da modificação dos parâmetros da função objetivo, conforme
@@ -26,16 +24,14 @@ mostrado no Capítulo~\ref{cap:resultados}. Também foi desenvolvida com sucesso
 uma interface gráfica que permite modificar esses parâmetros em tempo de
 execução.
 
-O trabalho atual pode permitir que um time melhor seja criado modificando-se os
+O trabalho atual permite que um time melhor seja criado modificando-se os
 parâmetros da função objetivo ou adicionando novos custos à função objetivo.
-Através do fornecimento dos parâmetros vencedores da competição anterior, tem-se
-um avanço no desempenho do time.
+Também pode-se utilizar este modelo para aplicar outros métodos de otimização.
 
-Pode-se melhorar o time utilizando uma maneria automática para realizar as
-partidas e avaliar o desempenho do time nessa partida. Isso permitiria que
-algorítimos de otimização também fossem utilizados para melhorar os parâmetros.
-Para isso, é a necessário um juíz automático para permitir jogos não
-supervisionados por humanos.
-% TODO: Escolher outra palavra, 'humanos' parece estranho.
+Como trabalhos futuros, sugere-se desenvolver um sistema automático para
+realizar as partidas e avaliar o desempenho do time nessa partida. Isso
+permitiria que algorítimos de otimização também fossem utilizados para
+melhorar os parâmetros.  Para isso, é a necessário um juíz automático
+para permitir jogos não supervisionados por humanos.
 
 % vim: tw=80 et ts=2 sw=2 sts=2 ft=tex
