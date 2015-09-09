@@ -147,26 +147,30 @@
   %     it may not always be desirable to use the current year
   %c\the\year{}
   %\vspace{10mm}
+  \newlength{\verticalinterparagrspace}
+  \setlength{\verticalinterparagrspace}{6mm}
 
   {\noindent
+    c\the\year\\
     INSTITUTO MILITAR DE ENGENHARIA\\
     Praça General Tibúrcio, 80 - Praia Vermelha\\
     Rio de Janeiro-RJ CEP 22290-270}
-  \vspace{10mm}
+  \vspace{\verticalinterparagrspace}
 
   {\noindent
     Este exemplar é de propriedade do Instituto Militar de Engenharia, que poderá incluí-lo em base de dados, armazenar em
     computador, microfilmar ou adotar qualquer forma de arquivamento.}
 
-  \vspace{10mm}
+  \vspace{\verticalinterparagrspace}
 
-  {\indent
+  {\noindent
     É permitida a menção, reprodução parcial ou integral e a transmissão entre bibliotecas deste trabalho, sem modificação
     de seu texto, em qualquer meio que esteja ou venha a ser fixado, para pesquisa acadêmica, comentários e citações, desde
-    que sem finalidade comercial e que seja feita a referência bibliográfica completa.
+    que sem finalidade comercial e que seja feita a referência bibliográfica completa.}
 
-    \vspace{10mm}
+  \vspace{\verticalinterparagrspace}
 
+  {\noindent
     Os conceitos expressos neste trabalho são de responsabilidade do(s) autor(es) e do(s) orientador(es).}
 
   \vspace{10mm}
